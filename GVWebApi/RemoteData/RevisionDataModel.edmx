@@ -1,0 +1,841 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="RevisionDataModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2005" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="BaseHistory">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ContractID" Type="int" Nullable="false" />
+          <Property Name="OverrideDate" Type="datetime" />
+          <Property Name="PreBase" Type="decimal" Precision="16" Scale="2" />
+          <Property Name="FprBase" Type="decimal" Precision="16" Scale="2" />
+          <Property Name="Comment" Type="varchar" MaxLength="1250" />
+          <Property Name="UpdatedOn" Type="datetime" />
+        </EntityType>
+        <EntityType Name="BillingTypeReference">
+          <Key>
+            <PropertyRef Name="BillingTypeID" />
+          </Key>
+          <Property Name="BillingTypeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ClientData">
+          <Key>
+            <PropertyRef Name="RevisionID" />
+          </Key>
+          <Property Name="RevisionID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ERPCustomerNumber" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="ERPContractID" Type="int" Nullable="false" />
+          <Property Name="ContractStartDate" Type="datetime" Nullable="false" />
+          <Property Name="BaseContractAmount" Type="float" Nullable="false" />
+          <Property Name="AffectedCost" Type="float" Nullable="false" />
+          <Property Name="PayOffAmount" Type="float" Nullable="false" />
+          <Property Name="BilledID" Type="int" Nullable="false" />
+          <Property Name="useOverrideVolume" Type="int" />
+          <Property Name="OverrideDate" Type="datetime" />
+          <Property Name="OverrideExpense" Type="decimal" Precision="16" Scale="2" />
+          <Property Name="useOverrideVolumeFPR" Type="int" />
+          <Property Name="OverrideDateFPR" Type="datetime" />
+          <Property Name="OverrideExpenseFPR" Type="decimal" Precision="16" Scale="2" />
+          <Property Name="Modified" Type="int" />
+          <Property Name="OverrideContractStartDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="IntegrisCalls">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CallNumber" Type="varchar" MaxLength="20" />
+          <Property Name="CallDateTime" Type="datetime" />
+          <Property Name="FPRID" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="LockInvoice">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InvoiceID" Type="int" />
+          <Property Name="Locked" Type="bit" />
+          <Property Name="ErpContractID" Type="int" />
+          <Property Name="PeriodDate" Type="datetime" />
+          <Property Name="CustomerID" Type="int" />
+        </EntityType>
+        <EntityType Name="MeterGroups">
+          <Key>
+            <PropertyRef Name="MeterGroupID" />
+          </Key>
+          <Property Name="MeterGroupID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ERPMeterGroupID" Type="int" />
+          <Property Name="MeterGroupDesc" Type="varchar" MaxLength="250" />
+          <Property Name="AuditExpense" Type="float" />
+          <Property Name="AuditVolume" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="CPP" Type="decimal" Precision="18" Scale="5" Nullable="false" />
+          <Property Name="ERPContractID" Type="int" />
+          <Property Name="ERPMeterGroupDesc" Type="varchar" MaxLength="250" />
+          <Property Name="id" Type="varchar" MaxLength="350" />
+          <Property Name="invoiceID" Type="int" />
+          <Property Name="UniqueID" Type="int" />
+          <Property Name="rollovers" Type="bit" />
+        </EntityType>
+        <EntityType Name="PeriodNotes">
+          <Key>
+            <PropertyRef Name="NoteID" />
+          </Key>
+          <Property Name="NoteID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ContractID" Type="int" />
+          <Property Name="PeriodDate" Type="datetime" />
+          <Property Name="PeriodNote" Type="varchar" MaxLength="1250" />
+        </EntityType>
+        <EntityType Name="RevisionData">
+          <Key>
+            <PropertyRef Name="RevisionDataID" />
+          </Key>
+          <Property Name="RevisionDataID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ERPContractID" Type="int" />
+          <Property Name="ERPMeterGroupID" Type="int" />
+          <Property Name="ERPMeterGroupDesc" Type="varchar" MaxLength="80" />
+          <Property Name="ContractedVolume" Type="bigint" />
+          <Property Name="ActualVolume" Type="bigint" />
+          <Property Name="CPPRate" Type="decimal" Precision="15" Scale="5" />
+          <Property Name="VolumeOffset" Type="bigint" />
+          <Property Name="PeriodDate" Type="datetime" />
+          <Property Name="Rollover" Type="int" />
+          <Property Name="Credits" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="FBRContractBase" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="ClientContractBase" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="ClientCPP" Type="decimal" Precision="15" Scale="5" />
+          <Property Name="datachecksum" Type="int" Nullable="false" />
+          <Property Name="InvoiceID" Type="int" />
+          <Property Name="ID" Type="varchar" MaxLength="100" />
+          <Property Name="StartDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="VisionData">
+          <Key>
+            <PropertyRef Name="RevisionDataID" />
+          </Key>
+          <Property Name="RevisionDataID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ERPContractID" Type="int" />
+          <Property Name="clientPeriodDates" Type="varchar" MaxLength="50" />
+          <Property Name="clientOverageCost" Type="float" />
+          <Property Name="fprOverageCost" Type="float" />
+          <Property Name="fprCost" Type="float" />
+          <Property Name="credits" Type="float" />
+          <Property Name="savings" Type="float" />
+          <Property Name="pct" Type="float" />
+          <Property Name="clientCost" Type="float" />
+          <Property Name="FPRBase" Type="float" />
+          <Property Name="ClientBase" Type="float" />
+        </EntityType>
+        <EntityType Name="VisionHistory">
+          <Key>
+            <PropertyRef Name="VisionHistoryID" />
+          </Key>
+          <Property Name="VisionHistoryID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ERPContractID" Type="int" />
+          <Property Name="PeriodDate" Type="datetime" />
+          <Property Name="MeterTypeDesc" Type="varchar" MaxLength="50" />
+          <Property Name="QtrContractVolume" Type="int" />
+          <Property Name="QtrActualVolume" Type="int" />
+          <Property Name="OverageRate" Type="float" />
+          <Property Name="VolumeChange" Type="float" />
+          <Property Name="OverageVolume" Type="int" />
+          <Property Name="OverageExpense" Type="float" />
+          <Property Name="CostWOFPR" Type="float" />
+          <Property Name="NetOverageSavings" Type="float" />
+          <Property Name="PctOverageSavings" Type="float" />
+          <Property Name="VolumeOffset" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'RevisionData.dbo.MeterGroupsDataView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="MeterGroupsDataView">
+          <Key>
+            <PropertyRef Name="MeterGroupID" />
+            <PropertyRef Name="CPP" />
+          </Key>
+          <Property Name="MeterGroupID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ERPMeterGroupID" Type="int" />
+          <Property Name="MeterGroupDesc" Type="varchar" MaxLength="50" />
+          <Property Name="AuditExpense" Type="float" />
+          <Property Name="AuditVolume" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="CPP" Type="decimal" Precision="18" Scale="5" Nullable="false" />
+          <Property Name="ERPContractID" Type="int" />
+          <Property Name="ERPMeterGroupDesc" Type="varchar" MaxLength="50" />
+          <Property Name="ID" Type="varchar" MaxLength="71" />
+          <Property Name="invoiceID" Type="int" />
+          <Property Name="UniqueID" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'RevisionData.dbo.PeriodHistoryWithNotes' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="PeriodHistoryWithNotes">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="PeriodDate" Type="datetime" />
+          <Property Name="ErpContractID" Type="int" />
+          <Property Name="InvoiceID" Type="int" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Locked" Type="bit" />
+          <Property Name="NoteID" Type="int" />
+          <Property Name="PeriodNote" Type="varchar" MaxLength="1250" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'RevisionData.dbo.PeriodNotesView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="PeriodNotesView">
+          <Key>
+            <PropertyRef Name="NoteID" />
+          </Key>
+          <Property Name="ID" Type="bigint" />
+          <Property Name="NoteID" Type="int" Nullable="false" />
+          <Property Name="ERPContractID" Type="int" />
+          <Property Name="PeriodDate" Type="datetime" />
+          <Property Name="PeriodNote" Type="varchar" MaxLength="1250" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'RevisionData.dbo.RevisionDataView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="RevisionDataView">
+          <Key>
+            <PropertyRef Name="datachecksum" />
+          </Key>
+          <Property Name="RevisionDataID" Type="bigint" />
+          <Property Name="ERPContractID" Type="int" />
+          <Property Name="PeriodDate" Type="datetime" />
+          <Property Name="ERPMeterGroupDesc" Type="varchar" MaxLength="80" />
+          <Property Name="ContractedVolume" Type="bigint" />
+          <Property Name="ActualVolume" Type="bigint" />
+          <Property Name="StartDate" Type="datetime" />
+          <Property Name="OverageUnderage" Type="bigint" />
+          <Property Name="OverageExpense" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="OverageNoFPR" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="NetSavings" Type="decimal" Precision="19" Scale="2" />
+          <Property Name="Credits" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="FBRContractBase" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="ClientContractBase" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="ClientCPP" Type="decimal" Precision="5" Scale="5" />
+          <Property Name="CPPRate" Type="decimal" Precision="5" Scale="5" />
+          <Property Name="Rollover" Type="int" />
+          <Property Name="ERPMeterGroupID" Type="int" />
+          <Property Name="datachecksum" Type="int" Nullable="false" />
+          <Property Name="ID" Type="varchar" MaxLength="100" />
+          <Property Name="InvoiceID" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'RevisionData.dbo.RolloverView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="RolloverView">
+          <Key>
+            <PropertyRef Name="ERPCustomerNumber" />
+            <PropertyRef Name="CPP" />
+          </Key>
+          <Property Name="ERPContractID" Type="int" />
+          <Property Name="ERPCustomerNumber" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="PeriodDate" Type="datetime" />
+          <Property Name="InvoiceID" Type="int" />
+          <Property Name="ERPMeterGroupDesc" Type="varchar" MaxLength="80" />
+          <Property Name="Rollover" Type="bigint" />
+          <Property Name="StartDate" Type="datetime" />
+          <Property Name="CPP" Type="decimal" Precision="18" Scale="5" Nullable="false" />
+          <Property Name="CustomerID" Type="int" />
+        </EntityType>
+        <EntityContainer Name="RevisionDataModelStoreContainer">
+          <EntitySet Name="BaseHistory" EntityType="Self.BaseHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BillingTypeReference" EntityType="Self.BillingTypeReference" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ClientData" EntityType="Self.ClientData" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="IntegrisCalls" EntityType="Self.IntegrisCalls" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LockInvoice" EntityType="Self.LockInvoice" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MeterGroups" EntityType="Self.MeterGroups" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PeriodNotes" EntityType="Self.PeriodNotes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RevisionData" EntityType="Self.RevisionData" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VisionData" EntityType="Self.VisionData" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VisionHistory" EntityType="Self.VisionHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MeterGroupsDataView" EntityType="Self.MeterGroupsDataView" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [MeterGroupsDataView].[MeterGroupID] AS [MeterGroupID], 
+    [MeterGroupsDataView].[ERPMeterGroupID] AS [ERPMeterGroupID], 
+    [MeterGroupsDataView].[MeterGroupDesc] AS [MeterGroupDesc], 
+    [MeterGroupsDataView].[AuditExpense] AS [AuditExpense], 
+    [MeterGroupsDataView].[AuditVolume] AS [AuditVolume], 
+    [MeterGroupsDataView].[CPP] AS [CPP], 
+    [MeterGroupsDataView].[ERPContractID] AS [ERPContractID], 
+    [MeterGroupsDataView].[ERPMeterGroupDesc] AS [ERPMeterGroupDesc], 
+    [MeterGroupsDataView].[ID] AS [ID], 
+    [MeterGroupsDataView].[invoiceID] AS [invoiceID], 
+    [MeterGroupsDataView].[UniqueID] AS [UniqueID]
+    FROM [dbo].[MeterGroupsDataView] AS [MeterGroupsDataView]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="PeriodHistoryWithNotes" EntityType="Self.PeriodHistoryWithNotes" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [PeriodHistoryWithNotes].[PeriodDate] AS [PeriodDate], 
+    [PeriodHistoryWithNotes].[ErpContractID] AS [ErpContractID], 
+    [PeriodHistoryWithNotes].[InvoiceID] AS [InvoiceID], 
+    [PeriodHistoryWithNotes].[ID] AS [ID], 
+    [PeriodHistoryWithNotes].[Locked] AS [Locked], 
+    [PeriodHistoryWithNotes].[NoteID] AS [NoteID], 
+    [PeriodHistoryWithNotes].[PeriodNote] AS [PeriodNote]
+    FROM [dbo].[PeriodHistoryWithNotes] AS [PeriodHistoryWithNotes]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="PeriodNotesView" EntityType="Self.PeriodNotesView" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [PeriodNotesView].[ID] AS [ID], 
+    [PeriodNotesView].[NoteID] AS [NoteID], 
+    [PeriodNotesView].[ERPContractID] AS [ERPContractID], 
+    [PeriodNotesView].[PeriodDate] AS [PeriodDate], 
+    [PeriodNotesView].[PeriodNote] AS [PeriodNote]
+    FROM [dbo].[PeriodNotesView] AS [PeriodNotesView]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="RevisionDataView" EntityType="Self.RevisionDataView" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [RevisionDataView].[RevisionDataID] AS [RevisionDataID], 
+    [RevisionDataView].[ERPContractID] AS [ERPContractID], 
+    [RevisionDataView].[PeriodDate] AS [PeriodDate], 
+    [RevisionDataView].[ERPMeterGroupDesc] AS [ERPMeterGroupDesc], 
+    [RevisionDataView].[ContractedVolume] AS [ContractedVolume], 
+    [RevisionDataView].[ActualVolume] AS [ActualVolume], 
+    [RevisionDataView].[StartDate] AS [StartDate], 
+    [RevisionDataView].[OverageUnderage] AS [OverageUnderage], 
+    [RevisionDataView].[OverageExpense] AS [OverageExpense], 
+    [RevisionDataView].[OverageNoFPR] AS [OverageNoFPR], 
+    [RevisionDataView].[NetSavings] AS [NetSavings], 
+    [RevisionDataView].[Credits] AS [Credits], 
+    [RevisionDataView].[FBRContractBase] AS [FBRContractBase], 
+    [RevisionDataView].[ClientContractBase] AS [ClientContractBase], 
+    [RevisionDataView].[ClientCPP] AS [ClientCPP], 
+    [RevisionDataView].[CPPRate] AS [CPPRate], 
+    [RevisionDataView].[Rollover] AS [Rollover], 
+    [RevisionDataView].[ERPMeterGroupID] AS [ERPMeterGroupID], 
+    [RevisionDataView].[datachecksum] AS [datachecksum], 
+    [RevisionDataView].[ID] AS [ID], 
+    [RevisionDataView].[InvoiceID] AS [InvoiceID]
+    FROM [dbo].[RevisionDataView] AS [RevisionDataView]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="RolloverView" EntityType="Self.RolloverView" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [RolloverView].[ERPContractID] AS [ERPContractID], 
+    [RolloverView].[ERPCustomerNumber] AS [ERPCustomerNumber], 
+    [RolloverView].[PeriodDate] AS [PeriodDate], 
+    [RolloverView].[InvoiceID] AS [InvoiceID], 
+    [RolloverView].[ERPMeterGroupDesc] AS [ERPMeterGroupDesc], 
+    [RolloverView].[Rollover] AS [Rollover], 
+    [RolloverView].[StartDate] AS [StartDate], 
+    [RolloverView].[CPP] AS [CPP], 
+    [RolloverView].[CustomerID] AS [CustomerID]
+    FROM [dbo].[RolloverView] AS [RolloverView]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RevisionDataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="BaseHistory">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ContractID" Type="Int32" Nullable="false" />
+          <Property Name="OverrideDate" Type="DateTime" Precision="3" />
+          <Property Name="PreBase" Type="Decimal" Precision="16" Scale="2" />
+          <Property Name="FprBase" Type="Decimal" Precision="16" Scale="2" />
+          <Property Name="Comment" Type="String" MaxLength="1250" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="BillingTypeReference">
+          <Key>
+            <PropertyRef Name="BillingTypeID" />
+          </Key>
+          <Property Name="BillingTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ClientData">
+          <Key>
+            <PropertyRef Name="RevisionID" />
+          </Key>
+          <Property Name="RevisionID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ERPCustomerNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ERPContractID" Type="Int32" Nullable="false" />
+          <Property Name="ContractStartDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="BaseContractAmount" Type="Double" Nullable="false" />
+          <Property Name="AffectedCost" Type="Double" Nullable="false" />
+          <Property Name="PayOffAmount" Type="Double" Nullable="false" />
+          <Property Name="BilledID" Type="Int32" Nullable="false" />
+          <Property Name="useOverrideVolume" Type="Int32" />
+          <Property Name="OverrideDate" Type="DateTime" Precision="3" />
+          <Property Name="OverrideExpense" Type="Decimal" Precision="16" Scale="2" />
+          <Property Name="useOverrideVolumeFPR" Type="Int32" />
+          <Property Name="OverrideDateFPR" Type="DateTime" Precision="3" />
+          <Property Name="OverrideExpenseFPR" Type="Decimal" Precision="16" Scale="2" />
+          <Property Name="Modified" Type="Int32" />
+          <Property Name="OverrideContractStartDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="IntegrisCall">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CallNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="CallDateTime" Type="DateTime" Precision="3" />
+          <Property Name="FPRID" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="LockInvoice">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InvoiceID" Type="Int32" />
+          <Property Name="Locked" Type="Boolean" />
+          <Property Name="ErpContractID" Type="Int32" />
+          <Property Name="PeriodDate" Type="DateTime" Precision="3" />
+          <Property Name="CustomerID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="MeterGroup">
+          <Key>
+            <PropertyRef Name="MeterGroupID" />
+          </Key>
+          <Property Name="MeterGroupID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ERPMeterGroupID" Type="Int32" />
+          <Property Name="MeterGroupDesc" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="AuditExpense" Type="Double" />
+          <Property Name="AuditVolume" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="CPP" Type="Decimal" Precision="18" Scale="5" Nullable="false" />
+          <Property Name="ERPContractID" Type="Int32" />
+          <Property Name="ERPMeterGroupDesc" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="id" Type="String" MaxLength="350" FixedLength="false" Unicode="false" />
+          <Property Name="invoiceID" Type="Int32" />
+          <Property Name="UniqueID" Type="Int32" />
+          <Property Name="rollovers" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="PeriodNote">
+          <Key>
+            <PropertyRef Name="NoteID" />
+          </Key>
+          <Property Name="NoteID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ContractID" Type="Int32" />
+          <Property Name="PeriodDate" Type="DateTime" Precision="3" />
+          <Property Name="PeriodNote1" Type="String" MaxLength="1250" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="RevisionData">
+          <Key>
+            <PropertyRef Name="RevisionDataID" />
+          </Key>
+          <Property Name="RevisionDataID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ERPContractID" Type="Int32" />
+          <Property Name="ERPMeterGroupID" Type="Int32" />
+          <Property Name="ERPMeterGroupDesc" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="ContractedVolume" Type="Int64" />
+          <Property Name="ActualVolume" Type="Int64" />
+          <Property Name="CPPRate" Type="Decimal" Precision="15" Scale="5" />
+          <Property Name="VolumeOffset" Type="Int64" />
+          <Property Name="PeriodDate" Type="DateTime" Precision="3" />
+          <Property Name="Rollover" Type="Int32" />
+          <Property Name="Credits" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="FBRContractBase" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ClientContractBase" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ClientCPP" Type="Decimal" Precision="15" Scale="5" />
+          <Property Name="datachecksum" Type="Int32" Nullable="false" />
+          <Property Name="InvoiceID" Type="Int32" />
+          <Property Name="ID" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="StartDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="VisionData">
+          <Key>
+            <PropertyRef Name="RevisionDataID" />
+          </Key>
+          <Property Name="RevisionDataID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ERPContractID" Type="Int32" />
+          <Property Name="clientPeriodDates" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="clientOverageCost" Type="Double" />
+          <Property Name="fprOverageCost" Type="Double" />
+          <Property Name="fprCost" Type="Double" />
+          <Property Name="credits" Type="Double" />
+          <Property Name="savings" Type="Double" />
+          <Property Name="pct" Type="Double" />
+          <Property Name="clientCost" Type="Double" />
+          <Property Name="FPRBase" Type="Double" />
+          <Property Name="ClientBase" Type="Double" />
+        </EntityType>
+        <EntityType Name="VisionHistory">
+          <Key>
+            <PropertyRef Name="VisionHistoryID" />
+          </Key>
+          <Property Name="VisionHistoryID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ERPContractID" Type="Int32" />
+          <Property Name="PeriodDate" Type="DateTime" Precision="3" />
+          <Property Name="MeterTypeDesc" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="QtrContractVolume" Type="Int32" />
+          <Property Name="QtrActualVolume" Type="Int32" />
+          <Property Name="OverageRate" Type="Double" />
+          <Property Name="VolumeChange" Type="Double" />
+          <Property Name="OverageVolume" Type="Int32" />
+          <Property Name="OverageExpense" Type="Double" />
+          <Property Name="CostWOFPR" Type="Double" />
+          <Property Name="NetOverageSavings" Type="Double" />
+          <Property Name="PctOverageSavings" Type="Double" />
+          <Property Name="VolumeOffset" Type="Int32" />
+        </EntityType>
+        <EntityType Name="MeterGroupsDataView">
+          <Key>
+            <PropertyRef Name="MeterGroupID" />
+            <PropertyRef Name="CPP" />
+          </Key>
+          <Property Name="MeterGroupID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ERPMeterGroupID" Type="Int32" />
+          <Property Name="MeterGroupDesc" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AuditExpense" Type="Double" />
+          <Property Name="AuditVolume" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="CPP" Type="Decimal" Precision="18" Scale="5" Nullable="false" />
+          <Property Name="ERPContractID" Type="Int32" />
+          <Property Name="ERPMeterGroupDesc" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ID" Type="String" MaxLength="71" FixedLength="false" Unicode="false" />
+          <Property Name="invoiceID" Type="Int32" />
+          <Property Name="UniqueID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="PeriodHistoryWithNote">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="PeriodDate" Type="DateTime" Precision="3" />
+          <Property Name="ErpContractID" Type="Int32" />
+          <Property Name="InvoiceID" Type="Int32" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Locked" Type="Boolean" />
+          <Property Name="NoteID" Type="Int32" />
+          <Property Name="PeriodNote" Type="String" MaxLength="1250" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="PeriodNotesView">
+          <Key>
+            <PropertyRef Name="NoteID" />
+          </Key>
+          <Property Name="ID" Type="Int64" />
+          <Property Name="NoteID" Type="Int32" Nullable="false" />
+          <Property Name="ERPContractID" Type="Int32" />
+          <Property Name="PeriodDate" Type="DateTime" Precision="3" />
+          <Property Name="PeriodNote" Type="String" MaxLength="1250" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="RevisionDataView">
+          <Key>
+            <PropertyRef Name="datachecksum" />
+          </Key>
+          <Property Name="RevisionDataID" Type="Int64" />
+          <Property Name="ERPContractID" Type="Int32" />
+          <Property Name="PeriodDate" Type="DateTime" Precision="3" />
+          <Property Name="ERPMeterGroupDesc" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="ContractedVolume" Type="Int64" />
+          <Property Name="ActualVolume" Type="Int64" />
+          <Property Name="StartDate" Type="DateTime" Precision="3" />
+          <Property Name="OverageUnderage" Type="Int64" />
+          <Property Name="OverageExpense" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="OverageNoFPR" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="NetSavings" Type="Decimal" Precision="19" Scale="2" />
+          <Property Name="Credits" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="FBRContractBase" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ClientContractBase" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ClientCPP" Type="Decimal" Precision="5" Scale="5" />
+          <Property Name="CPPRate" Type="Decimal" Precision="5" Scale="5" />
+          <Property Name="Rollover" Type="Int32" />
+          <Property Name="ERPMeterGroupID" Type="Int32" />
+          <Property Name="datachecksum" Type="Int32" Nullable="false" />
+          <Property Name="ID" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="InvoiceID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="RolloverView">
+          <Key>
+            <PropertyRef Name="ERPCustomerNumber" />
+            <PropertyRef Name="CPP" />
+          </Key>
+          <Property Name="ERPContractID" Type="Int32" />
+          <Property Name="ERPCustomerNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PeriodDate" Type="DateTime" Precision="3" />
+          <Property Name="InvoiceID" Type="Int32" />
+          <Property Name="ERPMeterGroupDesc" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="Rollover" Type="Int64" />
+          <Property Name="StartDate" Type="DateTime" Precision="3" />
+          <Property Name="CPP" Type="Decimal" Precision="18" Scale="5" Nullable="false" />
+          <Property Name="CustomerID" Type="Int32" />
+        </EntityType>
+        <EntityContainer Name="RevisionDataEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BaseHistories" EntityType="Self.BaseHistory" />
+          <EntitySet Name="BillingTypeReferences" EntityType="Self.BillingTypeReference" />
+          <EntitySet Name="ClientDatas" EntityType="Self.ClientData" />
+          <EntitySet Name="IntegrisCalls" EntityType="Self.IntegrisCall" />
+          <EntitySet Name="LockInvoices" EntityType="Self.LockInvoice" />
+          <EntitySet Name="MeterGroups" EntityType="Self.MeterGroup" />
+          <EntitySet Name="PeriodNotes" EntityType="Self.PeriodNote" />
+          <EntitySet Name="RevisionDatas" EntityType="Self.RevisionData" />
+          <EntitySet Name="VisionDatas" EntityType="Self.VisionData" />
+          <EntitySet Name="VisionHistories" EntityType="Self.VisionHistory" />
+          <EntitySet Name="MeterGroupsDataViews" EntityType="Self.MeterGroupsDataView" />
+          <EntitySet Name="PeriodHistoryWithNotes" EntityType="Self.PeriodHistoryWithNote" />
+          <EntitySet Name="PeriodNotesViews" EntityType="Self.PeriodNotesView" />
+          <EntitySet Name="RevisionDataViews" EntityType="Self.RevisionDataView" />
+          <EntitySet Name="RolloverViews" EntityType="Self.RolloverView" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RevisionDataModelStoreContainer" CdmEntityContainer="RevisionDataEntities">
+          <EntitySetMapping Name="BaseHistories">
+            <EntityTypeMapping TypeName="RevisionDataModel.BaseHistory">
+              <MappingFragment StoreEntitySet="BaseHistory">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
+                <ScalarProperty Name="OverrideDate" ColumnName="OverrideDate" />
+                <ScalarProperty Name="PreBase" ColumnName="PreBase" />
+                <ScalarProperty Name="FprBase" ColumnName="FprBase" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="UpdatedOn" ColumnName="UpdatedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BillingTypeReferences">
+            <EntityTypeMapping TypeName="RevisionDataModel.BillingTypeReference">
+              <MappingFragment StoreEntitySet="BillingTypeReference">
+                <ScalarProperty Name="BillingTypeID" ColumnName="BillingTypeID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ClientDatas">
+            <EntityTypeMapping TypeName="RevisionDataModel.ClientData">
+              <MappingFragment StoreEntitySet="ClientData">
+                <ScalarProperty Name="RevisionID" ColumnName="RevisionID" />
+                <ScalarProperty Name="ERPCustomerNumber" ColumnName="ERPCustomerNumber" />
+                <ScalarProperty Name="ERPContractID" ColumnName="ERPContractID" />
+                <ScalarProperty Name="ContractStartDate" ColumnName="ContractStartDate" />
+                <ScalarProperty Name="BaseContractAmount" ColumnName="BaseContractAmount" />
+                <ScalarProperty Name="AffectedCost" ColumnName="AffectedCost" />
+                <ScalarProperty Name="PayOffAmount" ColumnName="PayOffAmount" />
+                <ScalarProperty Name="BilledID" ColumnName="BilledID" />
+                <ScalarProperty Name="useOverrideVolume" ColumnName="useOverrideVolume" />
+                <ScalarProperty Name="OverrideDate" ColumnName="OverrideDate" />
+                <ScalarProperty Name="OverrideExpense" ColumnName="OverrideExpense" />
+                <ScalarProperty Name="useOverrideVolumeFPR" ColumnName="useOverrideVolumeFPR" />
+                <ScalarProperty Name="OverrideDateFPR" ColumnName="OverrideDateFPR" />
+                <ScalarProperty Name="OverrideExpenseFPR" ColumnName="OverrideExpenseFPR" />
+                <ScalarProperty Name="Modified" ColumnName="Modified" />
+                <ScalarProperty Name="OverrideContractStartDate" ColumnName="OverrideContractStartDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="IntegrisCalls">
+            <EntityTypeMapping TypeName="RevisionDataModel.IntegrisCall">
+              <MappingFragment StoreEntitySet="IntegrisCalls">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="CallNumber" ColumnName="CallNumber" />
+                <ScalarProperty Name="CallDateTime" ColumnName="CallDateTime" />
+                <ScalarProperty Name="FPRID" ColumnName="FPRID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LockInvoices">
+            <EntityTypeMapping TypeName="RevisionDataModel.LockInvoice">
+              <MappingFragment StoreEntitySet="LockInvoice">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+                <ScalarProperty Name="Locked" ColumnName="Locked" />
+                <ScalarProperty Name="ErpContractID" ColumnName="ErpContractID" />
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MeterGroups">
+            <EntityTypeMapping TypeName="RevisionDataModel.MeterGroup">
+              <MappingFragment StoreEntitySet="MeterGroups">
+                <ScalarProperty Name="MeterGroupID" ColumnName="MeterGroupID" />
+                <ScalarProperty Name="ERPMeterGroupID" ColumnName="ERPMeterGroupID" />
+                <ScalarProperty Name="MeterGroupDesc" ColumnName="MeterGroupDesc" />
+                <ScalarProperty Name="AuditExpense" ColumnName="AuditExpense" />
+                <ScalarProperty Name="AuditVolume" ColumnName="AuditVolume" />
+                <ScalarProperty Name="CPP" ColumnName="CPP" />
+                <ScalarProperty Name="ERPContractID" ColumnName="ERPContractID" />
+                <ScalarProperty Name="ERPMeterGroupDesc" ColumnName="ERPMeterGroupDesc" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="invoiceID" ColumnName="invoiceID" />
+                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+                <ScalarProperty Name="rollovers" ColumnName="rollovers" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PeriodNotes">
+            <EntityTypeMapping TypeName="RevisionDataModel.PeriodNote">
+              <MappingFragment StoreEntitySet="PeriodNotes">
+                <ScalarProperty Name="NoteID" ColumnName="NoteID" />
+                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="PeriodNote1" ColumnName="PeriodNote" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RevisionDatas">
+            <EntityTypeMapping TypeName="RevisionDataModel.RevisionData">
+              <MappingFragment StoreEntitySet="RevisionData">
+                <ScalarProperty Name="RevisionDataID" ColumnName="RevisionDataID" />
+                <ScalarProperty Name="ERPContractID" ColumnName="ERPContractID" />
+                <ScalarProperty Name="ERPMeterGroupID" ColumnName="ERPMeterGroupID" />
+                <ScalarProperty Name="ERPMeterGroupDesc" ColumnName="ERPMeterGroupDesc" />
+                <ScalarProperty Name="ContractedVolume" ColumnName="ContractedVolume" />
+                <ScalarProperty Name="ActualVolume" ColumnName="ActualVolume" />
+                <ScalarProperty Name="CPPRate" ColumnName="CPPRate" />
+                <ScalarProperty Name="VolumeOffset" ColumnName="VolumeOffset" />
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="Rollover" ColumnName="Rollover" />
+                <ScalarProperty Name="Credits" ColumnName="Credits" />
+                <ScalarProperty Name="FBRContractBase" ColumnName="FBRContractBase" />
+                <ScalarProperty Name="ClientContractBase" ColumnName="ClientContractBase" />
+                <ScalarProperty Name="ClientCPP" ColumnName="ClientCPP" />
+                <ScalarProperty Name="datachecksum" ColumnName="datachecksum" />
+                <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VisionDatas">
+            <EntityTypeMapping TypeName="RevisionDataModel.VisionData">
+              <MappingFragment StoreEntitySet="VisionData">
+                <ScalarProperty Name="RevisionDataID" ColumnName="RevisionDataID" />
+                <ScalarProperty Name="ERPContractID" ColumnName="ERPContractID" />
+                <ScalarProperty Name="clientPeriodDates" ColumnName="clientPeriodDates" />
+                <ScalarProperty Name="clientOverageCost" ColumnName="clientOverageCost" />
+                <ScalarProperty Name="fprOverageCost" ColumnName="fprOverageCost" />
+                <ScalarProperty Name="fprCost" ColumnName="fprCost" />
+                <ScalarProperty Name="credits" ColumnName="credits" />
+                <ScalarProperty Name="savings" ColumnName="savings" />
+                <ScalarProperty Name="pct" ColumnName="pct" />
+                <ScalarProperty Name="clientCost" ColumnName="clientCost" />
+                <ScalarProperty Name="FPRBase" ColumnName="FPRBase" />
+                <ScalarProperty Name="ClientBase" ColumnName="ClientBase" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VisionHistories">
+            <EntityTypeMapping TypeName="RevisionDataModel.VisionHistory">
+              <MappingFragment StoreEntitySet="VisionHistory">
+                <ScalarProperty Name="VisionHistoryID" ColumnName="VisionHistoryID" />
+                <ScalarProperty Name="ERPContractID" ColumnName="ERPContractID" />
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="MeterTypeDesc" ColumnName="MeterTypeDesc" />
+                <ScalarProperty Name="QtrContractVolume" ColumnName="QtrContractVolume" />
+                <ScalarProperty Name="QtrActualVolume" ColumnName="QtrActualVolume" />
+                <ScalarProperty Name="OverageRate" ColumnName="OverageRate" />
+                <ScalarProperty Name="VolumeChange" ColumnName="VolumeChange" />
+                <ScalarProperty Name="OverageVolume" ColumnName="OverageVolume" />
+                <ScalarProperty Name="OverageExpense" ColumnName="OverageExpense" />
+                <ScalarProperty Name="CostWOFPR" ColumnName="CostWOFPR" />
+                <ScalarProperty Name="NetOverageSavings" ColumnName="NetOverageSavings" />
+                <ScalarProperty Name="PctOverageSavings" ColumnName="PctOverageSavings" />
+                <ScalarProperty Name="VolumeOffset" ColumnName="VolumeOffset" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MeterGroupsDataViews">
+            <EntityTypeMapping TypeName="RevisionDataModel.MeterGroupsDataView">
+              <MappingFragment StoreEntitySet="MeterGroupsDataView">
+                <ScalarProperty Name="MeterGroupID" ColumnName="MeterGroupID" />
+                <ScalarProperty Name="ERPMeterGroupID" ColumnName="ERPMeterGroupID" />
+                <ScalarProperty Name="MeterGroupDesc" ColumnName="MeterGroupDesc" />
+                <ScalarProperty Name="AuditExpense" ColumnName="AuditExpense" />
+                <ScalarProperty Name="AuditVolume" ColumnName="AuditVolume" />
+                <ScalarProperty Name="CPP" ColumnName="CPP" />
+                <ScalarProperty Name="ERPContractID" ColumnName="ERPContractID" />
+                <ScalarProperty Name="ERPMeterGroupDesc" ColumnName="ERPMeterGroupDesc" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="invoiceID" ColumnName="invoiceID" />
+                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PeriodHistoryWithNotes">
+            <EntityTypeMapping TypeName="RevisionDataModel.PeriodHistoryWithNote">
+              <MappingFragment StoreEntitySet="PeriodHistoryWithNotes">
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="ErpContractID" ColumnName="ErpContractID" />
+                <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Locked" ColumnName="Locked" />
+                <ScalarProperty Name="NoteID" ColumnName="NoteID" />
+                <ScalarProperty Name="PeriodNote" ColumnName="PeriodNote" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PeriodNotesViews">
+            <EntityTypeMapping TypeName="RevisionDataModel.PeriodNotesView">
+              <MappingFragment StoreEntitySet="PeriodNotesView">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="NoteID" ColumnName="NoteID" />
+                <ScalarProperty Name="ERPContractID" ColumnName="ERPContractID" />
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="PeriodNote" ColumnName="PeriodNote" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RevisionDataViews">
+            <EntityTypeMapping TypeName="RevisionDataModel.RevisionDataView">
+              <MappingFragment StoreEntitySet="RevisionDataView">
+                <ScalarProperty Name="RevisionDataID" ColumnName="RevisionDataID" />
+                <ScalarProperty Name="ERPContractID" ColumnName="ERPContractID" />
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="ERPMeterGroupDesc" ColumnName="ERPMeterGroupDesc" />
+                <ScalarProperty Name="ContractedVolume" ColumnName="ContractedVolume" />
+                <ScalarProperty Name="ActualVolume" ColumnName="ActualVolume" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="OverageUnderage" ColumnName="OverageUnderage" />
+                <ScalarProperty Name="OverageExpense" ColumnName="OverageExpense" />
+                <ScalarProperty Name="OverageNoFPR" ColumnName="OverageNoFPR" />
+                <ScalarProperty Name="NetSavings" ColumnName="NetSavings" />
+                <ScalarProperty Name="Credits" ColumnName="Credits" />
+                <ScalarProperty Name="FBRContractBase" ColumnName="FBRContractBase" />
+                <ScalarProperty Name="ClientContractBase" ColumnName="ClientContractBase" />
+                <ScalarProperty Name="ClientCPP" ColumnName="ClientCPP" />
+                <ScalarProperty Name="CPPRate" ColumnName="CPPRate" />
+                <ScalarProperty Name="Rollover" ColumnName="Rollover" />
+                <ScalarProperty Name="ERPMeterGroupID" ColumnName="ERPMeterGroupID" />
+                <ScalarProperty Name="datachecksum" ColumnName="datachecksum" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RolloverViews">
+            <EntityTypeMapping TypeName="RevisionDataModel.RolloverView">
+              <MappingFragment StoreEntitySet="RolloverView">
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="ERPContractID" ColumnName="ERPContractID" />
+                <ScalarProperty Name="ERPCustomerNumber" ColumnName="ERPCustomerNumber" />
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+                <ScalarProperty Name="ERPMeterGroupDesc" ColumnName="ERPMeterGroupDesc" />
+                <ScalarProperty Name="Rollover" ColumnName="Rollover" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="CPP" ColumnName="CPP" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,55 @@
+﻿/*****************************************************
+*THIS FILE IS USED TO UPDATE YOUR DATABASE.  
+*PLEASE MAKE SURE YOUR STATEMENTS ARE RE-RUNNABLE   
+*****************************************************/
+
+--EasyLInk
+IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'EasyLink')
+BEGIN
+
+	CREATE TABLE EasyLink
+	(
+		EasyLinkId BIGINT NOT NULL IDENTITY(1,1) CONSTRAINT PK_EasyLink PRIMARY KEY(EasyLinkId),
+		[FileName] NVARCHAR(150) NOT NULL,
+		SavedFileName NVARCHAR(150) NOT NULL,
+		FileLocation NVARCHAR(500) NOT NULL,
+		NumberOfLines INT NOT NULL,
+		CreatedDateTime DATETIMEOFFSET NOT NULL
+	)
+    
+END
+
+IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'EasyLinkItem')
+BEGIN
+    
+	CREATE TABLE EasyLinkItem
+	(
+		EasyLinkItemId BIGINT NOT NULL IDENTITY(1,1) CONSTRAINT PK_EasyLinkItem PRIMARY KEY(EasyLinkItemId),
+		EasyLinkId BIGINT NOT NULL CONSTRAINT FK_EasyLinkItem_EasyLInk FOREIGN KEY(EasyLinkId) REFERENCES dbo.EasyLink(EasyLinkId),
+		Child INT NOT NULL,
+		Email NVARCHAR(150) NOT NULL,
+		Fax NVARCHAR(150) NOT NULL,
+		[DateTime] DATETIME2 NOT NULL,
+		[Description] NVARCHAR(150) NOT NULL,
+		Duration DECIMAL(18,6) NOT NULL,
+		Pages INT NOT NULL,
+		Charge DECIMAL(18,6) NOT NULL,
+		MessageNumber NVARCHAR(150) NOT NULL,
+	)
+
+END
+
+--add easylink child match table
+IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.tables WHERE TABLE_NAME = 'EasyLinkChildMatch')
+BEGIN
+	CREATE TABLE EasyLinkChildMatch
+	(
+		EasyLinkChildMatchId BIGINT NOT NULL IDENTITY(1,1) CONSTRAINT PK_EasyLinkChildMatch PRIMARY KEY(EasyLinkChildMatchId),
+		CustomerId BIGINT NOT NULL,
+		ChildId INT NOT NULL, 
+		IsEasyLinkOnly BIT NOT NULL,
+		CreatedDateTime DATETIMEOFFSET NOT NULL,
+		ModifiedDateTime DATETIMEOFFSET NULL, 
+		IsDeleted BIT NOT NULL	
+	)    
+END

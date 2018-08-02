@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{EF94A96D-91C2-4767-9E77-42CDF14FEFD2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GV</RootNamespace>
+    <AssemblyName>GV</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentNHibernate.2.0.3.0\lib\net40\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Iesi.Collections.4.0.0.4000\lib\net40\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Conventions, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.Conventions.3.3.0\lib\net45\Ninject.Extensions.Conventions.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Factory, Version=3.3.2.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.Factory.3.3.2\lib\net45\Ninject.Extensions.Factory.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.NamedScope, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.NamedScope.3.3.0\lib\net45\Ninject.Extensions.NamedScope.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CoFreedomDomain\CoFreedomRepository.cs" />
+    <Compile Include="CoFreedomDomain\CoFreedomSessionFactory.cs" />
+    <Compile Include="CoFreedomDomain\CoFreedomUnitOfWork.cs" />
+    <Compile Include="CoFreedomDomain\Entities\ArCustomersEntity.cs" />
+    <Compile Include="CoFreedomDomain\Entities\IcModelEntity.cs" />
+    <Compile Include="CoFreedomDomain\Entities\ScContractDetailsEntity.cs" />
+    <Compile Include="CoFreedomDomain\Entities\ScContractMeterGroupsEntity.cs" />
+    <Compile Include="CoFreedomDomain\Entities\ScContractsEntity.cs" />
+    <Compile Include="CoFreedomDomain\Entities\ScEquipmentCustomProperties.cs" />
+    <Compile Include="CoFreedomDomain\Entities\ScEquipmentEntity.cs" />
+    <Compile Include="CoFreedomDomain\Entities\ViewEquipmentAndRate.cs" />
+    <Compile Include="CoFreedomDomain\Mappings\ArCustomersMap.cs" />
+    <Compile Include="Configuration\IGlobalViewConfiguration.cs" />
+    <Compile Include="Domain\Entities\EasyLinkChildMatchEntity.cs" />
+    <Compile Include="Domain\Entities\EasyLinkItemEntity.cs" />
+    <Compile Include="Domain\Mappings\EasyLinkChildMatchMap.cs" />
+    <Compile Include="Domain\Mappings\EasyLinkItemMap.cs" />
+    <Compile Include="Domain\Mappings\EasyLinkMap.cs" />
+    <Compile Include="CoFreedomDomain\Mappings\IcModelMap.cs" />
+    <Compile Include="CoFreedomDomain\Mappings\ScContractDetailsMap.cs" />
+    <Compile Include="CoFreedomDomain\Mappings\ScContractMeterGroupsMap.cs" />
+    <Compile Include="CoFreedomDomain\Mappings\ScContractsMap.cs" />
+    <Compile Include="CoFreedomDomain\Mappings\ScEquipmentCustomPropertiesMap.cs" />
+    <Compile Include="CoFreedomDomain\Mappings\ScEquipmentMap.cs" />
+    <Compile Include="CoFreedomDomain\Mappings\ViewEquipmentAndRateMap.cs" />
+    <Compile Include="Domain\Entities\AssetReplacementEntity.cs" />
+    <Compile Include="Domain\Entities\CyclePeriodEntity.cs" />
+    <Compile Include="Domain\Entities\CyclePeriodSchedulesEntity.cs" />
+    <Compile Include="Domain\Entities\CycleReconciliationServicesEntity.cs" />
+    <Compile Include="Domain\Entities\CyclesEntity.cs" />
+    <Compile Include="Domain\Entities\DevicesEntity.cs" />
+    <Compile Include="Domain\Entities\EasyLinkEntity.cs" />
+    <Compile Include="Domain\Entities\LocationEntity.cs" />
+    <Compile Include="Domain\Entities\SchedulesEntity.cs" />
+    <Compile Include="Domain\Entities\ScheduleServiceEntity.cs" />
+    <Compile Include="Domain\Mappings\AssetReplacementMap.cs" />
+    <Compile Include="Domain\Mappings\CyclePeriodMap.cs" />
+    <Compile Include="Domain\Mappings\CyclePeriodScheduleMap.cs" />
+    <Compile Include="Domain\Mappings\CycleReconciliationServicesMap.cs" />
+    <Compile Include="Domain\Mappings\CyclesMap.cs" />
+    <Compile Include="Domain\Mappings\DevicesMap.cs" />
+    <Compile Include="Domain\Mappings\LocationMap.cs" />
+    <Compile Include="Domain\Mappings\ScheduleServiceMap.cs" />
+    <Compile Include="Domain\Mappings\SchedulesMap.cs" />
+    <Compile Include="Domain\Repository.cs" />
+    <Compile Include="Domain\SessionFactoryHelper.cs" />
+    <Compile Include="Domain\UnitOfWork.cs" />
+    <Compile Include="Domain\Views\ViewCsQuarterlyHistory.cs" />
+    <Compile Include="Domain\Views\ViewMonthlyDeviceCosts.cs" />
+    <Compile Include="ExtensionMethods\StringExtensions.cs" />
+    <Compile Include="Lookup\LookupInfo.cs" />
+    <Compile Include="Ninject\GvNinjectLoadModule.cs" />
+    <Compile Include="Ninject\Ioc.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\EasyLinkChildManagerModel.cs" />
+    <Compile Include="Services\EasyLinkChildManagerService.cs" />
+    <Compile Include="Services\EasyLinkChildSwitchModel.cs" />
+    <Compile Include="Services\EasyLinkFileDeleteService.cs" />
+    <Compile Include="Services\EasyLinkFileSaveModel.cs" />
+    <Compile Include="Services\EasyLinkFileSaveService.cs" />
+    <Compile Include="Services\EasyLinkService.cs" />
+    <Compile Include="Services\EasyLinkUnMappedChildModel.cs" />
+    <Compile Include="Services\EasyLinkViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

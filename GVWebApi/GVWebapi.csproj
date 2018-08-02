@@ -1,0 +1,835 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.7.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.7.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B769CD2E-BC03-40EC-9996-14C115FA1ABD}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GVWebapi</RootNamespace>
+    <AssemblyName>GVWebapi</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <Use64BitIISExpress />
+    <TypeScriptToolsVersion>2.5</TypeScriptToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentDateTime, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentDateTime.1.14.0\lib\net452\FluentDateTime.dll</HintPath>
+    </Reference>
+    <Reference Include="GoogleMaps.LocationServices, Version=0.1.5926.26040, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GoogleMaps.LocationServices.0.9.8.6\lib\net40\GoogleMaps.LocationServices.dll</HintPath>
+    </Reference>
+    <Reference Include="GuigleAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Easyforce.GuigleAPI.1.0.6\lib\GuigleAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.8.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Conventions, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.Conventions.3.3.0\lib\net45\Ninject.Extensions.Conventions.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Factory, Version=3.3.2.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.Factory.3.3.2\lib\net45\Ninject.Extensions.Factory.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.NamedScope, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.NamedScope.3.3.0\lib\net45\Ninject.Extensions.NamedScope.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Web.Common, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Web.Common.3.3.0\lib\net45\Ninject.Web.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Web.Common.WebHost, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Web.Common.WebHost.3.3.0\lib\net45\Ninject.Web.Common.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Web.WebApi, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Web.WebApi.3.3.0\lib\net45\Ninject.Web.WebApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Web.WebApi.WebHost, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Web.WebApi.WebHost.3.3.0\lib\net45\Ninject.Web.WebApi.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.DirectoryServices.Protocols" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.4\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.Cors, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.4\lib\net45\System.Web.Cors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.4\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Cors, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Cors.5.2.4\lib\net45\System.Web.Http.Cors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.4\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.4\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.4\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.4\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Cors, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Cors.5.2.4\lib\net45\System.Web.Http.Cors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.4\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.4\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.4\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Views\Equipment\" />
+    <Folder Include="Views\NotFoundWithMessage\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
+    <Compile Include="Areas\HelpPage\App_Start\HelpPageConfig.cs" />
+    <Compile Include="Areas\HelpPage\Controllers\HelpController.cs" />
+    <Compile Include="Areas\HelpPage\HelpPageAreaRegistration.cs" />
+    <Compile Include="Areas\HelpPage\HelpPageConfigurationExtensions.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\CollectionModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ComplexTypeModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\DictionaryModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\EnumTypeModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\EnumValueDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\IModelDocumentationProvider.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\KeyValuePairModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelDescriptionGenerator.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelNameAttribute.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelNameHelper.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ParameterAnnotation.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ParameterDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\SimpleTypeModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\Models\HelpPageApiModel.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\HelpPageSampleGenerator.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\HelpPageSampleKey.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\ImageSample.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\InvalidSample.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\ObjectGenerator.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
+    <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Configuration\GlobalViewConfiguration.cs" />
+    <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="Controllers\ClientsContractController.cs" />
+    <Compile Include="Controllers\CostAvoidancesController.cs" />
+    <Compile Include="Controllers\CustomersController.cs" />
+    <Compile Include="Controllers\CycleHistoryApiController.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
+    <Compile Include="Controllers\DeviceApiController.cs" />
+    <Compile Include="Controllers\DevicesController.cs" />
+    <Compile Include="Controllers\EasyLinkApiController.cs" />
+    <Compile Include="Controllers\EasyLinkChildMatchSaveModel.cs" />
+    <Compile Include="Controllers\EditScheduleApiController.cs" />
+    <Compile Include="Controllers\EquipmentManagersController.cs" />
+    <Compile Include="Controllers\FprContactController.cs" />
+    <Compile Include="Controllers\GlobalViewUsersController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LocationsApiController.cs" />
+    <Compile Include="Controllers\NotFoundWithMessage.cs" />
+    <Compile Include="Controllers\ReconciliationApiController.cs" />
+    <Compile Include="Controllers\RevisionDatasController.cs" />
+    <Compile Include="Controllers\RolloverPagesController.cs" />
+    <Compile Include="Controllers\ScheduleApiController.cs" />
+    <Compile Include="Controllers\ScheduleServiceApiController.cs" />
+    <Compile Include="Controllers\SurveysController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\DateTimeExtensions.cs" />
+    <Compile Include="Helpers\SqlExtensions.cs" />
+    <Compile Include="Migrations\201712092250024_InitialCreate.cs" />
+    <Compile Include="Migrations\201712092250024_InitialCreate.Designer.cs">
+      <DependentUpon>201712092250024_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712100050193_first.cs" />
+    <Compile Include="Migrations\201712100050193_first.Designer.cs">
+      <DependentUpon>201712100050193_first.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712100059201_second.cs" />
+    <Compile Include="Migrations\201712100059201_second.Designer.cs">
+      <DependentUpon>201712100059201_second.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712100101514_third.cs" />
+    <Compile Include="Migrations\201712100101514_third.Designer.cs">
+      <DependentUpon>201712100101514_third.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712100104274_forth.cs" />
+    <Compile Include="Migrations\201712100104274_forth.Designer.cs">
+      <DependentUpon>201712100104274_forth.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712100107185_fifth.cs" />
+    <Compile Include="Migrations\201712100107185_fifth.Designer.cs">
+      <DependentUpon>201712100107185_fifth.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ChildManagerExistingData.cs" />
+    <Compile Include="Models\ContactClientsViewModel.cs" />
+    <Compile Include="Models\ContactViewModel.cs" />
+    <Compile Include="Models\DashboardModel.cs" />
+    <Compile Include="Models\Devices\DeviceModel.cs" />
+    <Compile Include="Models\Devices\DeviceRemoveModel.cs" />
+    <Compile Include="Models\Devices\DeviceReplacementSaveModel.cs" />
+    <Compile Include="Models\Devices\DeviceSaveModel.cs" />
+    <Compile Include="Models\Devices\DeviceSearchModel.cs" />
+    <Compile Include="Models\Devices\FormatterReplacedModel.cs" />
+    <Compile Include="Models\Devices\SetScheduleSaveModel.cs" />
+    <Compile Include="Models\EquipmentLocation.cs" />
+    <Compile Include="Models\EquipmentManagerViewModel.cs" />
+    <Compile Include="Models\Locations\CoFreedomLocationModel.cs" />
+    <Compile Include="Models\Locations\LocationViewModel.cs" />
+    <Compile Include="Models\PeriodHistoryView.cs" />
+    <Compile Include="Models\Reconciliation\CostByDeviceModel.cs" />
+    <Compile Include="Models\Reconciliation\CycleSummaryModel.cs" />
+    <Compile Include="Models\Reconciliation\InvoicedServiceModel.cs" />
+    <Compile Include="Models\Reconciliation\ReconciliationViewModel.cs" />
+    <Compile Include="Models\Reconciliation\ReconCreditSaveModel.cs" />
+    <Compile Include="Models\ReplacementDevices.cs" />
+    <Compile Include="Models\EquipmentsModelView.cs" />
+    <Compile Include="Models\Locations.cs" />
+    <Compile Include="Models\LoginData.cs" />
+    <Compile Include="Models\RevisionHistoryViewModel.cs" />
+    <Compile Include="Models\RolloverPagesModel.cs" />
+    <Compile Include="Models\Schedules\CoterminousModel.cs" />
+    <Compile Include="Models\Schedules\EditScheduleDeviceTopModel.cs" />
+    <Compile Include="Models\Schedules\EditScheduleTopModel.cs" />
+    <Compile Include="Models\Schedules\ScheduleDeleteModel.cs" />
+    <Compile Include="Models\Schedules\ScheduleEditModel.cs" />
+    <Compile Include="Models\Schedules\ScheduleSaveModel.cs" />
+    <Compile Include="Models\Schedules\SchedulesModel.cs" />
+    <Compile Include="Models\ServiceCallsViewModel.cs" />
+    <Compile Include="Models\SurveyPostModel.cs" />
+    <Compile Include="Models\SurveyViewModel.cs" />
+    <Compile Include="Models\VisionModel.cs" />
+    <Compile Include="Models\VolumeTrends.cs" />
+    <Compile Include="Ninject\NinjectApiLoadModule.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteData\ARCustomer.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\AssetReplacement.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\BaseHistory.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\BillingTypeReference.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\ClientContact.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\ClientData.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\coFreedomEntities.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>coFreedomEntities.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\coFreedomEntities.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\coFreedomEntities.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>coFreedomEntities.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\ContactClient.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\CostAvoidance.cs">
+      <DependentUpon>CustomerService.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\csDeviceVolumesGrid_Result.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\csDeviceVolumes_Result.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\CustomerService.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CustomerService.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\CustomerService.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CustomerService.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\CustomerService.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CustomerService.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\easylinkimport.cs">
+      <DependentUpon>CustomerService.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\EasylinkImportHistory.cs">
+      <DependentUpon>CustomerService.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\EasyLinkMapping.cs">
+      <DependentUpon>CustomerService.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\EquipmentManager.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\EquipmentManagerList.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\FprContact.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\GlobalViewModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GlobalViewModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\GlobalViewModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\GlobalViewModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GlobalViewModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\GlobalViewUser.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\IntegrisCall.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\LockInvoice.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\MeterGroup.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\MeterGroupsDataView.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\PeriodHistoryWithNote.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\PeriodNote.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\PeriodNotesView.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\RevisionData.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\RevisionDataModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RevisionDataModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\RevisionDataModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\RevisionDataModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RevisionDataModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\RevisionDataView.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\RevisionDBContext.cs" />
+    <Compile Include="RemoteData\RolloverView.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\SCBillingCycle.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\SCContract.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\SCEquipmentCustomProperty.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\Survey.cs">
+      <DependentUpon>CustomerService.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\SurveyAnswer.cs">
+      <DependentUpon>CustomerService.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\SurveyQuestion.cs">
+      <DependentUpon>CustomerService.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\SurveyQuestionsWithAnswer.cs">
+      <DependentUpon>CustomerService.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\SurveyWithAvg.cs">
+      <DependentUpon>CustomerService.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\VisionData.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\VisionHistory.cs">
+      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_admin_EquipmentList_MeterGroup.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_admin_SCBillingMeters_MeterGroup.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_admin_SCEquipments_22.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_ClientsOnContract.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_ContractedPagesByDeviceTYpe_Cust.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_csContractList.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_CSQuarterlyHistory.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_CSQuarterlyHistoryByInvoice.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_csSCBillingContracts.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_CSServiceCallHistory.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_CSServiceCallSummarybyPeriod.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_CustomerLocations.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_CustomersOnContract.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_customer_contacts.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_EquipmentModels.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_GlobalView_Equipment.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_GVDeviceAnalyzer.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_invoicedMeterGroups.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_maplocations.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_PagesOnContract.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_REVisionDataImport.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_RevisionHistory.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_RevisionHistoryCustomerName.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_RevisionInvoiceHistory.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_REVisionInvoices.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_RevisionMeterGroups.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_ServiceCallandContact.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\vw_WeeklyServiceCalls.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\v_ARCustomers.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\v_SCEquipmentPreview_Custom.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Services\CoFreedomDeviceService.cs" />
+    <Compile Include="Services\CycleHistoryService.cs" />
+    <Compile Include="Services\CyclePeriodService.cs" />
+    <Compile Include="Services\DeviceService.cs" />
+    <Compile Include="Services\EditScheduleService.cs" />
+    <Compile Include="Services\LocationsService.cs" />
+    <Compile Include="Services\ReconciliationService.cs" />
+    <Compile Include="Services\ScheduleService.cs" />
+    <Compile Include="Services\ScheduleServicesService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\HelpPage\HelpPage.css" />
+    <Content Include="Content\bootstrap-grid.css" />
+    <Content Include="Content\bootstrap-grid.min.css" />
+    <Content Include="Content\bootstrap-reboot.css" />
+    <Content Include="Content\bootstrap-reboot.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="GoogleMaps.LocationServices.readme.txt" />
+    <Content Include="RemoteData\coFreedomEntities.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>coFreedomEntities.edmx</DependentUpon>
+      <LastGenOutput>coFreedomEntities.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="RemoteData\coFreedomEntities.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>coFreedomEntities.edmx</DependentUpon>
+      <LastGenOutput>coFreedomEntities.cs</LastGenOutput>
+    </Content>
+    <Content Include="RemoteData\CustomerService.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CustomerService.edmx</DependentUpon>
+      <LastGenOutput>CustomerService.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="RemoteData\CustomerService.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CustomerService.edmx</DependentUpon>
+      <LastGenOutput>CustomerService.cs</LastGenOutput>
+    </Content>
+    <Content Include="RemoteData\GlobalViewModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>GlobalViewModel.edmx</DependentUpon>
+      <LastGenOutput>GlobalViewModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="RemoteData\GlobalViewModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>GlobalViewModel.edmx</DependentUpon>
+      <LastGenOutput>GlobalViewModel.cs</LastGenOutput>
+    </Content>
+    <Content Include="RemoteData\RevisionDataModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>RevisionDataModel.edmx</DependentUpon>
+      <LastGenOutput>RevisionDataModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="RemoteData\RevisionDataModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>RevisionDataModel.edmx</DependentUpon>
+      <LastGenOutput>RevisionDataModel.cs</LastGenOutput>
+    </Content>
+    <Content Include="Scripts\bootstrap.bundle.js" />
+    <Content Include="Scripts\bootstrap.bundle.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Areas\HelpPage\Views\Web.config" />
+    <Content Include="Areas\HelpPage\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\ResourceModel.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\Index.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\TextSample.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\SimpleTypeModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\Samples.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\Parameters.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ModelDescriptionLink.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\KeyValuePairModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\InvalidSample.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ImageSample.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\HelpPageApiModel.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\EnumTypeModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\DictionaryModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ComplexTypeModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.css.map" />
+    <Content Include="Content\bootstrap-grid.min.css.map" />
+    <Content Include="Content\bootstrap-grid.css.map" />
+    <None Include="Properties\PublishProfiles\GVWebapi.pubxml" />
+    <EntityDeploy Include="RemoteData\coFreedomEntities.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>coFreedomEntities.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <EntityDeploy Include="RemoteData\GlobalViewModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>GlobalViewModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="RemoteData\GlobalViewModel.edmx.diagram">
+      <DependentUpon>GlobalViewModel.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="RemoteData\CustomerService.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>CustomerService.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="RemoteData\CustomerService.edmx.diagram">
+      <DependentUpon>CustomerService.edmx</DependentUpon>
+    </Content>
+    <EntityDeploy Include="RemoteData\RevisionDataModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>RevisionDataModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="RemoteData\RevisionDataModel.edmx.diagram">
+      <DependentUpon>RevisionDataModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Scripts\bootstrap.min.js.map" />
+    <Content Include="Scripts\bootstrap.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.min.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.js.map" />
+    <Content Include="Scripts\esm\popper-utils.js" />
+    <Content Include="Scripts\esm\popper-utils.min.js" />
+    <Content Include="Scripts\esm\popper.js" />
+    <Content Include="Scripts\esm\popper.min.js" />
+    <Content Include="Scripts\esm\popper.min.js.map" />
+    <Content Include="Scripts\esm\popper.js.map" />
+    <Content Include="Scripts\esm\popper-utils.min.js.map" />
+    <Content Include="Scripts\esm\popper-utils.js.map" />
+    <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.3.1.js" />
+    <Content Include="Scripts\jquery-3.3.1.min.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\popper-utils.js" />
+    <Content Include="Scripts\popper-utils.min.js" />
+    <Content Include="Scripts\popper.js" />
+    <Content Include="Scripts\popper.min.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.js" />
+    <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\umd\popper-utils.js" />
+    <Content Include="Scripts\umd\popper-utils.min.js" />
+    <Content Include="Scripts\umd\popper.js" />
+    <Content Include="Scripts\umd\popper.min.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\_references.js" />
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.3.1.min.map" />
+    <Content Include="Scripts\umd\popper.min.js.map" />
+    <Content Include="Scripts\umd\popper.js.map" />
+    <Content Include="Scripts\umd\popper-utils.min.js.map" />
+    <Content Include="Scripts\umd\popper-utils.js.map" />
+    <Content Include="Scripts\README.md" />
+    <Content Include="Scripts\popper.min.js.map" />
+    <Content Include="Scripts\popper.js.map" />
+    <Content Include="Scripts\popper-utils.min.js.map" />
+    <Content Include="Scripts\popper-utils.js.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+    <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201712092250024_InitialCreate.resx">
+      <DependentUpon>201712092250024_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712100050193_first.resx">
+      <DependentUpon>201712100050193_first.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712100059201_second.resx">
+      <DependentUpon>201712100059201_second.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712100101514_third.resx">
+      <DependentUpon>201712100101514_third.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712100104274_forth.resx">
+      <DependentUpon>201712100104274_forth.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712100107185_fifth.resx">
+      <DependentUpon>201712100107185_fifth.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="Scripts\index.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GV\GV.csproj">
+      <Project>{EF94A96D-91C2-4767-9E77-42CDF14FEFD2}</Project>
+      <Name>GV</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>54598</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:54598/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.7.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.7.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

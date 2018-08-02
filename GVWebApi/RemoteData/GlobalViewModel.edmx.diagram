@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="09550453e0784708ae8eef6ed2178e1b" Name="Diagram1">
+        <EntityTypeShape EntityType="GlobalViewModel.AssetReplacement" Width="2.375" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GlobalViewModel.ContactClient" Width="1.5" PointX="5.125" PointY="3.625" />
+        <EntityTypeShape EntityType="GlobalViewModel.FprContact" Width="1.5" PointX="3.25" PointY="3.625" />
+        <EntityTypeShape EntityType="GlobalViewModel.EquipmentManager" Width="1.5" PointX="0.75" PointY="3.875" />
+        <EntityTypeShape EntityType="GlobalViewModel.EquipmentManagerList" Width="3.375" PointX="5.375" PointY="0.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.GlobalViewUser" Width="1.5" PointX="8.75" PointY="3.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.ClientContact" Width="1.5" PointX="7" PointY="3.625" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

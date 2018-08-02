@@ -1,0 +1,447 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="CustomerPortalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2005" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CostAvoidance">
+          <Key>
+            <PropertyRef Name="CostAvoidanceID" />
+          </Key>
+          <Property Name="CostAvoidanceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerID" Type="int" Nullable="false" />
+          <Property Name="Location" Type="varchar" MaxLength="150" />
+          <Property Name="SavingsDate" Type="datetime" />
+          <Property Name="EndDate" Type="datetime" />
+          <Property Name="SavingsType" Type="int" />
+          <Property Name="SavingsCost" Type="decimal" Precision="16" Scale="2" />
+          <Property Name="TotalSavingsCost" Type="decimal" Precision="16" Scale="2" />
+          <Property Name="Months" Type="int" />
+          <Property Name="Comments" Type="varchar" MaxLength="1050" />
+        </EntityType>
+        <EntityType Name="easylinkimport">
+          <Key>
+            <PropertyRef Name="EasylinkImportID" />
+          </Key>
+          <Property Name="EasylinkImportID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ImportID" Type="int" />
+          <Property Name="PeriodDate" Type="datetime" />
+          <Property Name="Child" Type="int" />
+          <Property Name="emailaddress" Type="varchar" MaxLength="254" />
+          <Property Name="FaxNumber" Type="varchar" MaxLength="150" />
+          <Property Name="TransDate" Type="datetime" />
+          <Property Name="TransTime" Type="datetime" />
+          <Property Name="Description" Type="varchar" MaxLength="2049" />
+          <Property Name="Duration" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Pages" Type="int" />
+          <Property Name="Charges" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Messages" Type="varchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="EasylinkImportHistory">
+          <Key>
+            <PropertyRef Name="ImportID" />
+          </Key>
+          <Property Name="ImportID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FileName" Type="varchar" MaxLength="254" />
+          <Property Name="PeriodDate" Type="datetime" />
+          <Property Name="ImportRecords" Type="int" />
+        </EntityType>
+        <EntityType Name="EasyLinkMapping">
+          <Key>
+            <PropertyRef Name="MappingID" />
+          </Key>
+          <Property Name="MappingID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChildId" Type="int" />
+          <Property Name="ClientId" Type="int" />
+          <Property Name="ClientName" Type="varchar" MaxLength="254" />
+        </EntityType>
+        <EntityType Name="SurveyAnswer">
+          <Key>
+            <PropertyRef Name="SurveyQuestionsID" />
+          </Key>
+          <Property Name="SurveyQuestionsID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SurveyID" Type="int" Nullable="false" />
+          <Property Name="QuestionID" Type="int" />
+          <Property Name="Question" Type="varchar" MaxLength="350" />
+          <Property Name="AnswerNumeric" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="AnswerText" Type="varchar" MaxLength="350" />
+          <Property Name="Comments" Type="varchar" MaxLength="1050" />
+          <Property Name="NA" Type="bit" />
+        </EntityType>
+        <EntityType Name="SurveyQuestions">
+          <Key>
+            <PropertyRef Name="QuestionID" />
+          </Key>
+          <Property Name="QuestionID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SurveyTypeID" Type="int" />
+          <Property Name="Question" Type="varchar" MaxLength="1050" />
+        </EntityType>
+        <EntityType Name="Surveys">
+          <Key>
+            <PropertyRef Name="SurveyID" />
+          </Key>
+          <Property Name="SurveyID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SurveyTypeID" Type="int" Nullable="false" />
+          <Property Name="CustomerID" Type="int" Nullable="false" />
+          <Property Name="CustomerName" Type="varchar" MaxLength="120" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="Title" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="120" />
+          <Property Name="Phone" Type="varchar" MaxLength="50" />
+          <Property Name="SurveyDate" Type="datetime" />
+          <Property Name="SurveyComments" Type="varchar" MaxLength="1050" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'CustomerPortal.dbo.SurveyQuestionsWithAnswers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="SurveyQuestionsWithAnswers">
+          <Key>
+            <PropertyRef Name="QuestionID" />
+            <PropertyRef Name="SurveyID" />
+          </Key>
+          <Property Name="QuestionID" Type="int" Nullable="false" />
+          <Property Name="SurveyTypeID" Type="int" />
+          <Property Name="Question" Type="varchar" MaxLength="1050" />
+          <Property Name="AnswerNumeric" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="AnswerText" Type="varchar" MaxLength="350" />
+          <Property Name="Comments" Type="varchar" MaxLength="1050" />
+          <Property Name="SurveyID" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'CustomerPortal.dbo.SurveyWithAvg' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="SurveyWithAvg">
+          <Key>
+            <PropertyRef Name="SurveyID" />
+            <PropertyRef Name="SurveyTypeID" />
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="SurveyID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SurveyTypeID" Type="int" Nullable="false" />
+          <Property Name="CustomerID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="Title" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="120" />
+          <Property Name="Phone" Type="varchar" MaxLength="50" />
+          <Property Name="SurveyDate" Type="datetime" />
+          <Property Name="Average" Type="decimal" Precision="38" Scale="6" />
+          <Property Name="CustomerName" Type="varchar" MaxLength="120" />
+        </EntityType>
+        <EntityContainer Name="CustomerPortalModelStoreContainer">
+          <EntitySet Name="CostAvoidance" EntityType="Self.CostAvoidance" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="easylinkimport" EntityType="Self.easylinkimport" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EasylinkImportHistory" EntityType="Self.EasylinkImportHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EasyLinkMapping" EntityType="Self.EasyLinkMapping" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SurveyAnswer" EntityType="Self.SurveyAnswer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SurveyQuestions" EntityType="Self.SurveyQuestions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Surveys" EntityType="Self.Surveys" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SurveyQuestionsWithAnswers" EntityType="Self.SurveyQuestionsWithAnswers" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [SurveyQuestionsWithAnswers].[QuestionID] AS [QuestionID], 
+    [SurveyQuestionsWithAnswers].[SurveyTypeID] AS [SurveyTypeID], 
+    [SurveyQuestionsWithAnswers].[Question] AS [Question], 
+    [SurveyQuestionsWithAnswers].[AnswerNumeric] AS [AnswerNumeric], 
+    [SurveyQuestionsWithAnswers].[AnswerText] AS [AnswerText], 
+    [SurveyQuestionsWithAnswers].[Comments] AS [Comments], 
+    [SurveyQuestionsWithAnswers].[SurveyID] AS [SurveyID]
+    FROM [dbo].[SurveyQuestionsWithAnswers] AS [SurveyQuestionsWithAnswers]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="SurveyWithAvg" EntityType="Self.SurveyWithAvg" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [SurveyWithAvg].[SurveyID] AS [SurveyID], 
+    [SurveyWithAvg].[SurveyTypeID] AS [SurveyTypeID], 
+    [SurveyWithAvg].[CustomerID] AS [CustomerID], 
+    [SurveyWithAvg].[Name] AS [Name], 
+    [SurveyWithAvg].[Title] AS [Title], 
+    [SurveyWithAvg].[Email] AS [Email], 
+    [SurveyWithAvg].[Phone] AS [Phone], 
+    [SurveyWithAvg].[SurveyDate] AS [SurveyDate], 
+    [SurveyWithAvg].[Average] AS [Average], 
+    [SurveyWithAvg].[CustomerName] AS [CustomerName]
+    FROM [dbo].[SurveyWithAvg] AS [SurveyWithAvg]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="CustomerPortalModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="SurveyAnswer">
+          <Key>
+            <PropertyRef Name="SurveyQuestionsID" />
+          </Key>
+          <Property Name="SurveyQuestionsID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SurveyID" Type="Int32" Nullable="false" />
+          <Property Name="QuestionID" Type="Int32" />
+          <Property Name="Question" Type="String" MaxLength="350" FixedLength="false" Unicode="false" />
+          <Property Name="AnswerNumeric" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="AnswerText" Type="String" MaxLength="350" FixedLength="false" Unicode="false" />
+          <Property Name="Comments" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
+          <Property Name="NA" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="SurveyQuestion">
+          <Key>
+            <PropertyRef Name="QuestionID" />
+          </Key>
+          <Property Name="QuestionID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SurveyTypeID" Type="Int32" />
+          <Property Name="Question" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Survey">
+          <Key>
+            <PropertyRef Name="SurveyID" />
+          </Key>
+          <Property Name="SurveyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SurveyTypeID" Type="Int32" Nullable="false" />
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="CustomerName" Type="String" MaxLength="120" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="120" FixedLength="false" Unicode="false" />
+          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SurveyDate" Type="DateTime" Precision="3" />
+          <Property Name="SurveyComments" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityContainer Name="CustomerPortalEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="SurveyAnswers" EntityType="Self.SurveyAnswer" />
+          <EntitySet Name="SurveyQuestions" EntityType="Self.SurveyQuestion" />
+          <EntitySet Name="Surveys" EntityType="Self.Survey" />
+          <EntitySet Name="SurveyWithAvgs" EntityType="CustomerPortalModel.SurveyWithAvg" />
+          <EntitySet Name="CostAvoidances" EntityType="CustomerPortalModel.CostAvoidance" />
+          <EntitySet Name="SurveyQuestionsWithAnswers" EntityType="CustomerPortalModel.SurveyQuestionsWithAnswer" />
+          <EntitySet Name="easylinkimports" EntityType="CustomerPortalModel.easylinkimport" />
+          <EntitySet Name="EasylinkImportHistories" EntityType="CustomerPortalModel.EasylinkImportHistory" />
+          <EntitySet Name="EasyLinkMappings" EntityType="CustomerPortalModel.EasyLinkMapping" />
+        </EntityContainer>
+        <EntityType Name="SurveyWithAvg">
+          <Key>
+            <PropertyRef Name="SurveyID" />
+            <PropertyRef Name="SurveyTypeID" />
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="SurveyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SurveyTypeID" Type="Int32" Nullable="false" />
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="120" FixedLength="false" Unicode="false" />
+          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SurveyDate" Type="DateTime" Precision="3" />
+          <Property Name="Average" Type="Decimal" Precision="38" Scale="6" />
+          <Property Name="CustomerName" Type="String" MaxLength="120" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="CostAvoidance">
+          <Key>
+            <PropertyRef Name="CostAvoidanceID" />
+          </Key>
+          <Property Name="CostAvoidanceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="Location" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="SavingsDate" Type="DateTime" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Precision="3" />
+          <Property Name="SavingsType" Type="Int32" />
+          <Property Name="SavingsCost" Type="Decimal" Precision="16" Scale="2" />
+          <Property Name="TotalSavingsCost" Type="Decimal" Precision="16" Scale="2" />
+          <Property Name="Months" Type="Int32" />
+          <Property Name="Comments" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SurveyQuestionsWithAnswer">
+          <Key>
+            <PropertyRef Name="QuestionID" />
+            <PropertyRef Name="SurveyID" />
+          </Key>
+          <Property Name="QuestionID" Type="Int32" Nullable="false" />
+          <Property Name="SurveyTypeID" Type="Int32" />
+          <Property Name="Question" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
+          <Property Name="AnswerNumeric" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="AnswerText" Type="String" MaxLength="350" FixedLength="false" Unicode="false" />
+          <Property Name="Comments" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
+          <Property Name="SurveyID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="easylinkimport">
+          <Key>
+            <PropertyRef Name="EasylinkImportID" />
+          </Key>
+          <Property Name="EasylinkImportID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ImportID" Type="Int32" />
+          <Property Name="PeriodDate" Type="DateTime" Precision="3" />
+          <Property Name="Child" Type="Int32" />
+          <Property Name="emailaddress" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
+          <Property Name="FaxNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="TransDate" Type="DateTime" Precision="3" />
+          <Property Name="TransTime" Type="DateTime" Precision="3" />
+          <Property Name="Description" Type="String" MaxLength="2049" FixedLength="false" Unicode="false" />
+          <Property Name="Duration" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Pages" Type="Int32" />
+          <Property Name="Charges" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Messages" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="EasylinkImportHistory">
+          <Key>
+            <PropertyRef Name="ImportID" />
+          </Key>
+          <Property Name="ImportID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FileName" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
+          <Property Name="PeriodDate" Type="DateTime" Precision="3" />
+          <Property Name="ImportRecords" Type="Int32" />
+        </EntityType>
+        <EntityType Name="EasyLinkMapping">
+          <Key>
+            <PropertyRef Name="MappingID" />
+          </Key>
+          <Property Name="MappingID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChildId" Type="Int32" />
+          <Property Name="ClientId" Type="Int32" />
+          <Property Name="ClientName" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="CustomerPortalModelStoreContainer" CdmEntityContainer="CustomerPortalEntities">
+          <EntitySetMapping Name="SurveyAnswers">
+            <EntityTypeMapping TypeName="CustomerPortalModel.SurveyAnswer">
+              <MappingFragment StoreEntitySet="SurveyAnswer">
+                <ScalarProperty Name="SurveyQuestionsID" ColumnName="SurveyQuestionsID" />
+                <ScalarProperty Name="SurveyID" ColumnName="SurveyID" />
+                <ScalarProperty Name="QuestionID" ColumnName="QuestionID" />
+                <ScalarProperty Name="Question" ColumnName="Question" />
+                <ScalarProperty Name="AnswerNumeric" ColumnName="AnswerNumeric" />
+                <ScalarProperty Name="AnswerText" ColumnName="AnswerText" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="NA" ColumnName="NA" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SurveyQuestions">
+            <EntityTypeMapping TypeName="CustomerPortalModel.SurveyQuestion">
+              <MappingFragment StoreEntitySet="SurveyQuestions">
+                <ScalarProperty Name="QuestionID" ColumnName="QuestionID" />
+                <ScalarProperty Name="SurveyTypeID" ColumnName="SurveyTypeID" />
+                <ScalarProperty Name="Question" ColumnName="Question" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Surveys">
+            <EntityTypeMapping TypeName="CustomerPortalModel.Survey">
+              <MappingFragment StoreEntitySet="Surveys">
+                <ScalarProperty Name="SurveyID" ColumnName="SurveyID" />
+                <ScalarProperty Name="SurveyTypeID" ColumnName="SurveyTypeID" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="SurveyDate" ColumnName="SurveyDate" />
+                <ScalarProperty Name="SurveyComments" ColumnName="SurveyComments" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SurveyWithAvgs">
+            <EntityTypeMapping TypeName="CustomerPortalModel.SurveyWithAvg">
+              <MappingFragment StoreEntitySet="SurveyWithAvg">
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="Average" ColumnName="Average" />
+                <ScalarProperty Name="SurveyDate" ColumnName="SurveyDate" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="SurveyTypeID" ColumnName="SurveyTypeID" />
+                <ScalarProperty Name="SurveyID" ColumnName="SurveyID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CostAvoidances">
+            <EntityTypeMapping TypeName="CustomerPortalModel.CostAvoidance">
+              <MappingFragment StoreEntitySet="CostAvoidance">
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="Months" ColumnName="Months" />
+                <ScalarProperty Name="TotalSavingsCost" ColumnName="TotalSavingsCost" />
+                <ScalarProperty Name="SavingsCost" ColumnName="SavingsCost" />
+                <ScalarProperty Name="SavingsType" ColumnName="SavingsType" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="SavingsDate" ColumnName="SavingsDate" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="CostAvoidanceID" ColumnName="CostAvoidanceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SurveyQuestionsWithAnswers">
+            <EntityTypeMapping TypeName="CustomerPortalModel.SurveyQuestionsWithAnswer">
+              <MappingFragment StoreEntitySet="SurveyQuestionsWithAnswers">
+                <ScalarProperty Name="SurveyID" ColumnName="SurveyID" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="AnswerText" ColumnName="AnswerText" />
+                <ScalarProperty Name="AnswerNumeric" ColumnName="AnswerNumeric" />
+                <ScalarProperty Name="Question" ColumnName="Question" />
+                <ScalarProperty Name="SurveyTypeID" ColumnName="SurveyTypeID" />
+                <ScalarProperty Name="QuestionID" ColumnName="QuestionID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="easylinkimports">
+            <EntityTypeMapping TypeName="CustomerPortalModel.easylinkimport">
+              <MappingFragment StoreEntitySet="easylinkimport">
+                <ScalarProperty Name="Messages" ColumnName="Messages" />
+                <ScalarProperty Name="Charges" ColumnName="Charges" />
+                <ScalarProperty Name="Pages" ColumnName="Pages" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="TransTime" ColumnName="TransTime" />
+                <ScalarProperty Name="TransDate" ColumnName="TransDate" />
+                <ScalarProperty Name="FaxNumber" ColumnName="FaxNumber" />
+                <ScalarProperty Name="emailaddress" ColumnName="emailaddress" />
+                <ScalarProperty Name="Child" ColumnName="Child" />
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="ImportID" ColumnName="ImportID" />
+                <ScalarProperty Name="EasylinkImportID" ColumnName="EasylinkImportID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EasylinkImportHistories">
+            <EntityTypeMapping TypeName="CustomerPortalModel.EasylinkImportHistory">
+              <MappingFragment StoreEntitySet="EasylinkImportHistory">
+                <ScalarProperty Name="ImportRecords" ColumnName="ImportRecords" />
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="ImportID" ColumnName="ImportID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EasyLinkMappings">
+            <EntityTypeMapping TypeName="CustomerPortalModel.EasyLinkMapping">
+              <MappingFragment StoreEntitySet="EasyLinkMapping">
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="ClientId" ColumnName="ClientId" />
+                <ScalarProperty Name="ChildId" ColumnName="ChildId" />
+                <ScalarProperty Name="MappingID" ColumnName="MappingID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

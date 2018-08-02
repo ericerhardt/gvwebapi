@@ -1,0 +1,405 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="GlobalViewModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AssetReplacement">
+          <Key>
+            <PropertyRef Name="ReplacementID" />
+          </Key>
+          <Property Name="ReplacementID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerID" Type="int" />
+          <Property Name="Location" Type="varchar" MaxLength="250" />
+          <Property Name="ReplacementDate" Type="datetime" />
+          <Property Name="OldSerialNumber" Type="varchar" MaxLength="50" />
+          <Property Name="OldModel" Type="varchar" MaxLength="50" />
+          <Property Name="NewSerialNumber" Type="varchar" MaxLength="50" />
+          <Property Name="NewModel" Type="varchar" MaxLength="50" />
+          <Property Name="ReplacementValue" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Comments" Type="varchar" MaxLength="1250" />
+          <Property Name="ScheduleNumber" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="ContactClients">
+          <Key>
+            <PropertyRef Name="ContactClientId" />
+          </Key>
+          <Property Name="ContactClientId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FprContactId" Type="bigint" Nullable="false" />
+          <Property Name="CustomerId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EquipmentManager">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Model" Type="varchar" MaxLength="255" />
+          <Property Name="IntroDate" Type="datetime" />
+          <Property Name="MFRMoVol" Type="int" />
+          <Property Name="PurchasePrice" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Image" Type="varchar(max)" />
+          <Property Name="LastUpdatedOn" Type="datetime" />
+          <Property Name="Status" Type="int" />
+          <Property Name="LastUpdatedBy" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="FprContacts">
+          <Key>
+            <PropertyRef Name="ContactId" />
+          </Key>
+          <Property Name="ContactId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="80" />
+          <Property Name="Title" Type="varchar" MaxLength="50" />
+          <Property Name="StartedDate" Type="varchar" MaxLength="30" />
+          <Property Name="Email" Type="varchar" MaxLength="128" />
+          <Property Name="LinkedIn" Type="varchar" MaxLength="255" />
+          <Property Name="Story" Type="varchar(max)" />
+          <Property Name="Photo" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="GlobalViewUsers">
+          <Key>
+            <PropertyRef Name="idUser" />
+          </Key>
+          <Property Name="idUser" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="idClient" Type="int" />
+          <Property Name="Email" Type="varchar" MaxLength="180" />
+          <Property Name="Password" Type="varchar" MaxLength="150" />
+          <Property Name="LastUpdated" Type="datetime" />
+          <Property Name="LastUpdatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="Status" Type="int" />
+          <Property Name="Admin" Type="bit" Nullable="false" />
+          <Property Name="isLoggedIn" Type="bit" />
+          <Property Name="logindatetime" Type="datetime" />
+          <Property Name="logoutdatetime" Type="datetime" />
+          <Property Name="userimage" Type="varchar(max)" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'GlobalView.dbo.ClientContacts' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ClientContacts">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+            <PropertyRef Name="ContactId" />
+            <PropertyRef Name="ContactClientId" />
+          </Key>
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="80" />
+          <Property Name="Title" Type="varchar" MaxLength="50" />
+          <Property Name="StartedDate" Type="varchar" MaxLength="30" />
+          <Property Name="Email" Type="varchar" MaxLength="128" />
+          <Property Name="LinkedIn" Type="varchar" MaxLength="255" />
+          <Property Name="Story" Type="varchar(max)" />
+          <Property Name="Photo" Type="varchar(max)" />
+          <Property Name="CustomerId" Type="int" Nullable="false" />
+          <Property Name="ContactId" Type="bigint" Nullable="false" />
+          <Property Name="ContactClientId" Type="bigint" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="EquipmentManagerList">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Status" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Model" Type="varchar" MaxLength="255" />
+          <Property Name="IntroDate" Type="datetime" />
+          <Property Name="MFRMoVol" Type="int" />
+          <Property Name="PurchasePrice" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Image" Type="varchar(max)" />
+          <Property Name="LastUpdatedOn" Type="datetime" />
+          <Property Name="Status" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="LastUpdatedBy" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityContainer Name="GlobalViewModelStoreContainer">
+          <EntitySet Name="AssetReplacement" EntityType="Self.AssetReplacement" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ContactClients" EntityType="Self.ContactClients" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EquipmentManager" EntityType="Self.EquipmentManager" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FprContacts" EntityType="Self.FprContacts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GlobalViewUsers" EntityType="Self.GlobalViewUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ClientContacts" EntityType="Self.ClientContacts" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [ClientContacts].[FirstName] AS [FirstName], 
+    [ClientContacts].[LastName] AS [LastName], 
+    [ClientContacts].[Title] AS [Title], 
+    [ClientContacts].[StartedDate] AS [StartedDate], 
+    [ClientContacts].[Email] AS [Email], 
+    [ClientContacts].[LinkedIn] AS [LinkedIn], 
+    [ClientContacts].[Story] AS [Story], 
+    [ClientContacts].[Photo] AS [Photo], 
+    [ClientContacts].[CustomerId] AS [CustomerId], 
+    [ClientContacts].[ContactId] AS [ContactId], 
+    [ClientContacts].[ContactClientId] AS [ContactClientId]
+    FROM [dbo].[ClientContacts] AS [ClientContacts]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="EquipmentManagerList" EntityType="Self.EquipmentManagerList" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [EquipmentManagerList].[Id] AS [Id], 
+    [EquipmentManagerList].[Model] AS [Model], 
+    [EquipmentManagerList].[IntroDate] AS [IntroDate], 
+    [EquipmentManagerList].[MFRMoVol] AS [MFRMoVol], 
+    [EquipmentManagerList].[PurchasePrice] AS [PurchasePrice], 
+    [EquipmentManagerList].[Image] AS [Image], 
+    [EquipmentManagerList].[LastUpdatedOn] AS [LastUpdatedOn], 
+    [EquipmentManagerList].[Status] AS [Status], 
+    [EquipmentManagerList].[LastUpdatedBy] AS [LastUpdatedBy]
+    FROM [dbo].[EquipmentManagerList] AS [EquipmentManagerList]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="GlobalViewModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AssetReplacement">
+          <Key>
+            <PropertyRef Name="ReplacementID" />
+          </Key>
+          <Property Name="ReplacementID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerID" Type="Int32" />
+          <Property Name="Location" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="ReplacementDate" Type="DateTime" Precision="3" />
+          <Property Name="OldSerialNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="OldModel" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NewSerialNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NewModel" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ReplacementValue" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Comments" Type="String" MaxLength="1250" FixedLength="false" Unicode="false" />
+          <Property Name="ScheduleNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityContainer Name="GlobalViewEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AssetReplacements" EntityType="Self.AssetReplacement" />
+          <EntitySet Name="ContactClients" EntityType="GlobalViewModel.ContactClient" />
+          <EntitySet Name="FprContacts" EntityType="GlobalViewModel.FprContact" />
+          <EntitySet Name="EquipmentManagers" EntityType="GlobalViewModel.EquipmentManager" />
+          <EntitySet Name="EquipmentManagerLists" EntityType="GlobalViewModel.EquipmentManagerList" />
+          <EntitySet Name="GlobalViewUsers" EntityType="GlobalViewModel.GlobalViewUser" />
+          <EntitySet Name="ClientContacts" EntityType="GlobalViewModel.ClientContact" />
+        </EntityContainer>
+        <EntityType Name="ContactClient">
+          <Key>
+            <PropertyRef Name="ContactClientId" />
+          </Key>
+          <Property Name="ContactClientId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FprContactId" Type="Int64" Nullable="false" />
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FprContact">
+          <Key>
+            <PropertyRef Name="ContactId" />
+          </Key>
+          <Property Name="ContactId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="StartedDate" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="LinkedIn" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Story" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Photo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="EquipmentManager">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Model" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="IntroDate" Type="DateTime" Precision="3" />
+          <Property Name="MFRMoVol" Type="Int32" />
+          <Property Name="PurchasePrice" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Image" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LastUpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="Status" Type="Int32" />
+          <Property Name="LastUpdatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="EquipmentManagerList">
+          <Key>
+            <PropertyRef Name="Status" />
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Model" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="IntroDate" Type="DateTime" Precision="3" />
+          <Property Name="MFRMoVol" Type="Int32" />
+          <Property Name="PurchasePrice" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Image" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LastUpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="LastUpdatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="GlobalViewUser">
+          <Key>
+            <PropertyRef Name="idUser" />
+          </Key>
+          <Property Name="idUser" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="idClient" Type="Int32" />
+          <Property Name="Email" Type="String" MaxLength="180" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="LastUpdated" Type="DateTime" Precision="3" />
+          <Property Name="LastUpdatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Int32" />
+          <Property Name="Admin" Type="Boolean" Nullable="false" />
+          <Property Name="isLoggedIn" Type="Boolean" />
+          <Property Name="logindatetime" Type="DateTime" Precision="3" />
+          <Property Name="logoutdatetime" Type="DateTime" Precision="3" />
+          <Property Name="userimage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ClientContact">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+            <PropertyRef Name="ContactId" />
+            <PropertyRef Name="ContactClientId" />
+          </Key>
+          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="StartedDate" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="LinkedIn" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Story" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Photo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+          <Property Name="ContactId" Type="Int64" Nullable="false" />
+          <Property Name="ContactClientId" Type="Int64" Nullable="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="GlobalViewModelStoreContainer" CdmEntityContainer="GlobalViewEntities">
+          <EntitySetMapping Name="AssetReplacements">
+            <EntityTypeMapping TypeName="GlobalViewModel.AssetReplacement">
+              <MappingFragment StoreEntitySet="AssetReplacement">
+                <ScalarProperty Name="ScheduleNumber" ColumnName="ScheduleNumber" />
+                <ScalarProperty Name="ReplacementID" ColumnName="ReplacementID" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="ReplacementDate" ColumnName="ReplacementDate" />
+                <ScalarProperty Name="OldSerialNumber" ColumnName="OldSerialNumber" />
+                <ScalarProperty Name="OldModel" ColumnName="OldModel" />
+                <ScalarProperty Name="NewSerialNumber" ColumnName="NewSerialNumber" />
+                <ScalarProperty Name="NewModel" ColumnName="NewModel" />
+                <ScalarProperty Name="ReplacementValue" ColumnName="ReplacementValue" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ContactClients">
+            <EntityTypeMapping TypeName="GlobalViewModel.ContactClient">
+              <MappingFragment StoreEntitySet="ContactClients">
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="FprContactId" ColumnName="FprContactId" />
+                <ScalarProperty Name="ContactClientId" ColumnName="ContactClientId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FprContacts">
+            <EntityTypeMapping TypeName="GlobalViewModel.FprContact">
+              <MappingFragment StoreEntitySet="FprContacts">
+                <ScalarProperty Name="Photo" ColumnName="Photo" />
+                <ScalarProperty Name="Story" ColumnName="Story" />
+                <ScalarProperty Name="LinkedIn" ColumnName="LinkedIn" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="StartedDate" ColumnName="StartedDate" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="ContactId" ColumnName="ContactId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EquipmentManagers">
+            <EntityTypeMapping TypeName="GlobalViewModel.EquipmentManager">
+              <MappingFragment StoreEntitySet="EquipmentManager">
+                <ScalarProperty Name="LastUpdatedBy" ColumnName="LastUpdatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="LastUpdatedOn" ColumnName="LastUpdatedOn" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="PurchasePrice" ColumnName="PurchasePrice" />
+                <ScalarProperty Name="MFRMoVol" ColumnName="MFRMoVol" />
+                <ScalarProperty Name="IntroDate" ColumnName="IntroDate" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EquipmentManagerLists">
+            <EntityTypeMapping TypeName="GlobalViewModel.EquipmentManagerList">
+              <MappingFragment StoreEntitySet="EquipmentManagerList">
+                <ScalarProperty Name="LastUpdatedBy" ColumnName="LastUpdatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="LastUpdatedOn" ColumnName="LastUpdatedOn" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="PurchasePrice" ColumnName="PurchasePrice" />
+                <ScalarProperty Name="MFRMoVol" ColumnName="MFRMoVol" />
+                <ScalarProperty Name="IntroDate" ColumnName="IntroDate" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GlobalViewUsers">
+            <EntityTypeMapping TypeName="GlobalViewModel.GlobalViewUser">
+              <MappingFragment StoreEntitySet="GlobalViewUsers">
+                <ScalarProperty Name="userimage" ColumnName="userimage" />
+                <ScalarProperty Name="logoutdatetime" ColumnName="logoutdatetime" />
+                <ScalarProperty Name="logindatetime" ColumnName="logindatetime" />
+                <ScalarProperty Name="isLoggedIn" ColumnName="isLoggedIn" />
+                <ScalarProperty Name="Admin" ColumnName="Admin" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="LastUpdatedBy" ColumnName="LastUpdatedBy" />
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="idClient" ColumnName="idClient" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="idUser" ColumnName="idUser" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ClientContacts">
+            <EntityTypeMapping TypeName="GlobalViewModel.ClientContact">
+              <MappingFragment StoreEntitySet="ClientContacts">
+                <ScalarProperty Name="ContactClientId" ColumnName="ContactClientId" />
+                <ScalarProperty Name="ContactId" ColumnName="ContactId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="Photo" ColumnName="Photo" />
+                <ScalarProperty Name="Story" ColumnName="Story" />
+                <ScalarProperty Name="LinkedIn" ColumnName="LinkedIn" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="StartedDate" ColumnName="StartedDate" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

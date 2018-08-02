@@ -1,0 +1,12 @@
+﻿namespace GVWebapi.Models.Locations
+{
+    public class CoFreedomLocationModel
+    {
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Zip { get; set; }
+        public int LocationId { get; set; }
+    }
+}
