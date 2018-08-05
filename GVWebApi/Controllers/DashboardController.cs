@@ -7,6 +7,7 @@ using System.Web.Http;
 using GVWebapi.RemoteData;
 using GVWebapi.Models;
 using GVWebapi.Helpers;
+using System.Data.Entity;
 
 namespace GVWebapi.Controllers
 {
@@ -39,7 +40,15 @@ namespace GVWebapi.Controllers
         [HttpGet, Route("api/getuserlogins/{id}")]
         public IHttpActionResult GetUserLogins(int id)
         {
-            var userlist = _db.GlobalViewUsers.Where(cu => cu.idClient == id).ToList();
+            var userlist = _db.GlobalViewUsers.Where(cu => cu.idClient == id)
+                            .Select(cu => new {
+                                Name = cu.FirstName + " " + cu.LastName,
+                                Image = cu.userimage,
+                                isLoggedIn = cu.isLoggedIn,
+                                LoggedIn = cu.logindatetime,
+                                LoggedOut = cu.logoutdatetime,
+                                Duration = DbFunctions.DiffMinutes(cu.logindatetime, cu.logoutdatetime)
+                            }).ToList();  
 
             return Json(userlist);
         }
