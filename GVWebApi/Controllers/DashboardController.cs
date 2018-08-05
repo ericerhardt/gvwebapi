@@ -36,6 +36,13 @@ namespace GVWebapi.Controllers
             };
             return Json(ret);
         }
+        [HttpGet, Route("api/getuserlogins/{id}")]
+        public IHttpActionResult GetUserLogins(int id)
+        {
+            var userlist = _db.GlobalViewUsers.Where(cu => cu.idClient == id).ToList();
+
+            return Json(userlist);
+        }
         [HttpGet]
         [Route("api/maplocations/{ClientID}")]
         public IHttpActionResult GetMapLocations(int ClientID)

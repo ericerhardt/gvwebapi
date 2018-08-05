@@ -66,6 +66,7 @@ namespace GVWebapi.Controllers
                 {
                     user.isLoggedIn = true;
                     user.logindatetime = DateTime.Now;
+                    user.logoutdatetime = DateTime.Now.AddMinutes(2.0);
                     _globalViewEntities.SaveChanges();
                     return Ok(user);
                 }
@@ -86,11 +87,11 @@ namespace GVWebapi.Controllers
                 if (user != null)
                 {
                     user.isLoggedIn = false;
-                    user.logindatetime = DateTime.Now;
+                    user.logoutdatetime = DateTime.Now;
                     _globalViewEntities.SaveChanges();
                     return Ok(user);
                 }
-                return BadRequest("Error: Unable to authenticate your accuount.");
+                return BadRequest("Error: Unable to find user your accuount.");
             }
             catch (Exception e)
             {
