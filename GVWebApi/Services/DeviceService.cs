@@ -46,7 +46,8 @@ namespace GVWebapi.Services
                 .Where(x => x.Schedule.ScheduleId == scheduleId)
                 .Where(x => x.RemovedStatus == null || x.RemovedStatus == RemovedStatusEnum.SetForRemoval)
                 .ToList();
-            var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevices(schedule.Name, schedule.CustomerId);
+            var scheduldeName = schedule.Name.Insert(9, "-");
+            var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevices(scheduldeName, schedule.CustomerId);
 
             return MergeGlobalViewAndCoFreedom(globalViewEntities, coFreedomDevices);
 
