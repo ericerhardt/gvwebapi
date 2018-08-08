@@ -37,6 +37,9 @@ namespace GVWebapi.Services
             var schedulesEntity = new SchedulesEntity();
             schedulesEntity.CustomerId = model.CustomerId;
             schedulesEntity.Name = model.Name;
+            schedulesEntity.Term = model.Term;
+            schedulesEntity.EffectiveDateTime = model.EffectiveDateTime;
+            schedulesEntity.ExpiredDateTime = GetExpiredDateTime(model.EffectiveDateTime, model.Term);
             schedulesEntity.MonthlySvcCost = model.MonthlySvcCost;
             schedulesEntity.MonthlyHwCost = model.MonthlyHwCost;
             schedulesEntity.CreatedDateTime = DateTimeOffset.Now;
