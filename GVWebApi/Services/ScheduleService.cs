@@ -73,15 +73,18 @@ namespace GVWebapi.Services
                 .Where(x => x.CustomerId == customerId)
                 .Select(x => SchedulesModel.For(x))
                 .ToList();
-
-            var schedulesAndDevices = _coFreedomDeviceService.GetDeviceCount(customerId);
-
-            foreach (var schedulesModel in schedules)
+            if(schedules.Count > 0)
             {
-               if(schedulesAndDevices.ContainsKey(schedulesModel.Name) == false) continue;
-                schedulesModel.SetDeviceCount(schedulesAndDevices[schedulesModel.Name]);
-            }
 
+            
+                var schedulesAndDevices = _coFreedomDeviceService.GetDeviceCount(customerId);
+
+                foreach (var schedulesModel in schedules)
+                {
+                   if(schedulesAndDevices.ContainsKey(schedulesModel.Name) == false) continue;
+                    schedulesModel.SetDeviceCount(schedulesAndDevices[schedulesModel.Name]);
+                }
+            }
             return schedules;
         }
 
