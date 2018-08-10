@@ -34,7 +34,7 @@ namespace GVWebapi.Services
         }
         public bool ScheduleExists(ScheduleSaveModel model)
         {
-            var hasschedule = _repository.Find<SchedulesEntity>().Where(x => x.CustomerId == model.CustomerId && x.Name == model.Name).ToList();
+            var hasschedule = _repository.Find<SchedulesEntity>().Where(x => x.CustomerId == model.CustomerId && x.Name == model.Name && x.IsDeleted == false).ToList();
             if (hasschedule.Count() > 0)
             {
                 return true;
