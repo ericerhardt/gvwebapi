@@ -19,9 +19,18 @@ namespace GVWebapi.Controllers
         [HttpPost,Route("api/schedules/add")]
         public IHttpActionResult AddSchedule(ScheduleSaveModel model)
         {
-            _scheduleService.AddSchedule(model);
-            _unitOfWork.Commit();
-            return Ok();
+            var hasSchedule = _scheduleService.ScheduleExists(model);
+            if (hasSchedule)
+            {
+                return Content(System.Net.HttpStatusCode.BadRequest, "Duplicate Schedule");
+            }
+            else
+            {
+                _scheduleService.AddSchedule(model);
+                _unitOfWork.Commit();
+                return Ok();
+            }
+           
         }
 
         [HttpPost,Route("api/schedules/update")]

@@ -10,6 +10,7 @@ namespace GVWebapi.Services
     public interface IScheduleService
     {
         void AddSchedule(ScheduleSaveModel model);
+        bool ScheduleExists(ScheduleSaveModel model);
         IList<SchedulesModel> GetAll(long customerId);
         void DeleteSchedule(long scheduleId);
         IList<CoterminousModel> GetCoterminous(long customerId);
@@ -31,9 +32,21 @@ namespace GVWebapi.Services
             _repository = repository;
             _coFreedomDeviceService = coFreedomDeviceService;
         }
-
+        public bool ScheduleExists(ScheduleSaveModel model)
+        {
+            var hasschedule = _repository.Find<SchedulesEntity>().Where(x => x.CustomerId == model.CustomerId && x.Name == model.Name).ToList();
+            if (hasschedule.Count() > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         public void AddSchedule(ScheduleSaveModel model)
         {
+           
             var schedulesEntity = new SchedulesEntity();
             schedulesEntity.CustomerId = model.CustomerId;
             schedulesEntity.Name = model.Name;
