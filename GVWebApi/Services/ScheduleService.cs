@@ -73,7 +73,8 @@ namespace GVWebapi.Services
                 .Where(x => x.CustomerId == customerId)
                 .Select(x => SchedulesModel.For(x))
                 .ToList();
-            if(schedules.Count > 0)
+
+            if (schedules.Count > 0)
             {
 
             

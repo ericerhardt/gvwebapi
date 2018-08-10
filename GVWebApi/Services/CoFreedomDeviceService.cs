@@ -41,18 +41,26 @@ namespace GVWebapi.Services
 
         public Dictionary<string, int> GetDeviceCount(long customerId)
         {
-            using (var freedomEntities = new CoFreedomEntities())
+            try
             {
-                return freedomEntities
-                    .vw_admin_EquipmentList_MeterGroup
-                    .Where(x => x.CustomerID == customerId)
-                    .GroupBy(x => x.ScheduleNumber)
-                    .Select(x => new
-                    {
-                        Name = x.Key,
-                        Count = x.Count()
-                    })
-                    .ToDictionary(x => x.Name, x => x.Count);
+
+
+                using (var freedomEntities = new CoFreedomEntities())
+                {
+                    return freedomEntities
+                        .vw_admin_EquipmentList_MeterGroup
+                        .Where(x => x.CustomerID == customerId && x.ScheduleNumber != null)
+                        .GroupBy(x => x.ScheduleNumber)
+                        .Select(x => new
+                        {
+                            Name = x.Key,
+                            Count = x.Count()
+                        })
+                        .ToDictionary(x => x.Name, x => x.Count);
+                }
+            } catch 
+            {
+                return null;
             }
         }
 
