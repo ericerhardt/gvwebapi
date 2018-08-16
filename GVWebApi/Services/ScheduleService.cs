@@ -17,9 +17,11 @@ namespace GVWebapi.Services
         ScheduleDeleteModel CanDeleteSchedule(long scheduleId);
         ScheduleEditModel GetExistingSchedule(long scheduleId);
         void UpdateSchedule(ScheduleSaveModel model);
+        void UpdateMonthyHardwareCost(decimal value, long scheduleId);
         IList<SchedulesModel> GetActiveSchedules(long deviceId);
         IList<SchedulesModel> GetAcitveSchedulesByScheduleId(long scheduleId);
         SchedulesModel GetSchedule(long scheduleId);
+      
     }
 
     public class ScheduleService : IScheduleService
@@ -50,11 +52,11 @@ namespace GVWebapi.Services
             var schedulesEntity = new SchedulesEntity();
             schedulesEntity.CustomerId = model.CustomerId;
             schedulesEntity.Name = model.Name;
+            schedulesEntity.Suffix = model.Suffix;
             schedulesEntity.Term = model.Term;
             schedulesEntity.EffectiveDateTime = model.EffectiveDateTime;
             schedulesEntity.ExpiredDateTime = GetExpiredDateTime(model.EffectiveDateTime, model.Term);
-            schedulesEntity.MonthlySvcCost = model.MonthlySvcCost;
-            schedulesEntity.MonthlyHwCost = model.MonthlyHwCost;
+            schedulesEntity.MonthlyContractCost = model.MonthlyContractCost;           
             schedulesEntity.CreatedDateTime = DateTimeOffset.Now;
 
             if (model.CoterminousId.HasValue)
@@ -84,6 +86,7 @@ namespace GVWebapi.Services
             var schedules = _repository.Find<SchedulesEntity>()
                 .Where(x => x.IsDeleted == false)
                 .Where(x => x.CustomerId == customerId)
+                .OrderBy(x => x.Suffix)
                 .Select(x => SchedulesModel.For(x))
                 .ToList();
 
@@ -170,15 +173,20 @@ namespace GVWebapi.Services
 
             return model;
         }
-
+        public void UpdateMonthyHardwareCost(decimal value,long scheduleId)
+        {
+            var schedule = _repository.Get<SchedulesEntity>(scheduleId);
+            if (schedule == null) return;
+            schedule.MonthlyHwCost = value;
+            _repository.Add(schedule);
+        }
         public void UpdateSchedule(ScheduleSaveModel model)
         {
             var schedule = _repository.Get<SchedulesEntity>(model.ScheduleId);
             if (schedule == null) return;
-
+            schedule.Suffix = model.Name.Substring(model.Name.Length - 3,3);
             schedule.Name = model.Name;
-            schedule.MonthlySvcCost = model.MonthlySvcCost;
-            schedule.MonthlyHwCost = model.MonthlyHwCost;
+            schedule.MonthlyContractCost = model.MonthlyContractCost;
             schedule.ModifiedDateTime = DateTimeOffset.Now;
 
             if (model.CoterminousId.HasValue)

@@ -4,7 +4,7 @@
     {
         public long DeviceId { get; set; }
         public long ScheduleId { get; set; }
-        public long LocationId { get; set; }
+        public int LocationId { get; set; }
         public decimal MonthlyCost { get; set; }
         public string Exhibit { get; set; }
         public string User { get; set; }

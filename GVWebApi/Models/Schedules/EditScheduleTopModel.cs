@@ -13,6 +13,7 @@ namespace GVWebapi.Models.Schedules
             model.ScheduleId = entity.ScheduleId;
             model.MonthlySvcCost = entity.MonthlySvcCost;
             model.MonthlyHwCost = entity.MonthlyHwCost;
+            model.MonthlyContractCost = entity.MonthlyContractCost;  
             return model;
         }
 
@@ -24,6 +25,7 @@ namespace GVWebapi.Models.Schedules
         public long ScheduleId { get; set; }
         public decimal MonthlyHwCost { get; set; }
         public decimal MonthlySvcCost { get; set; }
+        public decimal MonthlyContractCost { get; set; }
         public decimal TotalCost => MonthlySvcCost + MonthlyHwCost;
         public IList<SchedulesModel> ActiveSchedules {get; private set; }
 

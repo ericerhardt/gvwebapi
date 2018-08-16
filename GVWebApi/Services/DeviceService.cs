@@ -17,6 +17,7 @@ namespace GVWebapi.Services
         IList<DeviceModel> GetRemovedDevices(long scheduleId);
         void DeleteDevice(long deviceId);
         void SaveDevice(DeviceSaveModel model);
+        decimal DeviceTotalCost(long scheduleId);
         void AddDevicesToSchedule(SetScheduleSaveModel model);
         void ConfirmDeviceRemove(DeviceRemoveModel model);
         void ConfirmFormatterReplacement(FormatterReplacedModel model);
@@ -105,14 +106,25 @@ namespace GVWebapi.Services
             if (customProperty == null) return;
             customProperty.TextVal = string.Empty;
         }
+        public decimal DeviceTotalCost(long scheduleId)
+        {
+            var schedule = _repository.Get<SchedulesEntity>(scheduleId);
 
+            var globalViewEntities = _repository.Find<DevicesEntity>()
+                .Where(x => x.Schedule.ScheduleId == scheduleId)
+                .Where(x => x.RemovedStatus == null || x.RemovedStatus == RemovedStatusEnum.SetForRemoval)
+                .ToList();
+            var totals = globalViewEntities.Sum(x => x.MonthlyCost);
+            return totals;
+        }
         public void SaveDevice(DeviceSaveModel model)
         {
             var device = _repository.Get<DevicesEntity>(model.DeviceId);
+          
             if (device == null) return;
 
             device.MonthlyCost = model.MonthlyCost;
-
+ 
             var scEquipmentEntity = _coFreedomRepository.Get<ScEquipmentEntity>(device.EquipmentId);
 
             //set schedule -- custom prop 2015

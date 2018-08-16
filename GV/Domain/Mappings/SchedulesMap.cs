@@ -14,11 +14,14 @@ namespace GV.Domain.Mappings
 
             Map(x => x.CustomerId);
             Map(x => x.Name);
+            Map(x => x.Suffix);
             Map(x => x.EffectiveDateTime);
             Map(x => x.ExpiredDateTime);
             Map(x => x.Term);
+            Map(x => x.ServiceAdjustment);
             Map(x => x.MonthlyHwCost);
             Map(x => x.MonthlySvcCost);
+            Map(x => x.MonthlyContractCost);
             Map(x => x.CreatedDateTime);
             Map(x => x.IsDeleted);
             Map(x => x.ModifiedDateTime);

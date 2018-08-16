@@ -17,11 +17,14 @@ namespace GV.Domain.Entities
         public virtual long ScheduleId { get; set; }
         public virtual long CustomerId { get; set; }
         public virtual string Name { get; set; }
+        public virtual string Suffix { get; set; }
         public virtual DateTimeOffset? EffectiveDateTime { get; set; }
         public virtual DateTimeOffset? ExpiredDateTime { get; set; }
         public virtual int? Term { get; set; }
+        public virtual decimal? ServiceAdjustment { get; set; }
         public virtual decimal MonthlyHwCost { get; set; }
-        public virtual decimal MonthlySvcCost { get; set; }
+        public virtual decimal MonthlySvcCost { get; set; }       
+        public virtual decimal MonthlyContractCost { get; set; }
         public virtual DateTimeOffset CreatedDateTime { get; set; }
         public virtual bool IsDeleted { get; set; }
         public virtual SchedulesEntity CoterminousSchedule { get; set; }
@@ -41,5 +44,6 @@ namespace GV.Domain.Entities
             service.Schedule = this;
             _scheduleServices.Add(service);
         }
+        
     }
 }

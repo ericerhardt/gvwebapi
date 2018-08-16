@@ -3,6 +3,7 @@ using GV.CoFreedomDomain;
 using GV.Domain;
 using GV.Services;
 using GVWebapi.Models.Devices;
+using GVWebapi.Models.Schedules;
 using GVWebapi.Services;
 
 namespace GVWebapi.Controllers
@@ -56,6 +57,9 @@ namespace GVWebapi.Controllers
         public IHttpActionResult SaveDeviceDetails(DeviceSaveModel model)
         {
             _deviceService.SaveDevice(model);
+            _unitOfWork.Commit();
+            var TotalCost = _deviceService.DeviceTotalCost(model.ScheduleId);
+            _scheduleService.UpdateMonthyHardwareCost(TotalCost, model.ScheduleId);
             _unitOfWork.Commit();
             _coFreedomUnitOfWork.Commit();
             return Ok();

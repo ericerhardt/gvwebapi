@@ -12,8 +12,9 @@ namespace GVWebapi.Services
     public interface IScheduleServicesService
     {
         List<ScheduleServiceModel> GetMeterGroups(long scheduleId);
-        void SaveSchedules(IList<ScheduleServiceSaveModel> scheduleServices);
+        void SaveSchedules(IList<ScheduleServiceSaveModel> scheduleServices, long scheduleId, decimal? serviceAdjustment);
         void UpdateRemovedFromSchedule(ScheduleServiceCheckChangedModel model);
+        decimal? GetServiceAdjustments(long scheduleId);
     }
 
     public class ScheduleServicesService : IScheduleServicesService
@@ -28,7 +29,11 @@ namespace GVWebapi.Services
             _coFreedomRepository = coFreedomRepository;
             _unitOfWork = unitOfWork;
         }
-
+        public decimal? GetServiceAdjustments(long scheduleId)
+        {
+            var schedule = _repository.Get<SchedulesEntity>(scheduleId);
+            return schedule.ServiceAdjustment;
+        }
         public List<ScheduleServiceModel> GetMeterGroups(long scheduleId)
         {
             var schedule = _repository.Get<SchedulesEntity>(scheduleId);
@@ -63,8 +68,11 @@ namespace GVWebapi.Services
                 .ToList();
         }
 
-        public void SaveSchedules(IList<ScheduleServiceSaveModel> scheduleServices)
+        public void SaveSchedules(IList<ScheduleServiceSaveModel> scheduleServices,long scheduleId, decimal? serviceAdjustment)
         {
+            var schedule = _repository.Get<SchedulesEntity>(scheduleId);
+            schedule.ServiceAdjustment = serviceAdjustment;
+            decimal serviceTotal = 0;
             foreach (var scheduleServiceSaveModel in scheduleServices)
             {
                 var scheduleService = _repository.Get<ScheduleServiceEntity>(scheduleServiceSaveModel.ScheduleServiceId);
@@ -72,8 +80,12 @@ namespace GVWebapi.Services
                 scheduleService.BaseCpp = scheduleServiceSaveModel.BaseCpp;
                 scheduleService.OverageCpp = scheduleServiceSaveModel.OverageCpp;
                 scheduleService.ModifiedDateTime = DateTimeOffset.Now;
-                scheduleService.SetCost();    
+                scheduleService.SetCost();   
+                serviceTotal += scheduleService.Cost;
             }
+
+           
+            schedule.MonthlySvcCost = (serviceTotal + serviceAdjustment.Value);
         }
 
         public void UpdateRemovedFromSchedule(ScheduleServiceCheckChangedModel model)

@@ -16,6 +16,7 @@ namespace GVWebapi.Models.Schedules
             schedule.Term = scheduleEntity.Term;
             schedule.MonthlyHwCost = scheduleEntity.MonthlyHwCost;
             schedule.MonthlySvcCost = scheduleEntity.MonthlySvcCost;
+            schedule.MonthlyContractCost = scheduleEntity.MonthlyContractCost;
             schedule.CreatedDateTime = scheduleEntity.CreatedDateTime;
             schedule.Name = scheduleEntity.Name;
             if (scheduleEntity.CoterminousSchedule != null)
@@ -28,8 +29,10 @@ namespace GVWebapi.Models.Schedules
         public DateTimeOffset? EffectiveDateTime { get; set; }
         public DateTimeOffset? ExpiredDateTime { get; set; }
         public int? Term { get; set; }
+        public decimal? ServiceAdjustment { get; set; }
         public decimal MonthlyHwCost { get; set; }
         public decimal MonthlySvcCost { get; set; }
+        public decimal MonthlyContractCost { get; set; }
         public DateTimeOffset CreatedDateTime { get; set; }
         public long? CoterminousScheduleId { get; set; }
         //this is used in the client

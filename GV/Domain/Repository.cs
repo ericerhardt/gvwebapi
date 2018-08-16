@@ -16,7 +16,7 @@ namespace GV.Domain
 
         T Get<T>(long id);
         T Get<T>(int id);
-
+        
         T Get<T>(Expression<Func<T, bool>> predicate);
 
         IQueryable<T> Find<T>();
@@ -50,7 +50,7 @@ namespace GV.Domain
         {
             return id == 0 ? default(T) : _unitOfWork.CurrentSession.Load<T>(id);
         }
-        
+         
         public T Get<T>(long id)
         {
             return id == 0L ? default(T) : _unitOfWork.CurrentSession.Get<T>(id);
@@ -60,7 +60,7 @@ namespace GV.Domain
         {
             return id == 0 ? default(T) : _unitOfWork.CurrentSession.Get<T>(id);
         }
-
+        
         public T Get<T>(Expression<Func<T, bool>> predicate)
         {
             return Find<T>().SingleOrDefault(predicate);
