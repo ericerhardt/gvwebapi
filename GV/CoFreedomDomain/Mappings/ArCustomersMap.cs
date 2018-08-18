@@ -10,7 +10,6 @@ namespace GV.CoFreedomDomain.Mappings
             Table("ArCustomers");
 
             Id(x => x.CustomerId).GeneratedBy.Identity();
-
             Map(x => x.CustomerName);
             Map(x => x.Address);
             Map(x => x.City);

@@ -16,8 +16,9 @@ namespace GV.CoFreedomDomain.Entities
         public virtual int EquipmentId { get; set; }
         public virtual string EquipmentNumber { get; set; }
         public virtual string SerialNumber { get; set; }
-        public virtual ArCustomersEntity Location {get; set; }
+        public virtual ArCustomersEntity Location { get; set; }
         public virtual int CustomerId { get; set; }
+   
         public virtual bool Active { get; set; }
         public virtual IcModelEntity Model { get; set; }
 
