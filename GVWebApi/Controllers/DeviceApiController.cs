@@ -46,7 +46,8 @@ namespace GVWebapi.Controllers
             var model = new
             {
                 ActiveSchedules = _scheduleService.GetActiveSchedules(deviceId),
-                Locations = _locationSerivce.LoadAllByDeviceId(deviceId)
+                Locations = _locationSerivce.LoadAllByDeviceId(deviceId),
+                DeviceItem = _deviceService.GetDeviceByID(deviceId)
             };
 
             _unitOfWork.Commit();
