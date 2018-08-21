@@ -5,6 +5,7 @@ using GV.Services;
 using GVWebapi.Models.Devices;
 using GVWebapi.Models.Schedules;
 using GVWebapi.Services;
+using GVWebapi.RemoteData;
 
 namespace GVWebapi.Controllers
 {
@@ -15,6 +16,7 @@ namespace GVWebapi.Controllers
         private readonly ICoFreedomUnitOfWork _coFreedomUnitOfWork;
         private readonly IScheduleService _scheduleService;
         private readonly ILocationsService _locationSerivce;
+        private readonly GlobalViewEntities _globalViewEntities = new GlobalViewEntities();
 
         public DeviceApiController(IDeviceService deviceService, IUnitOfWork unitOfWork, ICoFreedomUnitOfWork coFreedomUnitOfWork, IScheduleService scheduleService, ILocationsService locationSerivce)
         {
@@ -47,7 +49,7 @@ namespace GVWebapi.Controllers
             {
                 ActiveSchedules = _scheduleService.GetActiveSchedules(deviceId),
                 Locations = _locationSerivce.LoadAllByDeviceId(deviceId),
-                DeviceItem = _deviceService.GetDeviceByID(deviceId)
+                DeviceItem = _globalViewEntities.Devices.Find(deviceId)
             };
 
             _unitOfWork.Commit();

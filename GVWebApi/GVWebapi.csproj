@@ -377,6 +377,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CustomerService.edmx</DependentUpon>
     </Compile>
+    <Compile Include="RemoteData\Device.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="RemoteData\easylinkimport.cs">
       <DependentUpon>CustomerService.tt</DependentUpon>
     </Compile>

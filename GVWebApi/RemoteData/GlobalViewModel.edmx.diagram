@@ -12,6 +12,7 @@
         <EntityTypeShape EntityType="GlobalViewModel.EquipmentManagerList" Width="3.375" PointX="5.375" PointY="0.75" />
         <EntityTypeShape EntityType="GlobalViewModel.GlobalViewUser" Width="1.5" PointX="8.75" PointY="3.75" />
         <EntityTypeShape EntityType="GlobalViewModel.ClientContact" Width="1.5" PointX="7" PointY="3.625" />
+        <EntityTypeShape EntityType="GlobalViewModel.Device" Width="2.375" PointX="0.75" PointY="7.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

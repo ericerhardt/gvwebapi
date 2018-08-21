@@ -32,5 +32,6 @@ namespace GVWebapi.RemoteData
         public virtual DbSet<EquipmentManagerList> EquipmentManagerLists { get; set; }
         public virtual DbSet<GlobalViewUser> GlobalViewUsers { get; set; }
         public virtual DbSet<ClientContact> ClientContacts { get; set; }
+        public virtual DbSet<Device> Devices { get; set; }
     }
 }

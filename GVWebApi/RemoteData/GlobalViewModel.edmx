@@ -29,6 +29,24 @@
           <Property Name="FprContactId" Type="bigint" Nullable="false" />
           <Property Name="CustomerId" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="Devices">
+          <Key>
+            <PropertyRef Name="DeviceId" />
+          </Key>
+          <Property Name="DeviceId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ScheduleId" Type="bigint" />
+          <Property Name="CustomerId" Type="bigint" Nullable="false" />
+          <Property Name="EquipmentId" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="EquipmentNumber" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="SerialNumber" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="Model" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="ModifiedDateTime" Type="datetimeoffset" Precision="7" />
+          <Property Name="RemovedStatus" Type="nvarchar" MaxLength="50" />
+          <Property Name="MonthlyCost" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="RemovalDateTime" Type="datetimeoffset" Precision="7" />
+          <Property Name="Disposition" Type="nvarchar" MaxLength="250" />
+        </EntityType>
         <EntityType Name="EquipmentManager">
           <Key>
             <PropertyRef Name="Id" />
@@ -116,6 +134,7 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
         <EntityContainer Name="GlobalViewModelStoreContainer">
           <EntitySet Name="AssetReplacement" EntityType="Self.AssetReplacement" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ContactClients" EntityType="Self.ContactClients" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Devices" EntityType="Self.Devices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EquipmentManager" EntityType="Self.EquipmentManager" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FprContacts" EntityType="Self.FprContacts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GlobalViewUsers" EntityType="Self.GlobalViewUsers" Schema="dbo" store:Type="Tables" />
@@ -176,6 +195,7 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
           <EntitySet Name="EquipmentManagerLists" EntityType="GlobalViewModel.EquipmentManagerList" />
           <EntitySet Name="GlobalViewUsers" EntityType="GlobalViewModel.GlobalViewUser" />
           <EntitySet Name="ClientContacts" EntityType="GlobalViewModel.ClientContact" />
+          <EntitySet Name="Devices" EntityType="GlobalViewModel.Device" />
         </EntityContainer>
         <EntityType Name="ContactClient">
           <Key>
@@ -264,6 +284,24 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
           <Property Name="CustomerId" Type="Int32" Nullable="false" />
           <Property Name="ContactId" Type="Int64" Nullable="false" />
           <Property Name="ContactClientId" Type="Int64" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Device">
+          <Key>
+            <PropertyRef Name="DeviceId" />
+          </Key>
+          <Property Name="DeviceId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ScheduleId" Type="Int64" />
+          <Property Name="CustomerId" Type="Int64" Nullable="false" />
+          <Property Name="EquipmentId" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="EquipmentNumber" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="SerialNumber" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Model" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDateTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedDateTime" Type="DateTimeOffset" Precision="7" />
+          <Property Name="RemovedStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MonthlyCost" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="RemovalDateTime" Type="DateTimeOffset" Precision="7" />
+          <Property Name="Disposition" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -376,6 +414,25 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
                 <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Devices">
+            <EntityTypeMapping TypeName="GlobalViewModel.Device">
+              <MappingFragment StoreEntitySet="Devices">
+                <ScalarProperty Name="Disposition" ColumnName="Disposition" />
+                <ScalarProperty Name="RemovalDateTime" ColumnName="RemovalDateTime" />
+                <ScalarProperty Name="MonthlyCost" ColumnName="MonthlyCost" />
+                <ScalarProperty Name="RemovedStatus" ColumnName="RemovedStatus" />
+                <ScalarProperty Name="ModifiedDateTime" ColumnName="ModifiedDateTime" />
+                <ScalarProperty Name="CreatedDateTime" ColumnName="CreatedDateTime" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+                <ScalarProperty Name="EquipmentNumber" ColumnName="EquipmentNumber" />
+                <ScalarProperty Name="EquipmentId" ColumnName="EquipmentId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+                <ScalarProperty Name="DeviceId" ColumnName="DeviceId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

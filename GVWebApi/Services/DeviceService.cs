@@ -15,7 +15,7 @@ namespace GVWebapi.Services
         IList<DeviceModel> GetActiveDevices(long scheduleId);
         IList<DeviceModel> GetUnallocatedDevices(long scheduleId);
         IList<DeviceModel> GetRemovedDevices(long scheduleId);
-        DevicesEntity GetDeviceByID(long deviceId);
+         
         void DeleteDevice(long deviceId);
         void SaveDevice(DeviceSaveModel model);
         decimal DeviceTotalCost(long scheduleId);
@@ -228,11 +228,7 @@ namespace GVWebapi.Services
             return _repository.Find<DevicesEntity>()
                 .FirstOrDefault(x => x.EquipmentNumber.ToLower() == equipmentNumber.ToLower());
         }
-        public DevicesEntity GetDeviceByID(long deviceId)
-        {
-            return _repository.Find<DevicesEntity>()
-                .FirstOrDefault(x => x.DeviceId == deviceId);
-        }
+        
     }
 
     public enum DeviceStatusEnum
