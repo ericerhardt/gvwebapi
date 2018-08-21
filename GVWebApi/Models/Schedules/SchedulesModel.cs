@@ -25,6 +25,7 @@ namespace GVWebapi.Models.Schedules
         }
 
         public string Name { get; set; }
+        public int Suffix { get; set; }
         public long ScheduleId { get; set; }
         public DateTimeOffset? EffectiveDateTime { get; set; }
         public DateTimeOffset? ExpiredDateTime { get; set; }

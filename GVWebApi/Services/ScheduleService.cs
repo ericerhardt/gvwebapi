@@ -86,7 +86,6 @@ namespace GVWebapi.Services
             var schedules = _repository.Find<SchedulesEntity>()
                 .Where(x => x.IsDeleted == false)
                 .Where(x => x.CustomerId == customerId)
-                .OrderBy(x => x.Suffix)
                 .Select(x => SchedulesModel.For(x))
                 .ToList();
 
@@ -102,7 +101,7 @@ namespace GVWebapi.Services
                     schedulesModel.SetDeviceCount(schedulesAndDevices[schedulesModel.Name]);
                 }
             }
-            return schedules;
+            return schedules.OrderBy(x => x.Suffix).ToList();
         }
 
         public void DeleteSchedule(long scheduleId)

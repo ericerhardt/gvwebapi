@@ -17,7 +17,7 @@ namespace GV.Domain.Entities
         public virtual long ScheduleId { get; set; }
         public virtual long CustomerId { get; set; }
         public virtual string Name { get; set; }
-        public virtual string Suffix { get; set; }
+        public virtual int Suffix { get; set; }
         public virtual DateTimeOffset? EffectiveDateTime { get; set; }
         public virtual DateTimeOffset? ExpiredDateTime { get; set; }
         public virtual int? Term { get; set; }
