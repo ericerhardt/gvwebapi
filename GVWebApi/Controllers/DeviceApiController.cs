@@ -45,11 +45,12 @@ namespace GVWebapi.Controllers
         [HttpGet, Route("api/editschedule/devices/active/getdetails/{deviceId}")]
         public IHttpActionResult GetEditDetails(long deviceId)
         {
+             
             var model = new
             {
                 ActiveSchedules = _scheduleService.GetActiveSchedules(deviceId),
                 Locations = _locationSerivce.LoadAllByDeviceId(deviceId),
-                DeviceItem = _globalViewEntities.Devices.Find(deviceId)
+                DeviceItem = _deviceService.GetDeviceByID(deviceId)
             };
 
             _unitOfWork.Commit();

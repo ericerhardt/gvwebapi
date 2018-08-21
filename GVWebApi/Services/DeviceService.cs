@@ -15,7 +15,7 @@ namespace GVWebapi.Services
         IList<DeviceModel> GetActiveDevices(long scheduleId);
         IList<DeviceModel> GetUnallocatedDevices(long scheduleId);
         IList<DeviceModel> GetRemovedDevices(long scheduleId);
-         
+        DeviceModel GetDeviceByID(long deviceId);
         void DeleteDevice(long deviceId);
         void SaveDevice(DeviceSaveModel model);
         decimal DeviceTotalCost(long scheduleId);
@@ -69,6 +69,12 @@ namespace GVWebapi.Services
 
             return devices;
         }
+        private static  DeviceModel  MergeGlobalViewAndCoFreedomDevice(DevicesEntity globalViewEntity, vw_admin_EquipmentList_MeterGroup coFreedomDevice)
+        { 
+            var device = DeviceModel.For(globalViewEntity, coFreedomDevice);
+            return device;
+        }
+
 
         public IList<DeviceModel> GetUnallocatedDevices(long scheduleId)
         {
@@ -228,7 +234,16 @@ namespace GVWebapi.Services
             return _repository.Find<DevicesEntity>()
                 .FirstOrDefault(x => x.EquipmentNumber.ToLower() == equipmentNumber.ToLower());
         }
-        
+        public DeviceModel GetDeviceByID(long deviceId)
+        {
+
+            var gvDevice = _repository.Get<DevicesEntity>(deviceId);
+            var eaDevice = _coFreedomDeviceService.GetCoFreedomDevice(gvDevice.EquipmentId);
+            var results = MergeGlobalViewAndCoFreedomDevice(gvDevice, eaDevice);
+            return results; 
+
+        }
+
     }
 
     public enum DeviceStatusEnum
