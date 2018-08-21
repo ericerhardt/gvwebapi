@@ -183,7 +183,7 @@ namespace GVWebapi.Services
         {
             var schedule = _repository.Get<SchedulesEntity>(model.ScheduleId);
             if (schedule == null) return;
-            schedule.Suffix = model.Name.Substring(model.Name.Length - 3,3);
+            schedule.Suffix = Int32.Parse(model.Name.Substring(model.Name.Length - 3,3));
             schedule.Name = model.Name;
             schedule.MonthlyContractCost = model.MonthlyContractCost;
             schedule.ModifiedDateTime = DateTimeOffset.Now;

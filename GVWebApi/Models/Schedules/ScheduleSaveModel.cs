@@ -5,7 +5,7 @@ namespace GVWebapi.Models.Schedules
     public class ScheduleSaveModel
     {
         public string Name { get; set; }
-        public string Suffix { get; set; }
+        public int Suffix { get; set; }
         public DateTimeOffset? EffectiveDateTime {get; set; }
         public DateTimeOffset? ExpiredDateTime {get; set; }  
         public decimal MonthlyContractCost { get; set; }
