@@ -209,7 +209,10 @@ namespace GVWebapi.Controllers
             var groupcount = (from gc in _coFreedomEntities.vw_invoicedMeterGroups
                               where gc.ContractID == contractId
                               select gc).Count();
-            return Json(new { metergroups = contractMeterGroup, invoicedMetergroupcount = groupcount,metergroupcount = contractMeterGroup.Count(), contractstart = contractdetail.StartDate,billingcycle = BillCycle });
+            var baseExpense = (from be in _revisionDataEntities.BaseHistories
+                               where be.ContractID == contractId
+                               select be).ToList();
+            return Json(new { metergroups = contractMeterGroup, invoicedMetergroupcount = groupcount,metergroupcount = contractMeterGroup.Count(), contractstart = contractdetail.StartDate,billingcycle = BillCycle, baseExpenses = baseExpense });
         }
 
         public IQueryable<RevisionData> GetRevisionDatas()

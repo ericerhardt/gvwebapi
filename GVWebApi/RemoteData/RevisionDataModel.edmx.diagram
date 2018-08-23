@@ -7,7 +7,7 @@
       <Diagram DiagramId="800aea54e9814edba39ccf7d14900eeb" Name="Diagram1">
         <EntityTypeShape EntityType="RevisionDataModel.BaseHistory" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="RevisionDataModel.BillingTypeReference" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="RevisionDataModel.ClientData" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RevisionDataModel.ClientData" Width="3.375" PointX="0.875" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="RevisionDataModel.IntegrisCall" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="RevisionDataModel.LockInvoice" Width="1.5" PointX="4.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="RevisionDataModel.MeterGroup" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
