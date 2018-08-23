@@ -20,6 +20,7 @@ namespace GVWebapi.Services
         void UpdateMonthyHardwareCost(decimal value, long scheduleId);
         IList<SchedulesModel> GetActiveSchedules(long deviceId);
         IList<SchedulesModel> GetAcitveSchedulesByScheduleId(long scheduleId);
+        IList<SchedulesModel> GetAcitveSchedulesByCustomer(long CustomerId);
         SchedulesModel GetSchedule(long scheduleId);
       
     }
@@ -223,6 +224,16 @@ namespace GVWebapi.Services
                 .Select(x => SchedulesModel.For(x))
                 .ToList();
                 
+        }
+        public IList<SchedulesModel> GetAcitveSchedulesByCustomer(long CustomerId)
+        {
+           
+            return _repository.Find<SchedulesEntity>()
+                .Where(x => x.IsDeleted == false)
+                .Where(x => x.CustomerId ==  CustomerId)
+                .Select(x => SchedulesModel.For(x))
+                .ToList();
+
         }
 
         public SchedulesModel GetSchedule(long scheduleId)

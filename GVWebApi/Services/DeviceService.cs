@@ -76,30 +76,28 @@ namespace GVWebapi.Services
         }
 
 
-        public IList<DeviceModel> GetUnallocatedDevices(long scheduleId)
+        public IList<DeviceModel> GetUnallocatedDevices(long customerId)
         {
-            var schedule = _repository.Get<SchedulesEntity>(scheduleId);
-
+            
             var globalViewEntities = _repository.Find<DevicesEntity>()
                 .Where(x => x.Schedule == null)
-                .Where(x => x.CustomerId == schedule.CustomerId)
+                .Where(x => x.CustomerId == customerId)
                 .ToList();
 
-            var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevicesNoSchedule(schedule.CustomerId);
+            var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevicesNoSchedule(customerId);
 
             return MergeGlobalViewAndCoFreedom(globalViewEntities, coFreedomDevices);
         }
 
-        public IList<DeviceModel> GetRemovedDevices(long scheduleId)
+        public IList<DeviceModel> GetRemovedDevices(long customerId)
         {
-            var schedule = _repository.Get<SchedulesEntity>(scheduleId);
-
+           
             var globalViewEntities = _repository.Find<DevicesEntity>()
                 .Where(x => x.RemovedStatus == RemovedStatusEnum.Removed)
-                .Where(x => x.CustomerId == schedule.CustomerId)
+                .Where(x => x.CustomerId == customerId)
                 .ToList();
 
-            var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevices(schedule.CustomerId);
+            var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevices(customerId);
 
             return MergeGlobalViewAndCoFreedom(globalViewEntities, coFreedomDevices);
         }
@@ -108,11 +106,13 @@ namespace GVWebapi.Services
         {
             var device = _repository.Get<DevicesEntity>(deviceId);
             if (device == null) return;
+            device.Schedule = null;
             var customProperty = _coFreedomRepository.Find<ScEquipmentCustomPropertiesEntity>()
                 .Where(x => x.Equipment.EquipmentId == device.EquipmentId)
                 .FirstOrDefault(x => x.ShAttributeId == 2015);
             if (customProperty == null) return;
             customProperty.TextVal = string.Empty;
+            
         }
         public decimal DeviceTotalCost(long scheduleId)
         {

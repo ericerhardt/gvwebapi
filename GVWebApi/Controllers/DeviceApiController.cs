@@ -69,13 +69,13 @@ namespace GVWebapi.Controllers
             return Ok();
         }
 
-        [HttpGet, Route("api/editschedule/devices/unallocated/{scheduleId}")]
-        public IHttpActionResult GetUnallocatedDevices(long scheduleId)
+        [HttpGet, Route("api/editschedule/devices/unallocated/{customerId}")]
+        public IHttpActionResult GetUnallocatedDevices(long customerId)
         {
             var model = new
             {
-                Devices = _deviceService.GetUnallocatedDevices(scheduleId),
-                Schedules = _scheduleService.GetAcitveSchedulesByScheduleId(scheduleId)
+                Devices = _deviceService.GetUnallocatedDevices(customerId),
+                Schedules = _scheduleService.GetAcitveSchedulesByCustomer(customerId)
             };
 
             return Ok(model);
@@ -106,10 +106,10 @@ namespace GVWebapi.Controllers
             return Ok();
         }
 
-        [HttpGet, Route("api/editschedule/devices/removed/{scheduleId}")]
-        public IHttpActionResult GetRemovedDevices(long scheduleId)
+        [HttpGet, Route("api/editschedule/devices/removed/{customerId}")]
+        public IHttpActionResult GetRemovedDevices(long customerId)
         {
-            return Ok(_deviceService.GetRemovedDevices(scheduleId));
+            return Ok(_deviceService.GetRemovedDevices(customerId));
         }
 
         [HttpGet, Route("api/editschedule/devices/replacementinfo/{scheduleId}")]
