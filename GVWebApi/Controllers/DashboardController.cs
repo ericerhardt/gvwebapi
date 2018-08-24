@@ -52,7 +52,7 @@ namespace GVWebapi.Controllers
         [HttpGet, Route("api/getuserlogins/{id}")]
         public IHttpActionResult GetUserLogins(int id)
         {
-            var userlist = _db.GlobalViewUsers.Where(cu => cu.idClient == id)
+            var userlist = _db.GlobalViewUsers.OrderByDescending(x=> x.logindatetime).Where(cu => cu.idClient == id)
                             .Select(cu => new {
                                 Name = cu.FirstName + " " + cu.LastName,
                                 Image = cu.userimage,
