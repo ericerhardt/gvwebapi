@@ -501,6 +501,17 @@ warning 6002: The table/view 'CoFreedom._custom_placeholder.v_SCEquipmentPreview
           <Property Name="Attached" Type="bit" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
+warning 6002: The table/view 'CoFreedom._custom_placeholder.vw_AssetCountbyDeviceType_Cust' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_AssetCountbyDeviceType_Cust">
+          <Key>
+            <PropertyRef Name="Description" />
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="Description" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Devices" Type="int" />
+          <Property Name="CustomerID" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
 warning 6002: The table/view 'CoFreedom._custom_placeholder.vw_ClientsOnContract' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ClientsOnContract">
           <Key>
@@ -1514,6 +1525,13 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
     [v_SCEquipmentPreview_Custom].[Attached] AS [Attached]
     FROM [_custom_placeholder].[v_SCEquipmentPreview_Custom] AS [v_SCEquipmentPreview_Custom]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="vw_AssetCountbyDeviceType_Cust" EntityType="Self.vw_AssetCountbyDeviceType_Cust" store:Type="Views" store:Schema="_custom_placeholder">
+            <DefiningQuery>SELECT 
+    [vw_AssetCountbyDeviceType_Cust].[Description] AS [Description], 
+    [vw_AssetCountbyDeviceType_Cust].[Devices] AS [Devices], 
+    [vw_AssetCountbyDeviceType_Cust].[CustomerID] AS [CustomerID]
+    FROM [_custom_placeholder].[vw_AssetCountbyDeviceType_Cust] AS [vw_AssetCountbyDeviceType_Cust]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="vw_ClientsOnContract" EntityType="Self.vw_ClientsOnContract" store:Type="Views" store:Schema="_custom_placeholder">
             <DefiningQuery>SELECT 
     [vw_ClientsOnContract].[CustomerName] AS [CustomerName], 
@@ -2319,6 +2337,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
             <End Role="SCContract" EntitySet="SCContracts" />
           </AssociationSet>
           <EntitySet Name="vw_maplocations" EntityType="CoFreedomModel.vw_maplocations" />
+          <EntitySet Name="vw_AssetCountbyDeviceType_Cust" EntityType="CoFreedomModel.vw_AssetCountbyDeviceType_Cust" />
         </EntityContainer>
         <EntityType Name="v_SCEquipmentPreview_Custom">
           <Key>
@@ -3495,6 +3514,15 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
           <Property Name="Active" Type="Boolean" Nullable="false" />
           <Property Name="CustomerNameNumber" Type="String" Nullable="false" MaxLength="163" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="vw_AssetCountbyDeviceType_Cust">
+          <Key>
+            <PropertyRef Name="Description" />
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Devices" Type="Int32" />
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -4542,6 +4570,15 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="vw_AssetCountbyDeviceType_Cust">
+            <EntityTypeMapping TypeName="CoFreedomModel.vw_AssetCountbyDeviceType_Cust">
+              <MappingFragment StoreEntitySet="vw_AssetCountbyDeviceType_Cust">
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="Devices" ColumnName="Devices" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -4608,6 +4645,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_CustomerID_ARCustomers" />
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_OvgBillToID_ARCustomers" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_maplocations" Width="1.5" PointX="22.375" PointY="0.75" />
+        <EntityTypeShape EntityType="CoFreedomModel.vw_AssetCountbyDeviceType_Cust" Width="1.5" PointX="22.375" PointY="5.75" />
       </Diagram>
     </Diagrams>
   </Designer>

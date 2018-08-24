@@ -17,6 +17,7 @@ namespace GVWebapi.Controllers
         private readonly GlobalViewEntities _db = new GlobalViewEntities();
         private CustomerPortalEntities db = new CustomerPortalEntities();
         private RevisionDataEntities rev = new RevisionDataEntities();
+        private RevisionDBContext _revisionDbContext = new RevisionDBContext();
         [HttpGet]
         [Route("api/savingbycategory/{ClientID}")]
         public IHttpActionResult SavingsByCategory(int ClientID)
@@ -36,6 +37,17 @@ namespace GVWebapi.Controllers
                    new { label="Rollovers", color = "#878bb6" , data =  RollOvers}
             };
             return Json(ret);
+        }
+
+        [HttpGet, Route("api/vitals/{id}")]
+        public IHttpActionResult GetVitals(int id)
+        {
+            var ContractID = _context.SCContracts.FirstOrDefault(x => x.CustomerID == id).ContractID;
+            var deviceCount =  _context.vw_admin_SCEquipments_22.Count(x => x.CustomerID == id && x.Active == true);
+            var recovered = visionSummary(ContractID);
+            var contractPages = ContractedPages(id);
+            var loggedinUsers = _db.GlobalViewUsers.Count(x => x.idClient == id);
+            return Json(new { devices = deviceCount,visitors = loggedinUsers, recovered, pages = contractPages });
         }
         [HttpGet, Route("api/getuserlogins/{id}")]
         public IHttpActionResult GetUserLogins(int id)
@@ -67,8 +79,13 @@ namespace GVWebapi.Controllers
         }
 
         // POST: api/Dashboard
-       
 
+        public decimal? ContractedPages(int customerid)
+        {
+
+            var Volumes = _context.vw_ContractedPagesByDeviceTYpe_Cust.Where(x => x.CustomerID == customerid);
+            return Volumes.Sum(x => x.Pages / 12);
+        }
         private double? visionSummary(int ContractID)
         {
             using (var _dbAudit = new RevisionDataEntities())

@@ -501,6 +501,9 @@
     <Compile Include="RemoteData\vw_admin_SCEquipments_22.cs">
       <DependentUpon>coFreedomEntities.tt</DependentUpon>
     </Compile>
+    <Compile Include="RemoteData\vw_AssetCountbyDeviceType_Cust.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="RemoteData\vw_ClientsOnContract.cs">
       <DependentUpon>coFreedomEntities.tt</DependentUpon>
     </Compile>

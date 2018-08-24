@@ -61,6 +61,7 @@ namespace GVWebapi.RemoteData
         public virtual DbSet<vw_GVDeviceAnalyzer> vw_GVDeviceAnalyzer { get; set; }
         public virtual DbSet<ARCustomer> ARCustomers { get; set; }
         public virtual DbSet<vw_maplocations> vw_maplocations { get; set; }
+        public virtual DbSet<vw_AssetCountbyDeviceType_Cust> vw_AssetCountbyDeviceType_Cust { get; set; }
     
         public virtual ObjectResult<csDeviceVolumes_Result> csDeviceVolumes(Nullable<System.DateTime> vd_FromDate, Nullable<System.DateTime> vd_ToDate, string vs_DeviceID, Nullable<int> vs_CustomerID)
         {
