@@ -13,6 +13,7 @@ namespace GVWebapi.Services
         void LoadCoFreedomDevices(long scheduleId);
         vw_admin_EquipmentList_MeterGroup GetCoFreedomDevice(int EquipmentId);
         Dictionary<string, int> GetDeviceCount(long customerId);
+        int GetScheduleDeviceCount(string scheduleNumber);
         EditScheduleDeviceTopModel GetTabCounts(long scheduleId);
         IList<vw_admin_EquipmentList_MeterGroup> GetCoFreedomDevices(string scheduleName, long customerId);
         IList<vw_admin_EquipmentList_MeterGroup> GetCoFreedomDevicesNoSchedule(long customerId);
@@ -39,7 +40,22 @@ namespace GVWebapi.Services
             AddUnAllocatedDevices(coFreedomDevices, schedule);
             SetRemovedDevices(coFreedomDevices, schedule);
         }
-
+        public int GetScheduleDeviceCount(string scheduleNumber)
+        {
+            try
+            {
+                using (var freedomEntities = new CoFreedomEntities())
+                {
+                   var count = freedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.ScheduleNumber == scheduleNumber && x.NumberOfContractsActive != null).Count();
+                    return count;
+                }
+            }
+            catch
+            {
+                return 0;
+            }
+          
+        }
         public Dictionary<string, int> GetDeviceCount(long customerId)
         {
             try

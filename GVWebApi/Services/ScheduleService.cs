@@ -94,12 +94,12 @@ namespace GVWebapi.Services
             {
 
             
-                var schedulesAndDevices = _coFreedomDeviceService.GetDeviceCount(customerId);
+                
 
                 foreach (var schedulesModel in schedules)
                 {
-                   if(schedulesAndDevices.ContainsKey(schedulesModel.Name) == false) continue;
-                    schedulesModel.SetDeviceCount(schedulesAndDevices[schedulesModel.Name]);
+                    
+                    schedulesModel.SetDeviceCount(_coFreedomDeviceService.GetScheduleDeviceCount(schedulesModel.Name));
                 }
             }
             return schedules.OrderBy(x => x.Suffix).ToList();
