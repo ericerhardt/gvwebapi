@@ -389,6 +389,7 @@ warning 6002: The table/view 'CoFreedom._custom_eviews.vw_admin_EquipmentList_Me
           <Property Name="BillToID" Type="int" />
           <Property Name="LocationID" Type="int" />
           <Property Name="InstallDate" Type="datetime" />
+          <Property Name="MonthlyCost" Type="varchar" MaxLength="1024" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'CoFreedom._custom_eviews.vw_admin_SCBillingMeters_MeterGroup' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1446,7 +1447,8 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
     [vw_admin_EquipmentList_MeterGroup].[CustomerID] AS [CustomerID], 
     [vw_admin_EquipmentList_MeterGroup].[BillToID] AS [BillToID], 
     [vw_admin_EquipmentList_MeterGroup].[LocationID] AS [LocationID], 
-    [vw_admin_EquipmentList_MeterGroup].[InstallDate] AS [InstallDate]
+    [vw_admin_EquipmentList_MeterGroup].[InstallDate] AS [InstallDate], 
+    [vw_admin_EquipmentList_MeterGroup].[MonthlyCost] AS [MonthlyCost]
     FROM [_custom_eviews].[vw_admin_EquipmentList_MeterGroup] AS [vw_admin_EquipmentList_MeterGroup]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="vw_admin_SCBillingMeters_MeterGroup" EntityType="Self.vw_admin_SCBillingMeters_MeterGroup" store:Type="Views" store:Schema="_custom_eviews">
@@ -2862,6 +2864,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
           <Property Name="BillToID" Type="Int32" />
           <Property Name="LocationID" Type="Int32" />
           <Property Name="InstallDate" Type="DateTime" Precision="3" />
+          <Property Name="MonthlyCost" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="vw_admin_SCBillingMeters_MeterGroup">
           <Key>
@@ -4030,6 +4033,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
           <EntitySetMapping Name="vw_admin_EquipmentList_MeterGroup">
             <EntityTypeMapping TypeName="CoFreedomModel.vw_admin_EquipmentList_MeterGroup">
               <MappingFragment StoreEntitySet="vw_admin_EquipmentList_MeterGroup">
+                <ScalarProperty Name="MonthlyCost" ColumnName="MonthlyCost" />
                 <ScalarProperty Name="InstallDate" ColumnName="InstallDate" />
                 <ScalarProperty Name="LocationID" ColumnName="LocationID" />
                 <ScalarProperty Name="BillToID" ColumnName="BillToID" />
@@ -4601,7 +4605,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram DiagramId="6e06c22b0f064ffb9a205d94ee7e7a2f" Name="Diagram1" ZoomLevel="23">
+      <Diagram DiagramId="6e06c22b0f064ffb9a205d94ee7e7a2f" Name="Diagram1" ZoomLevel="108">
         <EntityTypeShape EntityType="CoFreedomModel.v_ARCustomers" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.v_SCEquipmentPreview_Custom" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_ClientsOnContract" Width="1.5" PointX="7.75" PointY="4.75" IsExpanded="true" />
@@ -4626,13 +4630,13 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
         <EntityTypeShape EntityType="CoFreedomModel.vw_RevisionMeterGroups" Width="1.5" PointX="17.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_ServiceCallandContact" Width="1.5" PointX="17.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_WeeklyServiceCalls" Width="1.5" PointX="9.75" PointY="17.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="CoFreedomModel.vw_admin_EquipmentList_MeterGroup" Width="1.5" PointX="17.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="CoFreedomModel.vw_admin_EquipmentList_MeterGroup" Width="2.5" PointX="17.75" PointY="13.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_admin_SCBillingMeters_MeterGroup" Width="1.5" PointX="11.75" PointY="18.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_admin_SCEquipments_22" Width="1.5" PointX="13.75" PointY="18.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_invoicedMeterGroups" Width="1.5" PointX="19.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.SCBillingCycle" Width="1.5" PointX="0.75" PointY="19.375" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.SCContract" Width="1.5" PointX="3" PointY="2.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="CoFreedomModel.SCEquipmentCustomProperty" Width="1.5" PointX="19.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="CoFreedomModel.SCEquipmentCustomProperty" Width="2.25" PointX="19.75" PointY="3.75" IsExpanded="true" />
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_BaseAccrualCycleID_SCBillingCycles" ManuallyRouted="false" />
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_BaseBillingCycleID_SCBillingCycles" ManuallyRouted="false" />
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_OverageBillingCycleID_SCBillingCycles" ManuallyRouted="false" />

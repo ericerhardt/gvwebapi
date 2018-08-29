@@ -193,6 +193,12 @@ namespace GVWebapi.Controllers
             }
             return Ok("Device not Deleted.");
         }
+        [HttpGet, Route("api/getdevicesonschedule/{schedule}/{customerid}")]
+        public IHttpActionResult GetDevicesOnSchedule(string schedule,int customerID)
+        {
+            var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.ScheduleNumber == schedule && x.CustomerID == customerID).ToList();
+            return Json(devices);
+        }
 
         [HttpPost,Route("api/updateproperty/{id}/{property}/{value?}")]
         public IHttpActionResult UpdateProperty(int? id, int? property,string value)
