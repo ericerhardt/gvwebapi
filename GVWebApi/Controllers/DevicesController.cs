@@ -204,7 +204,7 @@ namespace GVWebapi.Controllers
         public IHttpActionResult GetDevicesRemoved(int customerId)
         {
             
-            var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.CustomerID == customerId && x.NumberOfContractsActive == 0).ToList();
+            var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.CustomerID == customerId && x.NumberOfContractsActive == null).ToList();
             return Json(devices);
         }
         [HttpGet, Route("api/getdevicesunallocated/{customerId}")]
