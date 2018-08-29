@@ -211,8 +211,9 @@ namespace GVWebapi.Controllers
         public IHttpActionResult GetDevicesUnallocated(int customerId)
         {
             var schedules = _globalViewEntities.Schedules.Where(x => x.CustomerId == customerId && x.IsDeleted == false).Select(x=> x.Name).ToList();
+            var scheduleList = _globalViewEntities.Schedules.Where(x => x.CustomerId == customerId && x.IsDeleted == false).Select(x => new { x.Name, x.ScheduleId }).ToList();
             var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => (x.CustomerID == customerId && x.NumberOfContractsActive > 0) && !schedules.Contains(x.ScheduleNumber)).ToList();
-            return Json(new { devices, schedules });
+            return Json(new { devices, schedules = scheduleList });
         }
         [HttpPost,Route("api/updateproperty/{id}/{property}/{value?}")]
         public IHttpActionResult UpdateProperty(int? id, int? property,string value)
