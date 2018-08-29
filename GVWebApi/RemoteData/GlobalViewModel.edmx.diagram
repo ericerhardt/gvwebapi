@@ -12,7 +12,25 @@
         <EntityTypeShape EntityType="GlobalViewModel.EquipmentManagerList" Width="3.375" PointX="5.375" PointY="0.75" />
         <EntityTypeShape EntityType="GlobalViewModel.GlobalViewUser" Width="1.5" PointX="8.75" PointY="3.75" />
         <EntityTypeShape EntityType="GlobalViewModel.ClientContact" Width="1.5" PointX="7" PointY="3.625" />
-        <EntityTypeShape EntityType="GlobalViewModel.Device" Width="2.375" PointX="0.75" PointY="7.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.Device" Width="2.375" PointX="3.625" PointY="8.125" />
+        <EntityTypeShape EntityType="GlobalViewModel.CyclePeriod" Width="1.5" PointX="8.875" PointY="9.125" />
+        <EntityTypeShape EntityType="GlobalViewModel.CyclePeriodSchedule" Width="1.5" PointX="11.125" PointY="8.5" />
+        <EntityTypeShape EntityType="GlobalViewModel.CycleReconciliationService" Width="1.5" PointX="8.875" PointY="12.625" />
+        <EntityTypeShape EntityType="GlobalViewModel.Cycle" Width="1.5" PointX="6.625" PointY="10.125" />
+        <EntityTypeShape EntityType="GlobalViewModel.EasyLink" Width="1.5" PointX="13.625" PointY="1.5" />
+        <EntityTypeShape EntityType="GlobalViewModel.EasyLinkChildMatch" Width="1.5" PointX="13.625" PointY="5.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.EasyLinkItem" Width="1.5" PointX="15.875" PointY="1" />
+        <EntityTypeShape EntityType="GlobalViewModel.Location" Width="1.5" PointX="13.625" PointY="9.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.Schedule" Width="1.5" PointX="0.75" PointY="7.125" />
+        <EntityTypeShape EntityType="GlobalViewModel.ScheduleService" Width="3.25" PointX="3" PointY="13" />
+        <AssociationConnector Association="GlobalViewModel.FK_CyclePeriod_Cycle" />
+        <AssociationConnector Association="GlobalViewModel.FK_CyclePeriodSchedules_CyclePeriod" />
+        <AssociationConnector Association="GlobalViewModel.FK_CyclePeriodSchedules_Schedule" />
+        <AssociationConnector Association="GlobalViewModel.FK_CycleReconciliationServices_Cycle" />
+        <AssociationConnector Association="GlobalViewModel.FK_Devices_Schedules" />
+        <AssociationConnector Association="GlobalViewModel.FK_EasyLinkItem_EasyLInk" />
+        <AssociationConnector Association="GlobalViewModel.FK_Schedule_ScheduleService" />
+        <AssociationConnector Association="GlobalViewModel.FK_Schedules_ScheduleId" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

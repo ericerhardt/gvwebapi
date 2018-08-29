@@ -29,6 +29,51 @@
           <Property Name="FprContactId" Type="bigint" Nullable="false" />
           <Property Name="CustomerId" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="CyclePeriods">
+          <Key>
+            <PropertyRef Name="CyclePeriodId" />
+          </Key>
+          <Property Name="CyclePeriodId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CycleId" Type="bigint" Nullable="false" />
+          <Property Name="Period" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="ModifiedDateTime" Type="datetimeoffset" Precision="7" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="InvoiceNumber" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="CyclePeriodSchedules">
+          <Key>
+            <PropertyRef Name="CyclePeriodScheduleId" />
+          </Key>
+          <Property Name="CyclePeriodScheduleId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CyclePeriodId" Type="bigint" Nullable="false" />
+          <Property Name="ScheduleId" Type="bigint" Nullable="false" />
+          <Property Name="InstancesInvoiced" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CycleReconciliationServices">
+          <Key>
+            <PropertyRef Name="CycleReconciliationServiceId" />
+          </Key>
+          <Property Name="CycleReconciliationServiceId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CycleId" Type="bigint" Nullable="false" />
+          <Property Name="MeterGroup" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Credit" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Cycles">
+          <Key>
+            <PropertyRef Name="CycleId" />
+          </Key>
+          <Property Name="CycleId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerId" Type="bigint" Nullable="false" />
+          <Property Name="StartDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="InActive" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="ModifiedDateTime" Type="datetimeoffset" Precision="7" />
+          <Property Name="InvisibleToClient" Type="bit" Nullable="false" />
+          <Property Name="EndDate" Type="datetime2" Precision="7" />
+          <Property Name="IsReconciled" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="Devices">
           <Key>
             <PropertyRef Name="DeviceId" />
@@ -46,6 +91,45 @@
           <Property Name="MonthlyCost" Type="decimal" Precision="18" Scale="6" Nullable="false" />
           <Property Name="RemovalDateTime" Type="datetimeoffset" Precision="7" />
           <Property Name="Disposition" Type="nvarchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="EasyLink">
+          <Key>
+            <PropertyRef Name="EasyLinkId" />
+          </Key>
+          <Property Name="EasyLinkId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="SavedFileName" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="FileLocation" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="NumberOfLines" Type="int" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="datetimeoffset" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EasyLinkChildMatch">
+          <Key>
+            <PropertyRef Name="EasyLinkChildMatchId" />
+          </Key>
+          <Property Name="EasyLinkChildMatchId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerId" Type="bigint" Nullable="false" />
+          <Property Name="ChildId" Type="int" Nullable="false" />
+          <Property Name="IsEasyLinkOnly" Type="bit" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="ModifiedDateTime" Type="datetimeoffset" Precision="7" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EasyLinkItem">
+          <Key>
+            <PropertyRef Name="EasyLinkItemId" />
+          </Key>
+          <Property Name="EasyLinkItemId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EasyLinkId" Type="bigint" Nullable="false" />
+          <Property Name="Child" Type="int" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Fax" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="DateTime" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Duration" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="Pages" Type="int" Nullable="false" />
+          <Property Name="Charge" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="MessageNumber" Type="nvarchar" MaxLength="150" Nullable="false" />
         </EntityType>
         <EntityType Name="EquipmentManager">
           <Key>
@@ -94,6 +178,56 @@
           <Property Name="logoutdatetime" Type="datetime" />
           <Property Name="userimage" Type="varchar(max)" />
         </EntityType>
+        <EntityType Name="Location">
+          <Key>
+            <PropertyRef Name="LocationId" />
+          </Key>
+          <Property Name="LocationId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerId" Type="bigint" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="TaxRate" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="IsCorporate" Type="bit" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="ModifiedDateTime" Type="datetimeoffset" Precision="7" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CoFreedomLocationId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Schedules">
+          <Key>
+            <PropertyRef Name="ScheduleId" />
+          </Key>
+          <Property Name="ScheduleId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerId" Type="bigint" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Suffix" Type="int" />
+          <Property Name="EffectiveDateTime" Type="datetimeoffset" Precision="7" />
+          <Property Name="ExpiredDateTime" Type="datetimeoffset" Precision="7" />
+          <Property Name="Term" Type="int" />
+          <Property Name="MonthlyHwCost" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="MonthlySvcCost" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="ServiceAdjustment" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="MonthlyContractCost" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="CreatedDateTime" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CoterminousScheduleId" Type="bigint" />
+          <Property Name="ModifiedDateTime" Type="datetimeoffset" Precision="7" />
+        </EntityType>
+        <EntityType Name="ScheduleService">
+          <Key>
+            <PropertyRef Name="ScheduleServiceId" />
+          </Key>
+          <Property Name="ScheduleServiceId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ScheduleId" Type="bigint" Nullable="false" />
+          <Property Name="MeterGroup" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="ContractedPages" Type="int" Nullable="false" />
+          <Property Name="BaseCpp" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="OverageCpp" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="Cost" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="RemovedFromSchedule" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="ModifiedDateTime" Type="datetimeoffset" Precision="7" />
+        </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'GlobalView.dbo.ClientContacts' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ClientContacts">
@@ -131,13 +265,119 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
           <Property Name="Status" Type="varchar" MaxLength="10" Nullable="false" />
           <Property Name="LastUpdatedBy" Type="varchar" MaxLength="50" />
         </EntityType>
+        <Association Name="FK_CyclePeriod_Cycle">
+          <End Role="Cycles" Type="Self.Cycles" Multiplicity="1" />
+          <End Role="CyclePeriods" Type="Self.CyclePeriods" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cycles">
+              <PropertyRef Name="CycleId" />
+            </Principal>
+            <Dependent Role="CyclePeriods">
+              <PropertyRef Name="CycleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CyclePeriodSchedules_CyclePeriod">
+          <End Role="CyclePeriods" Type="Self.CyclePeriods" Multiplicity="1" />
+          <End Role="CyclePeriodSchedules" Type="Self.CyclePeriodSchedules" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CyclePeriods">
+              <PropertyRef Name="CyclePeriodId" />
+            </Principal>
+            <Dependent Role="CyclePeriodSchedules">
+              <PropertyRef Name="CyclePeriodId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CyclePeriodSchedules_Schedule">
+          <End Role="Schedules" Type="Self.Schedules" Multiplicity="1" />
+          <End Role="CyclePeriodSchedules" Type="Self.CyclePeriodSchedules" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedules">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="CyclePeriodSchedules">
+              <PropertyRef Name="ScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CycleReconciliationServices_Cycle">
+          <End Role="Cycles" Type="Self.Cycles" Multiplicity="1" />
+          <End Role="CycleReconciliationServices" Type="Self.CycleReconciliationServices" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cycles">
+              <PropertyRef Name="CycleId" />
+            </Principal>
+            <Dependent Role="CycleReconciliationServices">
+              <PropertyRef Name="CycleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Devices_Schedules">
+          <End Role="Schedules" Type="Self.Schedules" Multiplicity="0..1" />
+          <End Role="Devices" Type="Self.Devices" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedules">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="Devices">
+              <PropertyRef Name="ScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EasyLinkItem_EasyLInk">
+          <End Role="EasyLink" Type="Self.EasyLink" Multiplicity="1" />
+          <End Role="EasyLinkItem" Type="Self.EasyLinkItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EasyLink">
+              <PropertyRef Name="EasyLinkId" />
+            </Principal>
+            <Dependent Role="EasyLinkItem">
+              <PropertyRef Name="EasyLinkId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Schedule_ScheduleService">
+          <End Role="Schedules" Type="Self.Schedules" Multiplicity="1" />
+          <End Role="ScheduleService" Type="Self.ScheduleService" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedules">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="ScheduleService">
+              <PropertyRef Name="ScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Schedules_ScheduleId">
+          <End Role="Schedules" Type="Self.Schedules" Multiplicity="0..1" />
+          <End Role="Schedules1" Type="Self.Schedules" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedules">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="Schedules1">
+              <PropertyRef Name="CoterminousScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="GlobalViewModelStoreContainer">
           <EntitySet Name="AssetReplacement" EntityType="Self.AssetReplacement" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ContactClients" EntityType="Self.ContactClients" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CyclePeriods" EntityType="Self.CyclePeriods" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CyclePeriodSchedules" EntityType="Self.CyclePeriodSchedules" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CycleReconciliationServices" EntityType="Self.CycleReconciliationServices" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Cycles" EntityType="Self.Cycles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Devices" EntityType="Self.Devices" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EasyLink" EntityType="Self.EasyLink" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EasyLinkChildMatch" EntityType="Self.EasyLinkChildMatch" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EasyLinkItem" EntityType="Self.EasyLinkItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EquipmentManager" EntityType="Self.EquipmentManager" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FprContacts" EntityType="Self.FprContacts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GlobalViewUsers" EntityType="Self.GlobalViewUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Location" EntityType="Self.Location" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Schedules" EntityType="Self.Schedules" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ScheduleService" EntityType="Self.ScheduleService" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClientContacts" EntityType="Self.ClientContacts" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [ClientContacts].[FirstName] AS [FirstName], 
@@ -166,6 +406,38 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
     [EquipmentManagerList].[LastUpdatedBy] AS [LastUpdatedBy]
     FROM [dbo].[EquipmentManagerList] AS [EquipmentManagerList]</DefiningQuery>
           </EntitySet>
+          <AssociationSet Name="FK_CyclePeriod_Cycle" Association="Self.FK_CyclePeriod_Cycle">
+            <End Role="Cycles" EntitySet="Cycles" />
+            <End Role="CyclePeriods" EntitySet="CyclePeriods" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CyclePeriodSchedules_CyclePeriod" Association="Self.FK_CyclePeriodSchedules_CyclePeriod">
+            <End Role="CyclePeriods" EntitySet="CyclePeriods" />
+            <End Role="CyclePeriodSchedules" EntitySet="CyclePeriodSchedules" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CyclePeriodSchedules_Schedule" Association="Self.FK_CyclePeriodSchedules_Schedule">
+            <End Role="Schedules" EntitySet="Schedules" />
+            <End Role="CyclePeriodSchedules" EntitySet="CyclePeriodSchedules" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CycleReconciliationServices_Cycle" Association="Self.FK_CycleReconciliationServices_Cycle">
+            <End Role="Cycles" EntitySet="Cycles" />
+            <End Role="CycleReconciliationServices" EntitySet="CycleReconciliationServices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Devices_Schedules" Association="Self.FK_Devices_Schedules">
+            <End Role="Schedules" EntitySet="Schedules" />
+            <End Role="Devices" EntitySet="Devices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EasyLinkItem_EasyLInk" Association="Self.FK_EasyLinkItem_EasyLInk">
+            <End Role="EasyLink" EntitySet="EasyLink" />
+            <End Role="EasyLinkItem" EntitySet="EasyLinkItem" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Schedule_ScheduleService" Association="Self.FK_Schedule_ScheduleService">
+            <End Role="Schedules" EntitySet="Schedules" />
+            <End Role="ScheduleService" EntitySet="ScheduleService" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Schedules_ScheduleId" Association="Self.FK_Schedules_ScheduleId">
+            <End Role="Schedules" EntitySet="Schedules" />
+            <End Role="Schedules1" EntitySet="Schedules" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -196,6 +468,48 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
           <EntitySet Name="GlobalViewUsers" EntityType="GlobalViewModel.GlobalViewUser" />
           <EntitySet Name="ClientContacts" EntityType="GlobalViewModel.ClientContact" />
           <EntitySet Name="Devices" EntityType="GlobalViewModel.Device" />
+          <EntitySet Name="CyclePeriods" EntityType="GlobalViewModel.CyclePeriod" />
+          <EntitySet Name="CyclePeriodSchedules" EntityType="GlobalViewModel.CyclePeriodSchedule" />
+          <EntitySet Name="CycleReconciliationServices" EntityType="GlobalViewModel.CycleReconciliationService" />
+          <EntitySet Name="Cycles" EntityType="GlobalViewModel.Cycle" />
+          <EntitySet Name="EasyLinks" EntityType="GlobalViewModel.EasyLink" />
+          <EntitySet Name="EasyLinkChildMatches" EntityType="GlobalViewModel.EasyLinkChildMatch" />
+          <EntitySet Name="EasyLinkItems" EntityType="GlobalViewModel.EasyLinkItem" />
+          <EntitySet Name="Locations" EntityType="GlobalViewModel.Location" />
+          <EntitySet Name="Schedules" EntityType="GlobalViewModel.Schedule" />
+          <EntitySet Name="ScheduleServices" EntityType="GlobalViewModel.ScheduleService" />
+          <AssociationSet Name="FK_CyclePeriod_Cycle" Association="GlobalViewModel.FK_CyclePeriod_Cycle">
+            <End Role="Cycle" EntitySet="Cycles" />
+            <End Role="CyclePeriod" EntitySet="CyclePeriods" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CyclePeriodSchedules_CyclePeriod" Association="GlobalViewModel.FK_CyclePeriodSchedules_CyclePeriod">
+            <End Role="CyclePeriod" EntitySet="CyclePeriods" />
+            <End Role="CyclePeriodSchedule" EntitySet="CyclePeriodSchedules" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CyclePeriodSchedules_Schedule" Association="GlobalViewModel.FK_CyclePeriodSchedules_Schedule">
+            <End Role="Schedule" EntitySet="Schedules" />
+            <End Role="CyclePeriodSchedule" EntitySet="CyclePeriodSchedules" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CycleReconciliationServices_Cycle" Association="GlobalViewModel.FK_CycleReconciliationServices_Cycle">
+            <End Role="Cycle" EntitySet="Cycles" />
+            <End Role="CycleReconciliationService" EntitySet="CycleReconciliationServices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Devices_Schedules" Association="GlobalViewModel.FK_Devices_Schedules">
+            <End Role="Schedule" EntitySet="Schedules" />
+            <End Role="Device" EntitySet="Devices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EasyLinkItem_EasyLInk" Association="GlobalViewModel.FK_EasyLinkItem_EasyLInk">
+            <End Role="EasyLink" EntitySet="EasyLinks" />
+            <End Role="EasyLinkItem" EntitySet="EasyLinkItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Schedule_ScheduleService" Association="GlobalViewModel.FK_Schedule_ScheduleService">
+            <End Role="Schedule" EntitySet="Schedules" />
+            <End Role="ScheduleService" EntitySet="ScheduleServices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Schedules_ScheduleId" Association="GlobalViewModel.FK_Schedules_ScheduleId">
+            <End Role="Schedule" EntitySet="Schedules" />
+            <End Role="Schedule1" EntitySet="Schedules" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="ContactClient">
           <Key>
@@ -302,7 +616,253 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
           <Property Name="MonthlyCost" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
           <Property Name="RemovalDateTime" Type="DateTimeOffset" Precision="7" />
           <Property Name="Disposition" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Schedule" Relationship="GlobalViewModel.FK_Devices_Schedules" FromRole="Device" ToRole="Schedule" />
         </EntityType>
+        <EntityType Name="CyclePeriod">
+          <Key>
+            <PropertyRef Name="CyclePeriodId" />
+          </Key>
+          <Property Name="CyclePeriodId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CycleId" Type="Int64" Nullable="false" />
+          <Property Name="Period" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="CreatedDateTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedDateTime" Type="DateTimeOffset" Precision="7" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="InvoiceNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Cycle" Relationship="GlobalViewModel.FK_CyclePeriod_Cycle" FromRole="CyclePeriod" ToRole="Cycle" />
+          <NavigationProperty Name="CyclePeriodSchedules" Relationship="GlobalViewModel.FK_CyclePeriodSchedules_CyclePeriod" FromRole="CyclePeriod" ToRole="CyclePeriodSchedule" />
+        </EntityType>
+        <EntityType Name="CyclePeriodSchedule">
+          <Key>
+            <PropertyRef Name="CyclePeriodScheduleId" />
+          </Key>
+          <Property Name="CyclePeriodScheduleId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CyclePeriodId" Type="Int64" Nullable="false" />
+          <Property Name="ScheduleId" Type="Int64" Nullable="false" />
+          <Property Name="InstancesInvoiced" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <NavigationProperty Name="CyclePeriod" Relationship="GlobalViewModel.FK_CyclePeriodSchedules_CyclePeriod" FromRole="CyclePeriodSchedule" ToRole="CyclePeriod" />
+          <NavigationProperty Name="Schedule" Relationship="GlobalViewModel.FK_CyclePeriodSchedules_Schedule" FromRole="CyclePeriodSchedule" ToRole="Schedule" />
+        </EntityType>
+        <EntityType Name="CycleReconciliationService">
+          <Key>
+            <PropertyRef Name="CycleReconciliationServiceId" />
+          </Key>
+          <Property Name="CycleReconciliationServiceId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CycleId" Type="Int64" Nullable="false" />
+          <Property Name="MeterGroup" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Credit" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <NavigationProperty Name="Cycle" Relationship="GlobalViewModel.FK_CycleReconciliationServices_Cycle" FromRole="CycleReconciliationService" ToRole="Cycle" />
+        </EntityType>
+        <EntityType Name="Cycle">
+          <Key>
+            <PropertyRef Name="CycleId" />
+          </Key>
+          <Property Name="CycleId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerId" Type="Int64" Nullable="false" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="InActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedDateTime" Type="DateTimeOffset" Precision="7" />
+          <Property Name="InvisibleToClient" Type="Boolean" Nullable="false" />
+          <Property Name="EndDate" Type="DateTime" Precision="7" />
+          <Property Name="IsReconciled" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="CyclePeriods" Relationship="GlobalViewModel.FK_CyclePeriod_Cycle" FromRole="Cycle" ToRole="CyclePeriod" />
+          <NavigationProperty Name="CycleReconciliationServices" Relationship="GlobalViewModel.FK_CycleReconciliationServices_Cycle" FromRole="Cycle" ToRole="CycleReconciliationService" />
+        </EntityType>
+        <EntityType Name="EasyLink">
+          <Key>
+            <PropertyRef Name="EasyLinkId" />
+          </Key>
+          <Property Name="EasyLinkId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FileName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="SavedFileName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="FileLocation" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="NumberOfLines" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <NavigationProperty Name="EasyLinkItems" Relationship="GlobalViewModel.FK_EasyLinkItem_EasyLInk" FromRole="EasyLink" ToRole="EasyLinkItem" />
+        </EntityType>
+        <EntityType Name="EasyLinkChildMatch">
+          <Key>
+            <PropertyRef Name="EasyLinkChildMatchId" />
+          </Key>
+          <Property Name="EasyLinkChildMatchId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerId" Type="Int64" Nullable="false" />
+          <Property Name="ChildId" Type="Int32" Nullable="false" />
+          <Property Name="IsEasyLinkOnly" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedDateTime" Type="DateTimeOffset" Precision="7" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EasyLinkItem">
+          <Key>
+            <PropertyRef Name="EasyLinkItemId" />
+          </Key>
+          <Property Name="EasyLinkItemId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EasyLinkId" Type="Int64" Nullable="false" />
+          <Property Name="Child" Type="Int32" Nullable="false" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Fax" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="DateTime" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Duration" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="Pages" Type="Int32" Nullable="false" />
+          <Property Name="Charge" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="MessageNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="EasyLink" Relationship="GlobalViewModel.FK_EasyLinkItem_EasyLInk" FromRole="EasyLinkItem" ToRole="EasyLink" />
+        </EntityType>
+        <EntityType Name="Location">
+          <Key>
+            <PropertyRef Name="LocationId" />
+          </Key>
+          <Property Name="LocationId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerId" Type="Int64" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="TaxRate" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="IsCorporate" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedDateTime" Type="DateTimeOffset" Precision="7" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CoFreedomLocationId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Schedule">
+          <Key>
+            <PropertyRef Name="ScheduleId" />
+          </Key>
+          <Property Name="ScheduleId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerId" Type="Int64" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Suffix" Type="Int32" />
+          <Property Name="EffectiveDateTime" Type="DateTimeOffset" Precision="7" />
+          <Property Name="ExpiredDateTime" Type="DateTimeOffset" Precision="7" />
+          <Property Name="Term" Type="Int32" />
+          <Property Name="MonthlyHwCost" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="MonthlySvcCost" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ServiceAdjustment" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="MonthlyContractCost" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="CreatedDateTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CoterminousScheduleId" Type="Int64" />
+          <Property Name="ModifiedDateTime" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="CyclePeriodSchedules" Relationship="GlobalViewModel.FK_CyclePeriodSchedules_Schedule" FromRole="Schedule" ToRole="CyclePeriodSchedule" />
+          <NavigationProperty Name="Devices" Relationship="GlobalViewModel.FK_Devices_Schedules" FromRole="Schedule" ToRole="Device" />
+          <NavigationProperty Name="ScheduleServices" Relationship="GlobalViewModel.FK_Schedule_ScheduleService" FromRole="Schedule" ToRole="ScheduleService" />
+          <NavigationProperty Name="Schedules1" Relationship="GlobalViewModel.FK_Schedules_ScheduleId" FromRole="Schedule" ToRole="Schedule1" />
+          <NavigationProperty Name="Schedule1" Relationship="GlobalViewModel.FK_Schedules_ScheduleId" FromRole="Schedule1" ToRole="Schedule" />
+        </EntityType>
+        <EntityType Name="ScheduleService">
+          <Key>
+            <PropertyRef Name="ScheduleServiceId" />
+          </Key>
+          <Property Name="ScheduleServiceId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ScheduleId" Type="Int64" Nullable="false" />
+          <Property Name="MeterGroup" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ContractedPages" Type="Int32" Nullable="false" />
+          <Property Name="BaseCpp" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="OverageCpp" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="Cost" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="RemovedFromSchedule" Type="Boolean" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedDateTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedDateTime" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="Schedule" Relationship="GlobalViewModel.FK_Schedule_ScheduleService" FromRole="ScheduleService" ToRole="Schedule" />
+        </EntityType>
+        <Association Name="FK_CyclePeriod_Cycle">
+          <End Type="GlobalViewModel.Cycle" Role="Cycle" Multiplicity="1" />
+          <End Type="GlobalViewModel.CyclePeriod" Role="CyclePeriod" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cycle">
+              <PropertyRef Name="CycleId" />
+            </Principal>
+            <Dependent Role="CyclePeriod">
+              <PropertyRef Name="CycleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CyclePeriodSchedules_CyclePeriod">
+          <End Type="GlobalViewModel.CyclePeriod" Role="CyclePeriod" Multiplicity="1" />
+          <End Type="GlobalViewModel.CyclePeriodSchedule" Role="CyclePeriodSchedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CyclePeriod">
+              <PropertyRef Name="CyclePeriodId" />
+            </Principal>
+            <Dependent Role="CyclePeriodSchedule">
+              <PropertyRef Name="CyclePeriodId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CyclePeriodSchedules_Schedule">
+          <End Type="GlobalViewModel.Schedule" Role="Schedule" Multiplicity="1" />
+          <End Type="GlobalViewModel.CyclePeriodSchedule" Role="CyclePeriodSchedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="CyclePeriodSchedule">
+              <PropertyRef Name="ScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CycleReconciliationServices_Cycle">
+          <End Type="GlobalViewModel.Cycle" Role="Cycle" Multiplicity="1" />
+          <End Type="GlobalViewModel.CycleReconciliationService" Role="CycleReconciliationService" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cycle">
+              <PropertyRef Name="CycleId" />
+            </Principal>
+            <Dependent Role="CycleReconciliationService">
+              <PropertyRef Name="CycleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Devices_Schedules">
+          <End Type="GlobalViewModel.Schedule" Role="Schedule" Multiplicity="0..1" />
+          <End Type="GlobalViewModel.Device" Role="Device" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="Device">
+              <PropertyRef Name="ScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EasyLinkItem_EasyLInk">
+          <End Type="GlobalViewModel.EasyLink" Role="EasyLink" Multiplicity="1" />
+          <End Type="GlobalViewModel.EasyLinkItem" Role="EasyLinkItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EasyLink">
+              <PropertyRef Name="EasyLinkId" />
+            </Principal>
+            <Dependent Role="EasyLinkItem">
+              <PropertyRef Name="EasyLinkId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Schedule_ScheduleService">
+          <End Type="GlobalViewModel.Schedule" Role="Schedule" Multiplicity="1" />
+          <End Type="GlobalViewModel.ScheduleService" Role="ScheduleService" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="ScheduleService">
+              <PropertyRef Name="ScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Schedules_ScheduleId">
+          <End Type="GlobalViewModel.Schedule" Role="Schedule" Multiplicity="0..1" />
+          <End Type="GlobalViewModel.Schedule" Role="Schedule1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="Schedule1">
+              <PropertyRef Name="CoterminousScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -433,6 +993,150 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
                 <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
                 <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
                 <ScalarProperty Name="DeviceId" ColumnName="DeviceId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CyclePeriods">
+            <EntityTypeMapping TypeName="GlobalViewModel.CyclePeriod">
+              <MappingFragment StoreEntitySet="CyclePeriods">
+                <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="ModifiedDateTime" ColumnName="ModifiedDateTime" />
+                <ScalarProperty Name="CreatedDateTime" ColumnName="CreatedDateTime" />
+                <ScalarProperty Name="Period" ColumnName="Period" />
+                <ScalarProperty Name="CycleId" ColumnName="CycleId" />
+                <ScalarProperty Name="CyclePeriodId" ColumnName="CyclePeriodId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CyclePeriodSchedules">
+            <EntityTypeMapping TypeName="GlobalViewModel.CyclePeriodSchedule">
+              <MappingFragment StoreEntitySet="CyclePeriodSchedules">
+                <ScalarProperty Name="InstancesInvoiced" ColumnName="InstancesInvoiced" />
+                <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+                <ScalarProperty Name="CyclePeriodId" ColumnName="CyclePeriodId" />
+                <ScalarProperty Name="CyclePeriodScheduleId" ColumnName="CyclePeriodScheduleId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CycleReconciliationServices">
+            <EntityTypeMapping TypeName="GlobalViewModel.CycleReconciliationService">
+              <MappingFragment StoreEntitySet="CycleReconciliationServices">
+                <ScalarProperty Name="Credit" ColumnName="Credit" />
+                <ScalarProperty Name="MeterGroup" ColumnName="MeterGroup" />
+                <ScalarProperty Name="CycleId" ColumnName="CycleId" />
+                <ScalarProperty Name="CycleReconciliationServiceId" ColumnName="CycleReconciliationServiceId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Cycles">
+            <EntityTypeMapping TypeName="GlobalViewModel.Cycle">
+              <MappingFragment StoreEntitySet="Cycles">
+                <ScalarProperty Name="IsReconciled" ColumnName="IsReconciled" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="InvisibleToClient" ColumnName="InvisibleToClient" />
+                <ScalarProperty Name="ModifiedDateTime" ColumnName="ModifiedDateTime" />
+                <ScalarProperty Name="CreatedDateTime" ColumnName="CreatedDateTime" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="InActive" ColumnName="InActive" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="CycleId" ColumnName="CycleId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EasyLinks">
+            <EntityTypeMapping TypeName="GlobalViewModel.EasyLink">
+              <MappingFragment StoreEntitySet="EasyLink">
+                <ScalarProperty Name="CreatedDateTime" ColumnName="CreatedDateTime" />
+                <ScalarProperty Name="NumberOfLines" ColumnName="NumberOfLines" />
+                <ScalarProperty Name="FileLocation" ColumnName="FileLocation" />
+                <ScalarProperty Name="SavedFileName" ColumnName="SavedFileName" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="EasyLinkId" ColumnName="EasyLinkId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EasyLinkChildMatches">
+            <EntityTypeMapping TypeName="GlobalViewModel.EasyLinkChildMatch">
+              <MappingFragment StoreEntitySet="EasyLinkChildMatch">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="ModifiedDateTime" ColumnName="ModifiedDateTime" />
+                <ScalarProperty Name="CreatedDateTime" ColumnName="CreatedDateTime" />
+                <ScalarProperty Name="IsEasyLinkOnly" ColumnName="IsEasyLinkOnly" />
+                <ScalarProperty Name="ChildId" ColumnName="ChildId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="EasyLinkChildMatchId" ColumnName="EasyLinkChildMatchId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EasyLinkItems">
+            <EntityTypeMapping TypeName="GlobalViewModel.EasyLinkItem">
+              <MappingFragment StoreEntitySet="EasyLinkItem">
+                <ScalarProperty Name="MessageNumber" ColumnName="MessageNumber" />
+                <ScalarProperty Name="Charge" ColumnName="Charge" />
+                <ScalarProperty Name="Pages" ColumnName="Pages" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+                <ScalarProperty Name="Fax" ColumnName="Fax" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Child" ColumnName="Child" />
+                <ScalarProperty Name="EasyLinkId" ColumnName="EasyLinkId" />
+                <ScalarProperty Name="EasyLinkItemId" ColumnName="EasyLinkItemId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Locations">
+            <EntityTypeMapping TypeName="GlobalViewModel.Location">
+              <MappingFragment StoreEntitySet="Location">
+                <ScalarProperty Name="CoFreedomLocationId" ColumnName="CoFreedomLocationId" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="ModifiedDateTime" ColumnName="ModifiedDateTime" />
+                <ScalarProperty Name="CreatedDateTime" ColumnName="CreatedDateTime" />
+                <ScalarProperty Name="IsCorporate" ColumnName="IsCorporate" />
+                <ScalarProperty Name="TaxRate" ColumnName="TaxRate" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="LocationId" ColumnName="LocationId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Schedules">
+            <EntityTypeMapping TypeName="GlobalViewModel.Schedule">
+              <MappingFragment StoreEntitySet="Schedules">
+                <ScalarProperty Name="ModifiedDateTime" ColumnName="ModifiedDateTime" />
+                <ScalarProperty Name="CoterminousScheduleId" ColumnName="CoterminousScheduleId" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="CreatedDateTime" ColumnName="CreatedDateTime" />
+                <ScalarProperty Name="MonthlyContractCost" ColumnName="MonthlyContractCost" />
+                <ScalarProperty Name="ServiceAdjustment" ColumnName="ServiceAdjustment" />
+                <ScalarProperty Name="MonthlySvcCost" ColumnName="MonthlySvcCost" />
+                <ScalarProperty Name="MonthlyHwCost" ColumnName="MonthlyHwCost" />
+                <ScalarProperty Name="Term" ColumnName="Term" />
+                <ScalarProperty Name="ExpiredDateTime" ColumnName="ExpiredDateTime" />
+                <ScalarProperty Name="EffectiveDateTime" ColumnName="EffectiveDateTime" />
+                <ScalarProperty Name="Suffix" ColumnName="Suffix" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ScheduleServices">
+            <EntityTypeMapping TypeName="GlobalViewModel.ScheduleService">
+              <MappingFragment StoreEntitySet="ScheduleService">
+                <ScalarProperty Name="ModifiedDateTime" ColumnName="ModifiedDateTime" />
+                <ScalarProperty Name="CreatedDateTime" ColumnName="CreatedDateTime" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="RemovedFromSchedule" ColumnName="RemovedFromSchedule" />
+                <ScalarProperty Name="Cost" ColumnName="Cost" />
+                <ScalarProperty Name="OverageCpp" ColumnName="OverageCpp" />
+                <ScalarProperty Name="BaseCpp" ColumnName="BaseCpp" />
+                <ScalarProperty Name="ContractedPages" ColumnName="ContractedPages" />
+                <ScalarProperty Name="MeterGroup" ColumnName="MeterGroup" />
+                <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+                <ScalarProperty Name="ScheduleServiceId" ColumnName="ScheduleServiceId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

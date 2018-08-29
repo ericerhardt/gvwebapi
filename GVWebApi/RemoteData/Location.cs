@@ -12,22 +12,16 @@ namespace GVWebapi.RemoteData
     using System;
     using System.Collections.Generic;
     
-    public partial class Device
+    public partial class Location
     {
-        public long DeviceId { get; set; }
-        public Nullable<long> ScheduleId { get; set; }
+        public long LocationId { get; set; }
         public long CustomerId { get; set; }
-        public string EquipmentId { get; set; }
-        public string EquipmentNumber { get; set; }
-        public string SerialNumber { get; set; }
-        public string Model { get; set; }
+        public string Name { get; set; }
+        public decimal TaxRate { get; set; }
+        public bool IsCorporate { get; set; }
         public System.DateTimeOffset CreatedDateTime { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedDateTime { get; set; }
-        public string RemovedStatus { get; set; }
-        public decimal MonthlyCost { get; set; }
-        public Nullable<System.DateTimeOffset> RemovalDateTime { get; set; }
-        public string Disposition { get; set; }
-    
-        public virtual Schedule Schedule { get; set; }
+        public bool IsDeleted { get; set; }
+        public int CoFreedomLocationId { get; set; }
     }
 }

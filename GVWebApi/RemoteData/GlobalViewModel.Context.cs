@@ -33,5 +33,15 @@ namespace GVWebapi.RemoteData
         public virtual DbSet<GlobalViewUser> GlobalViewUsers { get; set; }
         public virtual DbSet<ClientContact> ClientContacts { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
+        public virtual DbSet<CyclePeriod> CyclePeriods { get; set; }
+        public virtual DbSet<CyclePeriodSchedule> CyclePeriodSchedules { get; set; }
+        public virtual DbSet<CycleReconciliationService> CycleReconciliationServices { get; set; }
+        public virtual DbSet<Cycle> Cycles { get; set; }
+        public virtual DbSet<EasyLink> EasyLinks { get; set; }
+        public virtual DbSet<EasyLinkChildMatch> EasyLinkChildMatches { get; set; }
+        public virtual DbSet<EasyLinkItem> EasyLinkItems { get; set; }
+        public virtual DbSet<Location> Locations { get; set; }
+        public virtual DbSet<Schedule> Schedules { get; set; }
+        public virtual DbSet<ScheduleService> ScheduleServices { get; set; }
     }
 }

@@ -193,10 +193,11 @@ namespace GVWebapi.Controllers
             }
             return Ok("Device not Deleted.");
         }
-        [HttpGet, Route("api/getdevicesonschedule/{schedule}/{customerid}")]
-        public IHttpActionResult GetDevicesOnSchedule(string schedule,int customerID)
+        [HttpGet, Route("api/getdevicesonschedule/{scheduleId}")]
+        public IHttpActionResult GetDevicesOnSchedule(long scheduleId)
         {
-            var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.ScheduleNumber == schedule && x.CustomerID == customerID).ToList();
+            var schedule = _globalViewEntities.Schedules.FirstOrDefault(x => x.ScheduleId == scheduleId);
+            var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.ScheduleNumber == schedule.Name && x.CustomerID == schedule.CustomerId).ToList();
             return Json(devices);
         }
 

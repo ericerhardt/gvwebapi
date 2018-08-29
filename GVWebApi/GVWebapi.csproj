@@ -377,7 +377,25 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CustomerService.edmx</DependentUpon>
     </Compile>
+    <Compile Include="RemoteData\Cycle.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\CyclePeriod.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\CyclePeriodSchedule.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\CycleReconciliationService.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="RemoteData\Device.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\EasyLink.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\EasyLinkChildMatch.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\easylinkimport.cs">
@@ -385,6 +403,9 @@
     </Compile>
     <Compile Include="RemoteData\EasylinkImportHistory.cs">
       <DependentUpon>CustomerService.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\EasyLinkItem.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\EasyLinkMapping.cs">
       <DependentUpon>CustomerService.tt</DependentUpon>
@@ -418,6 +439,9 @@
     </Compile>
     <Compile Include="RemoteData\IntegrisCall.cs">
       <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\Location.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\LockInvoice.cs">
       <DependentUpon>RevisionDataModel.tt</DependentUpon>
@@ -470,6 +494,12 @@
     </Compile>
     <Compile Include="RemoteData\SCEquipmentCustomProperty.cs">
       <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\Schedule.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\ScheduleService.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\Survey.cs">
       <DependentUpon>CustomerService.tt</DependentUpon>
