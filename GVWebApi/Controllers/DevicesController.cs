@@ -210,7 +210,7 @@ namespace GVWebapi.Controllers
         [HttpGet, Route("api/getdevicesunallocated/{customerId}")]
         public IHttpActionResult GetDevicesUnallocated(int customerId)
         {
-            var schedules = _globalViewEntities.Schedules.Where(x => x.CustomerId == customerId).Select(x=> x.Name).ToList();
+            var schedules = _globalViewEntities.Schedules.Where(x => x.CustomerId == customerId && x.IsDeleted == false).Select(x=> x.Name).ToList();
             var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => (x.CustomerID == customerId && x.NumberOfContractsActive > 0) && !schedules.Contains(x.ScheduleNumber)).ToList();
             return Json(new { devices, schedules });
         }
