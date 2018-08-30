@@ -11,7 +11,7 @@ namespace GVWebapi.Services
     public interface ICoFreedomDeviceService
     {
         void LoadCoFreedomDevices(long scheduleId);
-        vw_admin_EquipmentList_MeterGroup GetCoFreedomDevice(int EquipmentId);
+        vw_admin_EquipmentList_MeterGroup GetCoFreedomDevice(long EquipmentId);
         Dictionary<string, int> GetDeviceCount(long customerId);
         int GetScheduleDeviceCount(string scheduleNumber);
         EditScheduleDeviceTopModel GetTabCounts(long scheduleId);
@@ -99,11 +99,11 @@ namespace GVWebapi.Services
                 return freedomEntities
                     .vw_admin_EquipmentList_MeterGroup
                     .Where(x => x.CustomerID == customerId)
-                    .Where(x => x.ScheduleNumber.ToLower().Trim() == scheduleName.ToLower().Trim() || x.ScheduleNumber.Trim().Length == 0)
+                    .Where(x => x.ScheduleNumber.ToLower().Trim() == scheduleName.ToLower().Trim() && x.NumberOfContractsActive != null)
                     .ToList();
             }
         }
-        public vw_admin_EquipmentList_MeterGroup GetCoFreedomDevice(int EquipmentId)
+        public vw_admin_EquipmentList_MeterGroup GetCoFreedomDevice(long EquipmentId)
         {
             using (var freedomEntities = new CoFreedomEntities())
             {

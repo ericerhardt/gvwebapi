@@ -82,7 +82,7 @@ namespace GVWebapi.Services
 
         public IList<LocationViewModel> LoadAllByDeviceId(long deviceId)
         {
-            var device = _repository.Get<DevicesEntity>(deviceId);
+            var device = _coFreedomRepository.Get<ScEquipmentEntity>(deviceId);
             return LoadAll(device.CustomerId);
         }
 

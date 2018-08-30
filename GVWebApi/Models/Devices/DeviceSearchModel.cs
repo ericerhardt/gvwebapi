@@ -3,7 +3,7 @@
     public class DeviceSearchModel
     {
         public string SerialNumber { get; set; }
-        public int EquipmentId { get; set; }
+        public long EquipmentId { get; set; }
         public string Model { get; set; }
         public string Location { get; set; }
         public string Status { get; set; }

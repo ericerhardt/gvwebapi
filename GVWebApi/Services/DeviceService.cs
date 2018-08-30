@@ -15,7 +15,7 @@ namespace GVWebapi.Services
         IList<DeviceModel> GetActiveDevices(long scheduleId);
         IList<DeviceModel> GetUnallocatedDevices(long scheduleId);
         IList<DeviceModel> GetRemovedDevices(long scheduleId);
-        DeviceModel GetDeviceByID(long deviceId);
+        vw_admin_EquipmentList_MeterGroup GetDeviceByID(long deviceId);
         void DeleteDevice(long deviceId);
         void SaveDevice(DeviceSaveModel model);
         decimal DeviceTotalCost(long scheduleId);
@@ -102,13 +102,11 @@ namespace GVWebapi.Services
             return MergeGlobalViewAndCoFreedom(globalViewEntities, coFreedomDevices);
         }
 
-        public void DeleteDevice(long deviceId)
+        public void DeleteDevice(long EquipmentId)
         {
-            var device = _repository.Get<DevicesEntity>(deviceId);
-            if (device == null) return;
-            device.Schedule = null;
+          
             var customProperty = _coFreedomRepository.Find<ScEquipmentCustomPropertiesEntity>()
-                .Where(x => x.Equipment.EquipmentId == device.EquipmentId)
+                .Where(x => x.Equipment.EquipmentId ==  EquipmentId)
                 .FirstOrDefault(x => x.ShAttributeId == 2015);
             if (customProperty == null) return;
             customProperty.TextVal = string.Empty;
@@ -118,27 +116,26 @@ namespace GVWebapi.Services
         {
             var schedule = _repository.Get<SchedulesEntity>(scheduleId);
 
-            var globalViewEntities = _repository.Find<DevicesEntity>()
-                .Where(x => x.Schedule.ScheduleId == scheduleId)
-                .Where(x => x.RemovedStatus == null || x.RemovedStatus == RemovedStatusEnum.SetForRemoval)
-                .ToList();
-            var totals = globalViewEntities.Sum(x => x.MonthlyCost);
+            var devices = _coFreedomDeviceService.GetCoFreedomDevices(schedule.Name, schedule.CustomerId);
+                
+            var totals = 0.00M;
+            foreach(var device in devices)
+            {
+                totals = totals + decimal.Parse(device.MonthlyCost);
+            }
+           
             return totals;
         }
         public void SaveDevice(DeviceSaveModel model)
         {
-            var device = _repository.Get<DevicesEntity>(model.DeviceId);
-          
-            if (device == null) return;
 
-            device.MonthlyCost = model.MonthlyCost;
- 
-            var scEquipmentEntity = _coFreedomRepository.Get<ScEquipmentEntity>(device.EquipmentId);
+            var schedulesEntity = _repository.Get<SchedulesEntity>(model.ScheduleId);
+            var scEquipmentEntity = _coFreedomRepository.Get<ScEquipmentEntity>(model.DeviceId);
 
             //set schedule -- custom prop 2015
             var scheduleProperty = scEquipmentEntity.CustomProperties.FirstOrDefault(x => x.ShAttributeId == 2015);
             if (scheduleProperty != null)
-                scheduleProperty.TextVal = device.Schedule.Name;
+                scheduleProperty.TextVal = schedulesEntity.Name;
 
             scEquipmentEntity.Location = _coFreedomRepository.Load<ArCustomersEntity>(model.LocationId);
 
@@ -148,28 +145,32 @@ namespace GVWebapi.Services
 
             var exhibitProperty = scEquipmentEntity.CustomProperties.FirstOrDefault(x => x.ShAttributeId == 2006);
             if (exhibitProperty != null)
-                exhibitProperty.TextVal = $"Exhibit {model.Exhibit}";
+                exhibitProperty.TextVal =  model.Exhibit;
 
             var costCenterProperty = scEquipmentEntity.CustomProperties.FirstOrDefault(x => x.ShAttributeId == 2001);
             if (costCenterProperty != null)
                 costCenterProperty.TextVal = model.CostCenter;
+
+            var monthlyCostProperty = scEquipmentEntity.CustomProperties.FirstOrDefault(x => x.ShAttributeId == 2021);
+            if (monthlyCostProperty != null)
+                monthlyCostProperty.TextVal = model.MonthlyCost.ToString();
         }
 
         public void AddDevicesToSchedule(SetScheduleSaveModel model)
         {
             var schedule = _repository.Get<SchedulesEntity>(model.ScheduleId);
 
-            foreach (var deviceId in model.DeviceIds)
+            foreach (var EquipmentId in model.DeviceIds)
             {
-                var deviceEntity = _repository.Get<DevicesEntity>(deviceId);
-                if (deviceEntity == null) continue;
-                var coFreedomEquipmentEntity = _coFreedomRepository.Get<ScEquipmentEntity>(deviceEntity.EquipmentId);
+               
+                
+                var coFreedomEquipmentEntity = _coFreedomRepository.Get<ScEquipmentEntity>(EquipmentId);
                 var scheduleCustomProperty = coFreedomEquipmentEntity.CustomProperties.FirstOrDefault(x => x.ShAttributeId == 2015);
                 if (scheduleCustomProperty != null)
                     scheduleCustomProperty.TextVal = schedule.Name;
             }
 
-            _coFreedomDeviceService.LoadCoFreedomDevices(model.ScheduleId);
+          //  _coFreedomDeviceService.LoadCoFreedomDevices(model.ScheduleId);
         }
 
         public void ConfirmDeviceRemove(DeviceRemoveModel model)
@@ -234,13 +235,13 @@ namespace GVWebapi.Services
             return _repository.Find<DevicesEntity>()
                 .FirstOrDefault(x => x.EquipmentNumber.ToLower() == equipmentNumber.ToLower());
         }
-        public DeviceModel GetDeviceByID(long deviceId)
+        public vw_admin_EquipmentList_MeterGroup GetDeviceByID(long EquipmentID)
         {
 
-            var gvDevice = _repository.Get<DevicesEntity>(deviceId);
-            var eaDevice = _coFreedomDeviceService.GetCoFreedomDevice(gvDevice.EquipmentId);
-            var results = MergeGlobalViewAndCoFreedomDevice(gvDevice, eaDevice);
-            return results; 
+            
+            var eaDevice = _coFreedomDeviceService.GetCoFreedomDevice(EquipmentID);
+           
+            return eaDevice; 
 
         }
 

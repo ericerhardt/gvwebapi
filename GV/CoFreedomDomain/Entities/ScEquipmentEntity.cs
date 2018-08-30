@@ -13,7 +13,7 @@ namespace GV.CoFreedomDomain.Entities
             _contractDetails = new List<ScContractDetailsEntity>();
         }
 
-        public virtual int EquipmentId { get; set; }
+        public virtual long EquipmentId { get; set; }
         public virtual string EquipmentNumber { get; set; }
         public virtual string SerialNumber { get; set; }
         public virtual ArCustomersEntity Location { get; set; }

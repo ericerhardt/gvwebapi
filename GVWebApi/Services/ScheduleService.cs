@@ -206,11 +206,11 @@ namespace GVWebapi.Services
 
         public IList<SchedulesModel> GetActiveSchedules(long deviceId)
         {
-            var device =_repository.Get<DevicesEntity>(deviceId);
+            var device = _coFreedomDeviceService.GetCoFreedomDevice(deviceId);
 
             return _repository.Find<SchedulesEntity>()
                 .Where(x => x.IsDeleted == false)
-                .Where(x => x.CustomerId == device.CustomerId)
+                .Where(x => x.CustomerId == device.CustomerID)
                 .Select(x => SchedulesModel.For(x))
                 .ToList();
         }

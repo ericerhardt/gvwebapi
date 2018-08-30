@@ -26,22 +26,7 @@ namespace GVWebapi.Controllers
             _scheduleService = scheduleService;
             _locationSerivce = locationSerivce;
         }
-
-        [HttpGet, Route("api/editschedule/devices/active/{scheduleId}")]
-        public IHttpActionResult GetActiveDevices(long scheduleId)
-        {
-            return Json(_deviceService.GetActiveDevices(scheduleId));
-        }
-
-        [HttpGet, Route("api/editschedule/devices/active/delete/{deviceId}")]
-        public IHttpActionResult DeleteActiveDevice(long deviceId)
-        {
-            _deviceService.DeleteDevice(deviceId);
-            _unitOfWork.Commit();
-            _coFreedomUnitOfWork.Commit();
-            return Ok();
-        }
-
+ 
         [HttpGet, Route("api/editschedule/devices/active/getdetails/{deviceId}")]
         public IHttpActionResult GetEditDetails(long deviceId)
         {
@@ -61,11 +46,11 @@ namespace GVWebapi.Controllers
         public IHttpActionResult SaveDeviceDetails(DeviceSaveModel model)
         {
             _deviceService.SaveDevice(model);
-            _unitOfWork.Commit();
+            _coFreedomUnitOfWork.Commit();
             var TotalCost = _deviceService.DeviceTotalCost(model.ScheduleId);
             _scheduleService.UpdateMonthyHardwareCost(TotalCost, model.ScheduleId);
             _unitOfWork.Commit();
-            _coFreedomUnitOfWork.Commit();
+           
             return Ok();
         }
 
@@ -86,7 +71,7 @@ namespace GVWebapi.Controllers
         {
             _deviceService.AddDevicesToSchedule(model);
             _coFreedomUnitOfWork.Commit();
-            _unitOfWork.Commit();
+
             return Ok();
         }
 
