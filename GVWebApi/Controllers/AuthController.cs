@@ -70,7 +70,7 @@ namespace GVWebapi.Controllers
                     _globalViewEntities.SaveChanges();
                     return Ok(user);
                 }
-                return BadRequest("Error: Unable to authenticate your accuount.");
+                return BadRequest("Error: Unable to authenticate your account! Please try again.");
             }
             catch(Exception e)
             {
@@ -91,7 +91,7 @@ namespace GVWebapi.Controllers
                     _globalViewEntities.SaveChanges();
                     return Ok(user);
                 }
-                return BadRequest("Error: Unable to find user your accuount.");
+                return BadRequest("Error: Unable to find user your account! Please try again.");
             }
             catch (Exception e)
             {
@@ -144,7 +144,7 @@ namespace GVWebapi.Controllers
                     }
                     return Ok(user);
                 }
-                return BadRequest("Error: Unable to recover your accuount.");
+                return BadRequest("Error: Unable to recover your account! Please try again.");
             }
             catch (Exception e)
             {
