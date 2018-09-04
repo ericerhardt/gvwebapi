@@ -196,8 +196,10 @@ namespace GVWebapi.Controllers
         [HttpGet, Route("api/getdevicesonschedule/{scheduleId}")]
         public IHttpActionResult GetDevicesOnSchedule(long scheduleId)
         {
-            var schedule = _globalViewEntities.Schedules.FirstOrDefault(x => x.ScheduleId == scheduleId);
+            var schedule = _globalViewEntities.Schedules.Find(scheduleId);
             var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.ScheduleNumber == schedule.Name && x.CustomerID == schedule.CustomerId && x.NumberOfContractsActive > 0).ToList();
+           schedule.MonthlyHwCost = devices.Select(i => Decimal.Parse(i.MonthlyCost)).Sum();
+            _globalViewEntities.SaveChanges();
             return Json(devices);
         }
         [HttpGet, Route("api/getdevicesremoved/{customerId}")]

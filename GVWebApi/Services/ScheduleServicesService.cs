@@ -110,6 +110,7 @@ namespace GVWebapi.Services
     public class ScheduleServiceModel
     {
         public long ScheduleServiceId { get; set; }
+        public long ScheduleId { get; set; }
         public string MeterGroup { get; set; }
         public int ContractedPages { get; set; }
         public decimal BaseCpp { get; set; }

@@ -26,7 +26,7 @@ namespace GVWebapi.Controllers
             }
             else
             {
-                _scheduleService.AddSchedule(model);
+               _scheduleService.AddSchedule(model);
                 _unitOfWork.Commit();
                 return Ok();
             }

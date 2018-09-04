@@ -27,13 +27,15 @@ namespace GVWebapi.Services
 
     public class ScheduleService : IScheduleService
     {
+        private readonly IScheduleServicesService _scheduleServicesService;
         private readonly IRepository _repository;
         private readonly ICoFreedomDeviceService _coFreedomDeviceService;
 
-        public ScheduleService(IRepository repository, ICoFreedomDeviceService coFreedomDeviceService)
+        public ScheduleService(IRepository repository, ICoFreedomDeviceService coFreedomDeviceService, IScheduleServicesService scheduleServicesService)
         {
             _repository = repository;
             _coFreedomDeviceService = coFreedomDeviceService;
+            _scheduleServicesService = scheduleServicesService;
         }
         public bool ScheduleExists(ScheduleSaveModel model)
         {
@@ -49,7 +51,7 @@ namespace GVWebapi.Services
         }
         public void AddSchedule(ScheduleSaveModel model)
         {
-           
+
             var schedulesEntity = new SchedulesEntity();
             schedulesEntity.CustomerId = model.CustomerId;
             schedulesEntity.Name = model.Name;
@@ -57,12 +59,14 @@ namespace GVWebapi.Services
             schedulesEntity.Term = model.Term;
             schedulesEntity.EffectiveDateTime = model.EffectiveDateTime;
             schedulesEntity.ExpiredDateTime = GetExpiredDateTime(model.EffectiveDateTime, model.Term);
-            schedulesEntity.MonthlyContractCost = model.MonthlyContractCost;           
+            schedulesEntity.MonthlyContractCost = model.MonthlyContractCost;
             schedulesEntity.CreatedDateTime = DateTimeOffset.Now;
 
             if (model.CoterminousId.HasValue)
             {
                 schedulesEntity.CoterminousSchedule = _repository.Load<SchedulesEntity>(model.CoterminousId.Value);
+
+
             }
             else
             {
@@ -72,9 +76,21 @@ namespace GVWebapi.Services
                 schedulesEntity.ExpiredDateTime = GetExpiredDateTime(model.EffectiveDateTime, model.Term);
             }
 
-            _repository.Add(schedulesEntity);
+            var results = _repository.Add(schedulesEntity);
+            if (model.CoterminousId.HasValue)
+            {
+                var meterGroups = _scheduleServicesService.GetMeterGroups(model.CoterminousId.Value);
+                foreach (var metergroup in meterGroups)
+                {
+                   var scheduleServiceModel = new ScheduleServiceEntity();
+                    scheduleServiceModel.MeterGroup = metergroup.MeterGroup;
+                    scheduleServiceModel.BaseCpp = metergroup.BaseCpp;
+                    scheduleServiceModel.OverageCpp = metergroup.OverageCpp;
+                    scheduleServiceModel.Schedule = results;
+                    _repository.Add(scheduleServiceModel);
+                }
+            }
         }
-
         private static DateTimeOffset? GetExpiredDateTime(DateTimeOffset? effectiveDate, int? term)
         {
             if (effectiveDate.HasValue == false || term.HasValue == false) return null;
