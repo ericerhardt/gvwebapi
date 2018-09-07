@@ -62,7 +62,7 @@ namespace GVWebapi.Services
             schedulesEntity.MonthlyContractCost = model.MonthlyContractCost;
             schedulesEntity.CreatedDateTime = DateTimeOffset.Now;
 
-            if (model.CoterminousId.HasValue)
+            if (model.CoterminousId != 0)
             {
                 schedulesEntity.CoterminousSchedule = _repository.Load<SchedulesEntity>(model.CoterminousId.Value);
 
@@ -77,7 +77,7 @@ namespace GVWebapi.Services
             }
 
             var results = _repository.Add(schedulesEntity);
-            if (model.CoterminousId.HasValue)
+            if (model.CoterminousId != 0)
             {
                 var meterGroups = _scheduleServicesService.GetMeterGroups(model.CoterminousId.Value);
                 foreach (var metergroup in meterGroups)
