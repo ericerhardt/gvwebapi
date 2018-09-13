@@ -69,18 +69,37 @@ namespace GVWebapi.Controllers
             var provider = await Request.Content.ReadAsMultipartAsync(new InMemoryMultipartFormDataStreamProvider());
             NameValueCollection formData = provider.FormData;
 
-            var newSurvey = new Survey()
+            var Survey = new Survey();
+            if (formData["isEdit"] == "true")
             {
-                CustomerID = int.Parse(formData["CustomerID"]),
-                Name = formData["Name"],
-                Email = formData["Email"],
-                Title = formData["Title"],
-                SurveyTypeID = 2,
-                SurveyDate = DateTime.Parse(formData["SurveyDate"]),
-               
-            };
-            _customerPortalEntities.Surveys.Add(newSurvey);
-              _customerPortalEntities.SaveChanges();
+                var id = int.Parse(formData["SurveyID"]);
+                Survey = _customerPortalEntities.Surveys.Find(id);
+                Survey.CustomerID = int.Parse(formData["CustomerID"]);
+                Survey.Name = formData["Name"];
+                Survey.Email = formData["Email"];
+                Survey.Title = formData["Title"];
+                Survey.SurveyTypeID = 2;
+                Survey.SurveyDate = DateTime.Parse(formData["SurveyDate"]);
+            }
+            else
+            {
+                var newSurvey = new Survey()
+                {
+                    CustomerID = int.Parse(formData["CustomerID"]),
+                    Name = formData["Name"],
+                    Email = formData["Email"],
+                    Title = formData["Title"],
+                    SurveyTypeID = 2,
+                    SurveyDate = DateTime.Parse(formData["SurveyDate"]),
+                };
+                _customerPortalEntities.Surveys.Add(newSurvey);
+                _customerPortalEntities.SaveChanges();
+                Survey = newSurvey;
+            }
+           
+
+              
+          
             if (formData["Answers"].Count() > 0)
             {
                 IList<SurveyAnswer> surveyAnswers = JsonConvert.DeserializeObject<IList<SurveyAnswer>>(formData["Answers"]);
@@ -88,7 +107,7 @@ namespace GVWebapi.Controllers
                 {
                     var surveyAnswer = new SurveyAnswer()
                     {
-                        SurveyID = newSurvey.SurveyID,
+                        SurveyID = Survey.SurveyID,
                         QuestionID = answer.QuestionID,
                         Question = answer.Question,
                         AnswerNumeric = answer.AnswerNumeric,
@@ -121,17 +140,17 @@ namespace GVWebapi.Controllers
                     input.CopyTo(file);
                     //close file  
                     file.Close();
-                    var survey = _customerPortalEntities.Surveys.Find(newSurvey.SurveyID);
+                    var survey = _customerPortalEntities.Surveys.Find(Survey.SurveyID);
                     if (survey != null)
                     {
-                        survey.Attachment = "/uploads/surveys/"+ fileName;
+                        survey.Attachment =  fileName;
                           _customerPortalEntities.SaveChanges();
                     }
                 }
 
             }
 
-            var surveys = _customerPortalEntities.SurveyWithAvgs.Where(s => s.CustomerID == newSurvey.CustomerID).OrderByDescending(s => s.SurveyDate).AsEnumerable();
+            var surveys = _customerPortalEntities.SurveyWithAvgs.Where(s => s.CustomerID == Survey.CustomerID).OrderByDescending(s => s.SurveyDate).AsEnumerable();
             var results = new List<SurveyViewModel>();
 
             foreach (var actualSurvey in surveys)
@@ -160,18 +179,26 @@ namespace GVWebapi.Controllers
         }
 
         [Route("api/surveydetail/{id}")]
-        public IQueryable<SurveyQuestionsWithAnswer> GetSurveyDetail(int id)
+        public async Task<IHttpActionResult> GetSurveyDetail(int id)
         {
-            return _customerPortalEntities.SurveyQuestionsWithAnswers.Where(q => q.SurveyID == id);
+            var surveyinfo = await _customerPortalEntities.Surveys.FindAsync(id);
+            if (surveyinfo == null)
+            {
+                return NotFound();
+            }
+
+            var answers =  _customerPortalEntities.SurveyQuestionsWithAnswers.Where(q => q.SurveyID == id).ToList();
+
+            return Json(new { survey = surveyinfo, answers });
 
         }
 
         
-        [Route("api/deletesurvey/{id}")]       
+        [HttpPost,Route("api/deletesurvey/{id}")]       
         public async Task<IHttpActionResult> DeleteSurvey(int id)
         {
-            var surveyAnswers = _customerPortalEntities.SurveyAnswers.Where(a => a.SurveyID == id);
-            if(surveyAnswers != null)
+            var surveyAnswers = _customerPortalEntities.SurveyAnswers.Where(a => a.SurveyID == id).ToList();
+            if(surveyAnswers!= null)
             {
                 foreach(var answer in surveyAnswers)
                 {
@@ -185,7 +212,14 @@ namespace GVWebapi.Controllers
             {
                 return NotFound();
             }
-
+            var path = string.Empty;
+            if(!String.IsNullOrEmpty(survey.Attachment))
+              path = Path.Combine(HttpContext.Current.Server.MapPath("~/uploads/surveys"), survey.Attachment);
+            //Deletion exists file  
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
             _customerPortalEntities.Surveys.Remove(survey);
             await _customerPortalEntities.SaveChangesAsync();
 
