@@ -7,6 +7,15 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using GVWebapi.RemoteData;
 using GVWebapi.Models;
+using System.Web;
+using System.IO;
+using System.Net.Http;
+using System.Diagnostics;
+using GVWebapi.Helpers;
+using System.Collections.Specialized;
+using Newtonsoft.Json;
+using System;
+
 namespace GVWebapi.Controllers
 {
     public class SurveysController : ApiController
@@ -46,10 +55,127 @@ namespace GVWebapi.Controllers
             };
             return Json(output);
         }
+        [HttpPost,Route("api/surveyupload/")]
+        public IHttpActionResult SurveyUpload(HttpPostedFileBase file)
+        {
+            
+           
 
-        [Route("api/addsurvey/{Survey?}")]
+                if (file.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+                    var path = Path.Combine(HttpContext.Current.Server.MapPath("~/App_Data/uploads/surveys"), fileName);
+                    file.SaveAs(path);
+                }
+                return Ok();
+        }
+        [HttpPost, Route("api/addsurvey/")]
+        public async Task<IHttpActionResult> PostFormData()
+        {
+            var httpRequest = HttpContext.Current.Request;
+
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+            }
+             
+            var provider = await Request.Content.ReadAsMultipartAsync(new InMemoryMultipartFormDataStreamProvider());
+            NameValueCollection formData = provider.FormData;
+
+            var newSurvey = new Survey()
+            {
+                CustomerID = int.Parse(formData["CustomerID"]),
+                Name = formData["Name"],
+                Email = formData["Email"],
+                Title = formData["Title"],
+                SurveyTypeID = 2,
+                SurveyDate = DateTime.Parse(formData["SurveyDate"]),
+               
+            };
+            _customerPortalEntities.Surveys.Add(newSurvey);
+              _customerPortalEntities.SaveChanges();
+            if (formData["Answers"].Count() > 0)
+            {
+                IList<SurveyAnswer> surveyAnswers = JsonConvert.DeserializeObject<IList<SurveyAnswer>>(formData["Answers"]);
+                foreach(var answer in surveyAnswers)
+                {
+                    var surveyAnswer = new SurveyAnswer()
+                    {
+                        SurveyID = newSurvey.SurveyID,
+                        QuestionID = answer.QuestionID,
+                        Question = answer.Question,
+                        AnswerNumeric = answer.AnswerNumeric,
+                        Comments = answer.Comments,
+                        NA = false
+                    };
+                    _customerPortalEntities.SurveyAnswers.Add(surveyAnswer);
+                     _customerPortalEntities.SaveChanges();
+                }
+            }
+            
+
+            //access files  
+            IList<HttpContent> files = provider.Files;
+            if (files.Count() > 0)
+            {
+                HttpContent file1 = files[0];
+                var fileName = file1.Headers.ContentDisposition.FileName.Trim('\"');
+                Stream input = await file1.ReadAsStreamAsync();
+
+
+                var path = Path.Combine(HttpContext.Current.Server.MapPath("~/uploads/surveys"), fileName);
+                //Deletion exists file  
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                using (Stream file = File.Create(path))
+                {
+                    input.CopyTo(file);
+                    //close file  
+                    file.Close();
+                    var survey = _customerPortalEntities.Surveys.Find(newSurvey.SurveyID);
+                    if (survey != null)
+                    {
+                        survey.Attachment = "/uploads/surveys/"+ fileName;
+                          _customerPortalEntities.SaveChanges();
+                    }
+                }
+
+            }
+
+            var surveys = _customerPortalEntities.SurveyWithAvgs.Where(s => s.CustomerID == newSurvey.CustomerID).OrderByDescending(s => s.SurveyDate).AsEnumerable();
+            var results = new List<SurveyViewModel>();
+
+            foreach (var actualSurvey in surveys)
+            {
+                var surveyViewModel = new SurveyViewModel
+                {
+                    Survey = actualSurvey,
+                    SurveyDetail = _customerPortalEntities.SurveyQuestionsWithAnswers.Where(s => s.SurveyID == actualSurvey.SurveyID).AsEnumerable()
+                };
+                results.Add(surveyViewModel);
+            }
+
+            return Json(results);
+        }
+
+
+
+
+       
         public IHttpActionResult Addsurvey(SurveyPostModel survey)
         {
+            var reqeust = Request.Content;
+          
+            var path = "";
+            if (survey.Attachment.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(survey.Attachment.FileName);
+                path = Path.Combine(HttpContext.Current.Server.MapPath("~/uploads/surveys"), fileName);
+                survey.Attachment.SaveAs(path);
+            }
+
             var newSurvey = new Survey()
             {
                 CustomerID = survey.CustomerID,
@@ -57,10 +183,11 @@ namespace GVWebapi.Controllers
                 Email = survey.Email,
                 Title = survey.Title,
                 SurveyTypeID = 2,
-                SurveyDate = survey.SurveyDate
+                SurveyDate = survey.SurveyDate,
+                Attachment = path
             };
             _customerPortalEntities.Surveys.Add(newSurvey);
-            _customerPortalEntities.SaveChanges();
+           // _customerPortalEntities.SaveChanges();
 
             foreach (var answer in survey.Answers)
             {
@@ -74,7 +201,7 @@ namespace GVWebapi.Controllers
                     NA = false
                 };
                 _customerPortalEntities.SurveyAnswers.Add(surveyAnswer);
-                _customerPortalEntities.SaveChanges();
+               // _customerPortalEntities.SaveChanges();
             }
 
             var surveys = _customerPortalEntities.SurveyWithAvgs.Where(s => s.CustomerID == survey.CustomerID).OrderByDescending(s => s.SurveyDate).AsEnumerable();

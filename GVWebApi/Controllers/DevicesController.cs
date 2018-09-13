@@ -3,7 +3,7 @@ using System.Linq;
 using System.Web.Http;
 using GVWebapi.RemoteData;
 using GVWebapi.Models;
-
+using System.Data.Entity.Core.Objects;
 namespace GVWebapi.Controllers
 {
     public class DevicesController : ApiController
@@ -239,7 +239,47 @@ namespace GVWebapi.Controllers
             }
             return Ok("Device not Updated.");
         }
-        
+        [HttpPost,Route("api/placeservicecall/")]
+        public IHttpActionResult PlaceServiceCall(ServiceCallModel model)
+        {
+            var callID =  new  ObjectParameter("callID", typeof(int));
+            if (model != null)
+            {
+
+                if (model.isWorking)
+                {
+                    model.Description = model.Description + " This device is functioning";
+                }
+                else
+                {
+                    model.Description = model.Description + " This device is not functioning";
+                }
+
+                _coFreedomEntities.Web_SCInsertServiceCall(model.EquipmentID, model.Name,
+                                                      model.Description, callID,
+                                                      model.CallTypeID, model.UserID,DateTime.Now);
+            }
+           
+            return Ok();
+        }
+        [HttpPost, Route("api/placesupplycall/")]
+        public IHttpActionResult PlaceSupplyCall(ServiceCallModel model)
+        {
+            var callID = new ObjectParameter("callID", typeof(int));
+            if (model != null)
+            {
+                var Device = _coFreedomEntities.vw_admin_SCEquipments_22.Find(model.EquipmentID);
+                 
+                model.Description = "Supply Order For Device " + Device.EquipmentNumber + "\r\n Black =" + model.Black + "\r\n Cyan=" + model.Cyan + "\r\n Magenta=" + model.Magenta + "\r\n Yellow=" + model.Yellow + "\r\n Do they have supplies?:" + model.isWorking.ToString() + "\r\n Comments:\r\n " + model.Description ;
+
+                _coFreedomEntities.Web_SCInsertServiceCall(model.EquipmentID, model.Name,
+                                                      model.Description, callID,
+                                                      model.CallTypeID, model.UserID, DateTime.Now);
+            }
+
+            return Ok();
+        }
+
         [HttpGet,Route("api/servicecalls/{CustomerID}/{StartDate}/{EndDate}/{Type}/{Status}")]
         public IHttpActionResult GetCustomerservicecalls(int customerId,DateTime startDate,DateTime endDate,string type,string status)
         {

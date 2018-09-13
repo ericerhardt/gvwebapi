@@ -104,5 +104,40 @@ namespace GVWebapi.RemoteData
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<csDeviceVolumesGrid_Result>("csDeviceVolumesGrid", vd_FromDateParameter, vd_ToDateParameter, vs_DeviceIDParameter, vs_CustomerIDParameter);
         }
+    
+        public virtual int Web_SCInsertServiceCall(Nullable<int> equipmentID, string caller, string description, ObjectParameter callID,  Nullable<int> callTypeID, string userID,Nullable<DateTime> callDate)
+        {
+            var equipmentIDParameter = equipmentID.HasValue ?
+                new ObjectParameter("EquipmentID", equipmentID) :
+                new ObjectParameter("EquipmentID", typeof(int));
+    
+            var callerParameter = caller != null ?
+                new ObjectParameter("Caller", caller) :
+                new ObjectParameter("Caller", typeof(string));
+    
+            var descriptionParameter = description != null ?
+                new ObjectParameter("Description", description) :
+                new ObjectParameter("Description", typeof(string));
+    
+            
+            var callTypeIDParameter = callTypeID.HasValue ?
+                new ObjectParameter("CallTypeID", callTypeID) :
+                new ObjectParameter("CallTypeID", typeof(int));
+    
+           
+            var callDateParameter = callDate.HasValue ?
+                new ObjectParameter("CallDate", callDate) :
+                new ObjectParameter("CallDate", typeof(System.DateTime));
+    
+            
+    
+            var userIDParameter = userID != null ?
+                new ObjectParameter("UserID", userID) :
+                new ObjectParameter("UserID", typeof(string));
+    
+           
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("Web_SCInsertServiceCall", equipmentIDParameter, callerParameter, descriptionParameter, callID,   callTypeIDParameter,   callDateParameter,   userIDParameter );
+        }
     }
 }

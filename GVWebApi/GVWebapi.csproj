@@ -250,6 +250,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DateTimeExtensions.cs" />
+    <Compile Include="Helpers\InMemoryMultipartFormDataStreamProvider.cs" />
     <Compile Include="Helpers\SqlExtensions.cs" />
     <Compile Include="Migrations\201712092250024_InitialCreate.cs" />
     <Compile Include="Migrations\201712092250024_InitialCreate.Designer.cs">
@@ -310,6 +311,7 @@
     <Compile Include="Models\Schedules\ScheduleEditModel.cs" />
     <Compile Include="Models\Schedules\ScheduleSaveModel.cs" />
     <Compile Include="Models\Schedules\SchedulesModel.cs" />
+    <Compile Include="Models\ServiceCallModel.cs" />
     <Compile Include="Models\ServiceCallsViewModel.cs" />
     <Compile Include="Models\SurveyPostModel.cs" />
     <Compile Include="Models\SurveyViewModel.cs" />
@@ -789,6 +791,7 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
+    <Content Include="uploads\surveys\SupportSurveyMorsco09-07-17.pdf" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

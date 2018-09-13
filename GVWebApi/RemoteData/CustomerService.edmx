@@ -91,6 +91,7 @@
           <Property Name="Phone" Type="varchar" MaxLength="50" />
           <Property Name="SurveyDate" Type="datetime" />
           <Property Name="SurveyComments" Type="varchar" MaxLength="1050" />
+          <Property Name="Attachment" Type="varchar(max)" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'CustomerPortal.dbo.SurveyQuestionsWithAnswers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -125,6 +126,7 @@ warning 6002: The table/view 'CustomerPortal.dbo.SurveyWithAvg' does not have a 
           <Property Name="SurveyDate" Type="datetime" />
           <Property Name="Average" Type="decimal" Precision="38" Scale="6" />
           <Property Name="CustomerName" Type="varchar" MaxLength="120" />
+          <Property Name="Attachment" Type="varchar(max)" />
         </EntityType>
         <EntityContainer Name="CustomerPortalModelStoreContainer">
           <EntitySet Name="CostAvoidance" EntityType="Self.CostAvoidance" Schema="dbo" store:Type="Tables" />
@@ -156,7 +158,8 @@ warning 6002: The table/view 'CustomerPortal.dbo.SurveyWithAvg' does not have a 
     [SurveyWithAvg].[Phone] AS [Phone], 
     [SurveyWithAvg].[SurveyDate] AS [SurveyDate], 
     [SurveyWithAvg].[Average] AS [Average], 
-    [SurveyWithAvg].[CustomerName] AS [CustomerName]
+    [SurveyWithAvg].[CustomerName] AS [CustomerName], 
+    [SurveyWithAvg].[Attachment] AS [Attachment]
     FROM [dbo].[SurveyWithAvg] AS [SurveyWithAvg]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
@@ -199,6 +202,7 @@ warning 6002: The table/view 'CustomerPortal.dbo.SurveyWithAvg' does not have a 
           <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="SurveyDate" Type="DateTime" Precision="3" />
           <Property Name="SurveyComments" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
+          <Property Name="Attachment" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityContainer Name="CustomerPortalEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="SurveyAnswers" EntityType="Self.SurveyAnswer" />
@@ -227,6 +231,7 @@ warning 6002: The table/view 'CustomerPortal.dbo.SurveyWithAvg' does not have a 
           <Property Name="SurveyDate" Type="DateTime" Precision="3" />
           <Property Name="Average" Type="Decimal" Precision="38" Scale="6" />
           <Property Name="CustomerName" Type="String" MaxLength="120" FixedLength="false" Unicode="false" />
+          <Property Name="Attachment" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="CostAvoidance">
           <Key>
@@ -324,6 +329,7 @@ warning 6002: The table/view 'CustomerPortal.dbo.SurveyWithAvg' does not have a 
           <EntitySetMapping Name="Surveys">
             <EntityTypeMapping TypeName="CustomerPortalModel.Survey">
               <MappingFragment StoreEntitySet="Surveys">
+                <ScalarProperty Name="Attachment" ColumnName="Attachment" />
                 <ScalarProperty Name="SurveyID" ColumnName="SurveyID" />
                 <ScalarProperty Name="SurveyTypeID" ColumnName="SurveyTypeID" />
                 <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
@@ -340,6 +346,7 @@ warning 6002: The table/view 'CustomerPortal.dbo.SurveyWithAvg' does not have a 
           <EntitySetMapping Name="SurveyWithAvgs">
             <EntityTypeMapping TypeName="CustomerPortalModel.SurveyWithAvg">
               <MappingFragment StoreEntitySet="SurveyWithAvg">
+                <ScalarProperty Name="Attachment" ColumnName="Attachment" />
                 <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
                 <ScalarProperty Name="Average" ColumnName="Average" />
                 <ScalarProperty Name="SurveyDate" ColumnName="SurveyDate" />

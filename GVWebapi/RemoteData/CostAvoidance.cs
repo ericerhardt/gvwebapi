@@ -12,18 +12,17 @@ namespace GVWebapi.RemoteData
     using System;
     using System.Collections.Generic;
     
-    public partial class SurveyWithAvg
+    public partial class CostAvoidance
     {
-        public int SurveyID { get; set; }
-        public int SurveyTypeID { get; set; }
+        public int CostAvoidanceID { get; set; }
         public int CustomerID { get; set; }
-        public string Name { get; set; }
-        public string Title { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public Nullable<System.DateTime> SurveyDate { get; set; }
-        public Nullable<decimal> Average { get; set; }
-        public string CustomerName { get; set; }
-        public string Attachment { get; set; }
+        public string Location { get; set; }
+        public Nullable<System.DateTime> SavingsDate { get; set; }
+        public Nullable<System.DateTime> EndDate { get; set; }
+        public Nullable<int> SavingsType { get; set; }
+        public Nullable<decimal> SavingsCost { get; set; }
+        public Nullable<decimal> TotalSavingsCost { get; set; }
+        public Nullable<int> Months { get; set; }
+        public string Comments { get; set; }
     }
 }

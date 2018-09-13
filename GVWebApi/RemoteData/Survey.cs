@@ -24,5 +24,6 @@ namespace GVWebapi.RemoteData
         public string Phone { get; set; }
         public Nullable<System.DateTime> SurveyDate { get; set; }
         public string SurveyComments { get; set; }
+        public string Attachment { get; set; }
     }
 }
