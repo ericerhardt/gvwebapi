@@ -55,20 +55,7 @@ namespace GVWebapi.Controllers
             };
             return Json(output);
         }
-        [HttpPost,Route("api/surveyupload/")]
-        public IHttpActionResult SurveyUpload(HttpPostedFileBase file)
-        {
-            
-           
-
-                if (file.ContentLength > 0)
-                {
-                    var fileName = Path.GetFileName(file.FileName);
-                    var path = Path.Combine(HttpContext.Current.Server.MapPath("~/App_Data/uploads/surveys"), fileName);
-                    file.SaveAs(path);
-                }
-                return Ok();
-        }
+       
         [HttpPost, Route("api/addsurvey/")]
         public async Task<IHttpActionResult> PostFormData()
         {
@@ -160,66 +147,6 @@ namespace GVWebapi.Controllers
             return Json(results);
         }
 
-
-
-
-       
-        public IHttpActionResult Addsurvey(SurveyPostModel survey)
-        {
-            var reqeust = Request.Content;
-          
-            var path = "";
-            if (survey.Attachment.ContentLength > 0)
-            {
-                var fileName = Path.GetFileName(survey.Attachment.FileName);
-                path = Path.Combine(HttpContext.Current.Server.MapPath("~/uploads/surveys"), fileName);
-                survey.Attachment.SaveAs(path);
-            }
-
-            var newSurvey = new Survey()
-            {
-                CustomerID = survey.CustomerID,
-                Name = survey.Name,
-                Email = survey.Email,
-                Title = survey.Title,
-                SurveyTypeID = 2,
-                SurveyDate = survey.SurveyDate,
-                Attachment = path
-            };
-            _customerPortalEntities.Surveys.Add(newSurvey);
-           // _customerPortalEntities.SaveChanges();
-
-            foreach (var answer in survey.Answers)
-            {
-                var surveyAnswer = new SurveyAnswer()
-                {
-                    SurveyID = newSurvey.SurveyID,
-                    QuestionID = answer.QuestionID,
-                    Question = answer.Question,
-                    AnswerNumeric = answer.AnswerNumeric,
-                    Comments = answer.Comments,
-                    NA = false
-                };
-                _customerPortalEntities.SurveyAnswers.Add(surveyAnswer);
-               // _customerPortalEntities.SaveChanges();
-            }
-
-            var surveys = _customerPortalEntities.SurveyWithAvgs.Where(s => s.CustomerID == survey.CustomerID).OrderByDescending(s => s.SurveyDate).AsEnumerable();
-            var results = new List<SurveyViewModel>();
-
-            foreach (var actualSurvey in surveys)
-            {
-                var surveyViewModel = new SurveyViewModel
-                {
-                    Survey = actualSurvey,
-                    SurveyDetail = _customerPortalEntities.SurveyQuestionsWithAnswers.Where(s => s.SurveyID == actualSurvey.SurveyID).AsEnumerable()
-                };
-                results.Add(surveyViewModel);
-            }
-
-            return Json(results);
-        }
-
         [ResponseType(typeof(Survey))]
         public async Task<IHttpActionResult> GetSurvey(int id)
         {
@@ -239,41 +166,20 @@ namespace GVWebapi.Controllers
 
         }
 
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutSurvey(int id, Survey survey)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != survey.SurveyID)
-            {
-                return BadRequest();
-            }
-
-            _customerPortalEntities.Entry(survey).State = System.Data.Entity.EntityState.Modified;
-
-            try
-            {
-                await _customerPortalEntities.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SurveyExists(id))
-                {
-                    return NotFound();
-                }
-
-                throw;
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
-
-        [ResponseType(typeof(Survey))]
+        
+        [Route("api/deletesurvey/{id}")]       
         public async Task<IHttpActionResult> DeleteSurvey(int id)
         {
+            var surveyAnswers = _customerPortalEntities.SurveyAnswers.Where(a => a.SurveyID == id);
+            if(surveyAnswers != null)
+            {
+                foreach(var answer in surveyAnswers)
+                {
+                    _customerPortalEntities.SurveyAnswers.Remove(answer);
+                    await _customerPortalEntities.SaveChangesAsync();
+                }
+              
+            }
             var survey = await _customerPortalEntities.Surveys.FindAsync(id);
             if (survey == null)
             {
