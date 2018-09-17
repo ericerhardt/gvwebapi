@@ -91,11 +91,7 @@ namespace GVWebapi.Controllers
             return Ok();
         }
 
-        [HttpGet, Route("api/editschedule/devices/removed/{customerId}")]
-        public IHttpActionResult GetRemovedDevices(long customerId)
-        {
-            return Ok(_deviceService.GetRemovedDevices(customerId));
-        }
+       
 
         [HttpGet, Route("api/editschedule/devices/replacementinfo/{scheduleId}")]
         public IHttpActionResult GetReplacementDeviceInfo(long scheduleId)

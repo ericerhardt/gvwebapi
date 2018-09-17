@@ -14,8 +14,8 @@ namespace GVWebapi.Services
     {
         IList<DeviceModel> GetActiveDevices(long scheduleId);
         IList<DeviceModel> GetUnallocatedDevices(long scheduleId);
-        IList<DeviceModel> GetRemovedDevices(long scheduleId);
-        vw_admin_EquipmentList_MeterGroup GetDeviceByID(long deviceId);
+
+        DeviceModel GetDeviceByID(long deviceId);
         void DeleteDevice(long deviceId);
         void SaveDevice(DeviceSaveModel model);
         decimal DeviceTotalCost(long scheduleId);
@@ -33,74 +33,68 @@ namespace GVWebapi.Services
         private readonly IRepository _repository;
         private readonly ICoFreedomDeviceService _coFreedomDeviceService;
         private readonly ICoFreedomRepository _coFreedomRepository;
-
-        public DeviceService(IRepository repository, ICoFreedomDeviceService coFreedomDeviceService, ICoFreedomRepository coFreedomRepository)
+        private readonly ILocationsService _locationsService;
+        public DeviceService(IRepository repository, ICoFreedomDeviceService coFreedomDeviceService, ICoFreedomRepository coFreedomRepository, ILocationsService locationsService)
         {
             _repository = repository;
             _coFreedomDeviceService = coFreedomDeviceService;
             _coFreedomRepository = coFreedomRepository;
+            _locationsService = locationsService;
         }
 
         public IList<DeviceModel> GetActiveDevices(long scheduleId)
         {
             var schedule = _repository.Get<SchedulesEntity>(scheduleId);
-
-            var globalViewEntities = _repository.Find<DevicesEntity>()
-                .Where(x => x.Schedule.ScheduleId == scheduleId)
-                .Where(x => x.RemovedStatus == null || x.RemovedStatus == RemovedStatusEnum.SetForRemoval)
-                .ToList();
-           
-
-            var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevices(schedule.Name, schedule.CustomerId);
-
-            return MergeGlobalViewAndCoFreedom(globalViewEntities, coFreedomDevices);
-
-        }
-
-        private static List<DeviceModel> MergeGlobalViewAndCoFreedom(List<DevicesEntity> globalViewEntities, IList<vw_admin_EquipmentList_MeterGroup> coFreedomDevices)
-        {
             var devices = new List<DeviceModel>();
-            foreach (var globalViewEntity in globalViewEntities)
+            var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevices(schedule.Name, schedule.CustomerId);
+            foreach(var device in coFreedomDevices)
             {
-                var existingCoFreedomDevice = coFreedomDevices.FirstOrDefault(x => x.EquipmentID == globalViewEntity.EquipmentId);
-                if (existingCoFreedomDevice == null) continue;
-                devices.Add(DeviceModel.For(globalViewEntity, existingCoFreedomDevice));
+                var taxrate = _locationsService.GetTaxRate(device.LocName);
+                devices.Add(DeviceModel.For(taxrate,device));
             }
 
             return devices;
+
         }
-        private static  DeviceModel  MergeGlobalViewAndCoFreedomDevice(DevicesEntity globalViewEntity, vw_admin_EquipmentList_MeterGroup coFreedomDevice)
-        { 
-            var device = DeviceModel.For(globalViewEntity, coFreedomDevice);
-            return device;
-        }
+
+        //private static List<DeviceModel> MergeGlobalViewAndCoFreedom(List<DevicesEntity> globalViewEntities, IList<vw_admin_EquipmentList_MeterGroup> coFreedomDevices)
+        //{
+        //    var devices = new List<DeviceModel>();
+        //    foreach (var globalViewEntity in globalViewEntities)
+        //    {
+        //        var existingCoFreedomDevice = coFreedomDevices.FirstOrDefault(x => x.EquipmentID == globalViewEntity.EquipmentId);
+        //        if (existingCoFreedomDevice == null) continue;
+        //        devices.Add(DeviceModel.For(globalViewEntity, existingCoFreedomDevice));
+        //    }
+
+        //    return devices;
+        //}
+        //private static  DeviceModel  MergeGlobalViewAndCoFreedomDevice(DevicesEntity globalViewEntity, vw_admin_EquipmentList_MeterGroup coFreedomDevice)
+        //{ 
+        //    var device = DeviceModel.For(globalViewEntity, coFreedomDevice);
+        //    return device;
+        //}
 
 
         public IList<DeviceModel> GetUnallocatedDevices(long customerId)
         {
             
-            var globalViewEntities = _repository.Find<DevicesEntity>()
-                .Where(x => x.Schedule == null)
-                .Where(x => x.CustomerId == customerId)
+            var globalViewEntities = _repository.Find<vw_admin_EquipmentList_MeterGroup>()
+                .Where(x => x.ScheduleNumber == null)
+                .Where(x => x.CustomerID == customerId)
                 .ToList();
+            var devices = new List<DeviceModel>();
+            foreach (var device in globalViewEntities)
+            {
+                var taxrate = _locationsService.GetTaxRate(device.LocName);
+                devices.Add(DeviceModel.For(taxrate,device));
+            }
 
-            var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevicesNoSchedule(customerId);
-
-            return MergeGlobalViewAndCoFreedom(globalViewEntities, coFreedomDevices);
+            return devices;
+ 
         }
 
-        public IList<DeviceModel> GetRemovedDevices(long customerId)
-        {
-           
-            var globalViewEntities = _repository.Find<DevicesEntity>()
-                .Where(x => x.RemovedStatus == RemovedStatusEnum.Removed)
-                .Where(x => x.CustomerId == customerId)
-                .ToList();
-
-            var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevices(customerId);
-
-            return MergeGlobalViewAndCoFreedom(globalViewEntities, coFreedomDevices);
-        }
+       
 
         public void DeleteDevice(long EquipmentId)
         {
@@ -235,13 +229,12 @@ namespace GVWebapi.Services
             return _repository.Find<DevicesEntity>()
                 .FirstOrDefault(x => x.EquipmentNumber.ToLower() == equipmentNumber.ToLower());
         }
-        public vw_admin_EquipmentList_MeterGroup GetDeviceByID(long EquipmentID)
+        public DeviceModel GetDeviceByID(long EquipmentID)
         {
-
-            
             var eaDevice = _coFreedomDeviceService.GetCoFreedomDevice(EquipmentID);
-           
-            return eaDevice; 
+            var taxrate = _locationsService.GetTaxRate(eaDevice.LocName);
+            var Device = DeviceModel.For(taxrate,eaDevice);
+            return Device; 
 
         }
 

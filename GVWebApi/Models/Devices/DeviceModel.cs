@@ -7,25 +7,23 @@ namespace GVWebapi.Models.Devices
 {
     public class DeviceModel
     {
-        public static DeviceModel For(DevicesEntity deviceEntity, vw_admin_EquipmentList_MeterGroup coFreedomDevice)
+        public static DeviceModel For(decimal taxRate, vw_admin_EquipmentList_MeterGroup coFreedomDevice)
         {
+            Decimal.TryParse(coFreedomDevice.MonthlyCost, out decimal MontlyCost);
             var model = new DeviceModel();
-            model.DeviceId = deviceEntity.DeviceId;
-            model.EquipmentId = deviceEntity.EquipmentId;
-            model.EquipmentNumber = deviceEntity.EquipmentNumber;
-            model.SerialNumber = deviceEntity.SerialNumber;
-            model.Model = deviceEntity.Model;
-            model.ScheduleNumber = deviceEntity.Schedule?.Name;
-            model.Exhibit = GetExhibit(coFreedomDevice);
+            model.EquipmentId = coFreedomDevice.EquipmentID;
+            model.EquipmentNumber = coFreedomDevice.EquipmentNumber;
+            model.SerialNumber = coFreedomDevice.SerialNumber;
+            model.Model = coFreedomDevice.Model;
+            model.ScheduleNumber = coFreedomDevice.ScheduleNumber;
+            model.Exhibit = coFreedomDevice.OwnershipType;
             model.Location = coFreedomDevice.LocName;
             model.User = coFreedomDevice.AssetUser;
             model.CostCenter = coFreedomDevice.CostCenter;
-            model.Status = GetDeviceStatus(coFreedomDevice, deviceEntity);
-            model.MonthlyCost = deviceEntity.MonthlyCost;
-            model.Disposition = deviceEntity.Disposition;
-            model.RemovedDateTime = deviceEntity.RemovalDateTime?.LocalDateTime;
+            model.Status = coFreedomDevice.Active ;
+            model.MonthlyCost = MontlyCost;
             model.DeviceType = coFreedomDevice.ModelCategory;
-
+            model.TaxRate = taxRate;
             return model;
         }
 
@@ -76,7 +74,7 @@ namespace GVWebapi.Models.Devices
         public string User { get; set; }
         public string CostCenter { get; set; }
         public decimal MonthlyCost { get; set; }
-        public DeviceStatusEnum Status { get; set; }
+        public bool Status { get; set; }
         public string Disposition { get; set; }
         public DateTime? RemovedDateTime { get; set; }
         public string DeviceType {get; set; }

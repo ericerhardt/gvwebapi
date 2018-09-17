@@ -8,6 +8,7 @@ using GV.Domain;
 using GV.Domain.Entities;
 using GV.Services;
 using GVWebapi.Models.Devices;
+using GVWebapi.RemoteData;
 
 namespace GVWebapi.Services
 {
@@ -137,32 +138,29 @@ namespace GVWebapi.Services
                 .Where(x => x.StartDate >= minDate)
                 .Where(x => x.EndDate <= maxDate)
                 .ToList();
-
             foreach (var schedule in modelSchedules)
             {
                 var activeDevices = _deviceService.GetActiveDevices(schedule.ScheduleId);
-                foreach (var activeDevice in activeDevices)
-                {
-                    activeDevice.TaxRate = _locationsService.GetTaxRate(activeDevice.Location);
-                    LoadHardwareCost(activeDevice, deviceRates);
-                }
+                
                 allDevices.AddRange(activeDevices);
             }
+
+
             return allDevices;
         }
 
-        private void LoadHardwareCost(DeviceModel activeDevice, List<ViewEquipmentAndRate> deviceRates)
-        {
-            var actualDeviceRates = deviceRates
-                .Where(x => x.EquipmentSerialNumber.ToLower().Trim() == activeDevice.SerialNumber.Trim().ToLower())
-                .Where(x => x.EquipmentNumber.ToLower().Trim() == activeDevice.EquipmentNumber.Trim().ToLower())
-                .ToList();
+        //private void LoadHardwareCost(vw_admin_EquipmentList_MeterGroup activeDevice, decimal deviceRates)
+        //{
+        //    var actualDeviceRates = deviceRates
+        //        .Where(x => x.EquipmentSerialNumber.ToLower().Trim() == activeDevice.SerialNumber.Trim().ToLower())
+        //        .Where(x => x.EquipmentNumber.ToLower().Trim() == activeDevice.EquipmentNumber.Trim().ToLower())
+        //        .ToList();
 
-            foreach (var viewEquipmentAndRate in actualDeviceRates)
-            {
-                activeDevice.MonthlyCost += viewEquipmentAndRate.DifferenceCopies * viewEquipmentAndRate.EffectiveRate;
-            }
-        }
+        //    foreach (var viewEquipmentAndRate in actualDeviceRates)
+        //    {
+        //        activeDevice.MonthlyCost += viewEquipmentAndRate.DifferenceCopies * viewEquipmentAndRate.EffectiveRate;
+        //    }
+        //}
 
         public void SaveInstancesInvoiced(InvoiceInstanceSaveModel model)
         {
@@ -245,7 +243,7 @@ namespace GVWebapi.Services
 
     public class CyclePeriodScheduleModel
     {
-        public long CyclePeriodScheduleId { get; set; }
+        public long CyclePeriodScheduleId { get; set; }  
         public long ScheduleId { get; set; }
         public string ScheduleName { get; set; }
         public decimal Service { get; set; }
