@@ -4,7 +4,8 @@ namespace GV.Domain.Views
 {
     public class ViewMonthlyDeviceCosts
     {
-        public int InvoiceId { get; set; }
+        public int InvoiceID { get; set; }
+        public int EquipmentID { get; set; }
         public string CustomerName { get; set; }
         public string ContractNumber { get; set; }
         public string EquipmentCustomerName { get; set; }

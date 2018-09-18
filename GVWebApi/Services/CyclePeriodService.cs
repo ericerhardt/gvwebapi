@@ -182,6 +182,7 @@ namespace GVWebapi.Services
                 .Where(x => x.IsDeleted == false)
                 .Where(x => x.EffectiveDateTime != null)
                 .Where(x => x.ExpiredDateTime != null)
+                .Where(x => x.CustomerId == cycle.CustomerId)
                 .Where(x => cycle.StartDate.Date >= x.EffectiveDateTime.Value.Date)
                 .Where(x => cycle.EndDate.Value <= x.ExpiredDateTime.Value.Date)
 

@@ -88,6 +88,8 @@ namespace GVWebapi.Services
 
         public decimal GetTaxRate(string location)
         {
+            if (String.IsNullOrWhiteSpace(location))
+                return 0.00M;
             var locationEntity = _repository
                 .Find<LocationEntity>()
                 .Where(x => x.IsDeleted == false)

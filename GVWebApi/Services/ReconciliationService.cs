@@ -108,19 +108,19 @@ namespace GVWebapi.Services
 
         private IList<CostByDeviceModel> GetCostByDevice(ReconciliationViewModel model, CyclesEntity cycle)
         {
-            var query = $"select * from _custom_eviews.vw_monthly_device_costs where customerId = {cycle.CustomerId} and beginmeterdate >= '{model.StartDate:yyyy/MM/dd}' and endmeterdate <= '{model.EndDate:yyyy/MM/dd}'";
+            var query = $"select * from _custom_eviews.vw_monthly_device_costs where customerId = {cycle.CustomerId} and beginmeterdate >= '{model.StartDate:yyyy-MM-dd}' and endmeterdate <= '{model.EndDate:yyyy-MM-dd}'";
             var items = _coFreedomRepository.ExecuteSQL<ViewMonthlyDeviceCosts>(query);
 
             var costByDevices = new List<CostByDeviceModel>();
             var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevices(cycle.CustomerId);
 
-            var distinctEquipmentItems = items.Select(x => x.EquipmentNumber).Distinct().ToList();
-            foreach (var equipmentNumber in distinctEquipmentItems)
+            var distinctEquipmentItems = items.Select(x => x.EquipmentID).Distinct().ToList();
+            foreach (var equipmentID in distinctEquipmentItems)
             {
-                var globalViewDevice = _deviceService.GetDevice(equipmentNumber);
+                var globalViewDevice = _deviceService.GetDevice(equipmentID);
                 if(globalViewDevice == null) continue;
 
-                var coFreedomDevice = coFreedomDevices.FirstOrDefault(x => x.EquipmentID == globalViewDevice.EquipmentId);
+                var coFreedomDevice = coFreedomDevices.FirstOrDefault(x => x.EquipmentID == globalViewDevice.EquipmentID);
                 
                 var costByDeviceModel = new CostByDeviceModel();
                 costByDeviceModel.SerialNumber = globalViewDevice.SerialNumber;
@@ -129,35 +129,35 @@ namespace GVWebapi.Services
                 costByDeviceModel.Location = coFreedomDevice?.Location;
                 costByDeviceModel.User = coFreedomDevice?.AssetUser;
                 costByDeviceModel.CostCenter = coFreedomDevice?.CostCenter;
-                costByDeviceModel.BWCopies = GetBwCopies(items, equipmentNumber);
-                costByDeviceModel.BWPrints = GetBwPrints(items, equipmentNumber);
-                costByDeviceModel.ColorCopies = GetColorCopies(items, equipmentNumber);
+                costByDeviceModel.BWCopies = GetBwCopies(items, equipmentID);
+                costByDeviceModel.BWPrints = GetBwPrints(items, equipmentID);
+                costByDeviceModel.ColorCopies = GetColorCopies(items, equipmentID);
                 costByDevices.Add(costByDeviceModel);
             }
 
             return costByDevices;
         }
 
-        private static decimal GetColorCopies(IList<ViewMonthlyDeviceCosts> items, string equipmentNumber)
+        private static decimal GetColorCopies(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber)
         {
             return items
-                .Where(x => x.EquipmentNumber.EqualsIgnore(equipmentNumber))
+                .Where(x => x.EquipmentID == equipmentNumber)
                 .Where(x => x.ContractMeterGroup.EqualsIgnore("color laser prints")|| x.ContractMeterGroup.EqualsIgnore("color copies (color pages)"))
                 .Sum(x => x.BilledAmount);
         }
 
-        private static decimal GetBwPrints(IList<ViewMonthlyDeviceCosts> items, string equipmentNumber)
+        private static decimal GetBwPrints(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber)
         {
             return items
-                .Where(x => x.EquipmentNumber.EqualsIgnore(equipmentNumber))
+                .Where(x => x.EquipmentID == equipmentNumber)
                 .Where(x => x.ContractMeterGroup.EqualsIgnore("b/w copies"))
                 .Sum(x => x.BilledAmount);
         }
 
-        private static decimal GetBwCopies(IList<ViewMonthlyDeviceCosts> items, string equipmentNumber)
+        private static decimal GetBwCopies(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber)
         {
             return items
-                .Where(x => x.EquipmentNumber.EqualsIgnore(equipmentNumber))
+                .Where(x => x.EquipmentID == equipmentNumber)
                 .Where(x => x.ContractMeterGroup.EqualsIgnore("b/w laser prints"))
                 .Sum(x => x.BilledAmount);
         }

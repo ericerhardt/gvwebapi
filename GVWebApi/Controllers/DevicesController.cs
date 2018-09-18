@@ -255,9 +255,9 @@ namespace GVWebapi.Controllers
                     model.Description = model.Description + " This device is not functioning";
                 }
 
-                _coFreedomEntities.Web_SCInsertServiceCall(model.EquipmentID, model.Name,
-                                                      model.Description, callID,
-                                                      model.CallTypeID, model.UserID,DateTime.Now);
+           //     _coFreedomEntities.Web_SCInsertServiceCall(model.EquipmentID, model.Name,
+           //                                           model.Description, callID,
+           //                                           model.CallTypeID, model.UserID,DateTime.Now);
             }
            
             return Ok();
@@ -272,9 +272,9 @@ namespace GVWebapi.Controllers
                  
                 model.Description = "Supply Order For Device " + Device.EquipmentNumber + "\r\n Black =" + model.Black + "\r\n Cyan=" + model.Cyan + "\r\n Magenta=" + model.Magenta + "\r\n Yellow=" + model.Yellow + "\r\n Do they have supplies?:" + model.isWorking.ToString() + "\r\n Comments:\r\n " + model.Description ;
 
-                _coFreedomEntities.Web_SCInsertServiceCall(model.EquipmentID, model.Name,
-                                                      model.Description, callID,
-                                                      model.CallTypeID, model.UserID, DateTime.Now);
+             //   _coFreedomEntities.Web_SCInsertServiceCall(model.EquipmentID, model.Name,
+             //                                         model.Description, callID,
+             //                                         model.CallTypeID, model.UserID, DateTime.Now);
             }
 
             return Ok();

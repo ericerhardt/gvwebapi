@@ -24,7 +24,7 @@ namespace GVWebapi.Services
         void ConfirmFormatterReplacement(FormatterReplacedModel model);
         IList<DeviceSearchModel> GetDevicesToSearch(long scheduleId);
         void AddReplacementDevice(DeviceReplacementSaveModel model);
-        DevicesEntity GetDevice(string equipmentNumber);
+        vw_admin_EquipmentList_MeterGroup GetDevice(int equipmentID);
        
 }
 
@@ -224,10 +224,10 @@ namespace GVWebapi.Services
             _repository.Add(replacementEntity);
         }
 
-        public DevicesEntity GetDevice(string equipmentNumber)
+        public vw_admin_EquipmentList_MeterGroup GetDevice(int equipmentID)
         {
-            return _repository.Find<DevicesEntity>()
-                .FirstOrDefault(x => x.EquipmentNumber.ToLower() == equipmentNumber.ToLower());
+            return  _coFreedomDeviceService.GetCoFreedomDevice(equipmentID);
+               
         }
         public DeviceModel GetDeviceByID(long EquipmentID)
         {
