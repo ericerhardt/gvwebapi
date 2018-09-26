@@ -28,14 +28,16 @@ namespace GVWebapi.Services
     public class ScheduleService : IScheduleService
     {
         private readonly IScheduleServicesService _scheduleServicesService;
+        private readonly IDeviceService _deviceService;
         private readonly IRepository _repository;
         private readonly ICoFreedomDeviceService _coFreedomDeviceService;
 
-        public ScheduleService(IRepository repository, ICoFreedomDeviceService coFreedomDeviceService, IScheduleServicesService scheduleServicesService)
+        public ScheduleService(IRepository repository, ICoFreedomDeviceService coFreedomDeviceService, IScheduleServicesService scheduleServicesService, IDeviceService deviceService)
         {
             _repository = repository;
             _coFreedomDeviceService = coFreedomDeviceService;
             _scheduleServicesService = scheduleServicesService;
+            _deviceService = deviceService;
         }
         public bool ScheduleExists(ScheduleSaveModel model)
         {
@@ -90,6 +92,8 @@ namespace GVWebapi.Services
                     _repository.Add(scheduleServiceModel);
                 }
             }
+             var TotalCost = _deviceService.DeviceTotalCost(results.ScheduleId);
+             UpdateMonthyHardwareCost(TotalCost, results.ScheduleId);
         }
         private static DateTimeOffset? GetExpiredDateTime(DateTimeOffset? effectiveDate, int? term)
         {
@@ -108,10 +112,7 @@ namespace GVWebapi.Services
 
             if (schedules.Count > 0)
             {
-
-            
-                
-
+ 
                 foreach (var schedulesModel in schedules)
                 {
                     
@@ -125,6 +126,8 @@ namespace GVWebapi.Services
         {
             var schedule = _repository.Get<SchedulesEntity>(scheduleId);
             schedule.IsDeleted = true;
+            var TotalCost = _deviceService.DeviceTotalCost(schedule.ScheduleId);
+            UpdateMonthyHardwareCost(TotalCost, schedule.ScheduleId);
         }
 
         public IList<CoterminousModel> GetCoterminous(long customerId)
@@ -196,21 +199,35 @@ namespace GVWebapi.Services
             schedule.MonthlyHwCost = value;
             _repository.Add(schedule);
         }
+        private string GetSufix(string ScheduleName)
+        {
+            var results = String.Empty;
+            if(ScheduleName.Length > 13)
+            {
+                results = ScheduleName.Substring(ScheduleName.Length - 6, 3);
+            } else
+            {
+                results = ScheduleName.Substring(ScheduleName.Length - 3, 3);
+            }
+         
+            return results;
+        }
         public void UpdateSchedule(ScheduleSaveModel model)
         {
             var schedule = _repository.Get<SchedulesEntity>(model.ScheduleId);
             if (schedule == null) return;
-            schedule.Suffix = Int32.Parse(model.Name.Substring(model.Name.Length - 3,3));
+            schedule.Suffix = Int32.Parse(GetSufix(model.Name));
             schedule.Name = model.Name;
             schedule.MonthlyContractCost = model.MonthlyContractCost;
             schedule.ModifiedDateTime = DateTimeOffset.Now;
 
             if (model.CoterminousId.HasValue)
             {
-                schedule.ExpiredDateTime = null;
-                schedule.EffectiveDateTime = null;
-                schedule.Term = null;
+              
+                schedule.EffectiveDateTime = model.EffectiveDateTime;
+                schedule.Term = model.Term;
                 schedule.CoterminousSchedule = _repository.Load<SchedulesEntity>(model.CoterminousId.Value);
+                schedule.ExpiredDateTime = schedule.CoterminousSchedule.ExpiredDateTime;
             }
             else
             {
@@ -218,6 +235,8 @@ namespace GVWebapi.Services
                 schedule.Term = model.Term;
                 schedule.ExpiredDateTime = GetExpiredDateTime(model.EffectiveDateTime, model.Term);
             }
+            var TotalCost = _deviceService.DeviceTotalCost(model.ScheduleId);
+            UpdateMonthyHardwareCost(TotalCost, model.ScheduleId);
         }
 
         public IList<SchedulesModel> GetActiveSchedules(long deviceId)
@@ -254,6 +273,7 @@ namespace GVWebapi.Services
 
         public SchedulesModel GetSchedule(long scheduleId)
         {
+
             return SchedulesModel.For(_repository.Get<SchedulesEntity>(scheduleId));
         }
 

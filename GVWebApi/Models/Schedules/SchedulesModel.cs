@@ -36,6 +36,7 @@ namespace GVWebapi.Models.Schedules
         public decimal MonthlyContractCost { get; set; }
         public DateTimeOffset CreatedDateTime { get; set; }
         public long? CoterminousScheduleId { get; set; }
+        public DateTimeOffset? CoterminousEffectiveDateTime { get; set; }
         //this is used in the client
         public decimal TotalCost => MonthlySvcCost + MonthlyHwCost;
         public int DeviceCount { get; private set;}
@@ -45,9 +46,10 @@ namespace GVWebapi.Models.Schedules
         {
             if (entity.CoterminousSchedule != null)
             {
-                model.EffectiveDateTime = entity.CoterminousSchedule.EffectiveDateTime;
+                
                 model.ExpiredDateTime = entity.CoterminousSchedule.ExpiredDateTime;
-                model.Term = entity.CoterminousSchedule.Term;
+                model.CoterminousScheduleId = entity.CoterminousSchedule.ScheduleId;
+                model.CoterminousEffectiveDateTime = entity.CoterminousSchedule.EffectiveDateTime;
             }
             else
             {

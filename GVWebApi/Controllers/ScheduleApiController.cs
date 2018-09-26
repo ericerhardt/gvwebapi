@@ -44,7 +44,7 @@ namespace GVWebapi.Controllers
         [HttpGet,Route("api/schedules/all/{customerId}")]
         public IHttpActionResult GetAll(long customerId)
         {
-            return Ok(_scheduleService.GetAll(customerId));
+            return Json(_scheduleService.GetAll(customerId));
         }
 
         [HttpGet,Route("api/schedules/delete/{scheduleId}")]

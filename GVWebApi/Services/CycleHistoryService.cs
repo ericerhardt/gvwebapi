@@ -37,6 +37,7 @@ namespace GVWebapi.Services
                 .Where(x => x.EffectiveDateTime <= DateTimeOffset.Now)
                 .ToList();
 
+
             var availableDates = new List<DateTime>();
             foreach (var schedule in schedules)
             {
@@ -49,12 +50,13 @@ namespace GVWebapi.Services
                     startDateTime = startDateTime.AddMonths(1);
                 }
 
-                availableDates = availableDates
-                    .Where(x => x.IsBefore(DateTime.Now.Date))
-                    .Where(x => x.IsAfter(schedulesDates.StartDate.Date))
-                    .ToList();
+                
             }
-
+            var StartDate = availableDates.FirstOrDefault();
+            availableDates = availableDates
+                    .Where(x => x.IsBefore(DateTime.Now.Date))
+                    .Where(x => x.IsAfter(StartDate.AddMonths(-1)))
+                    .ToList();
             var activeCycles = GetActiveCycles(customerId);
 
             var finalDates = new List<DateTime>();
@@ -76,8 +78,15 @@ namespace GVWebapi.Services
         public void AddNewCycle(NewCycleModel model)
         {
             var newCycle = new CyclesEntity(model.CustomerId, model.CycleDate);
-            newCycle.InvisibleToClient = true;
+            newCycle.InvisibleToClient = true;          
             _repository.Add(newCycle);
+            //var newPeriod = new CyclePeriodEntity(newCycle);
+            //var periodDate = newCycle.StartDate;
+            //newCycle.EndDate = model.CycleDate.AddMonths(1);
+            //newPeriod.Period = periodDate;
+            //newCycle.ModifiedDateTime = DateTimeOffset.Now;
+            //newCycle.AddNewPeriod(newPeriod);
+            _cyclePeriodService.AddPeriodToCycle(newCycle.CycleId);
         }
 
         public IList<CycleHistoryViewModel> GetActiveCycles(long customerId)
@@ -93,11 +102,12 @@ namespace GVWebapi.Services
                     InvisibleToClient = x.InvisibleToClient,
                     CycleStartDate = x.StartDate,
                     EndDate = x.EndDate,
-                    IsReconciled = x.IsReconciled
-                    
+                    IsReconciled = x.IsReconciled,
+                  
+ 
                 }).ToList();
 
-            
+           
             var maxItem = items.Count;
             foreach (var item in items)
             {

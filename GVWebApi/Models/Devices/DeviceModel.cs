@@ -18,6 +18,7 @@ namespace GVWebapi.Models.Devices
             model.ScheduleNumber = coFreedomDevice.ScheduleNumber;
             model.Exhibit = coFreedomDevice.OwnershipType;
             model.Location = coFreedomDevice.LocName;
+            model.LocationID = coFreedomDevice.LocationID;
             model.User = coFreedomDevice.AssetUser;
             model.CostCenter = coFreedomDevice.CostCenter;
             model.Status = coFreedomDevice.Active ;
@@ -71,6 +72,7 @@ namespace GVWebapi.Models.Devices
         public string ScheduleNumber { get; set; }
         public string Exhibit { get; set; }
         public string Location { get; set; }
+        public int?   LocationID { get; set; }
         public string User { get; set; }
         public string CostCenter { get; set; }
         public decimal MonthlyCost { get; set; }
@@ -79,7 +81,7 @@ namespace GVWebapi.Models.Devices
         public DateTime? RemovedDateTime { get; set; }
         public string DeviceType {get; set; }
         public decimal TaxRate { get; set; }
-        public decimal CalculatedTax => MonthlyCost * TaxRate;
+        public decimal CalculatedTax => MonthlyCost * (TaxRate / 100);
         public decimal UnitTotal => CalculatedTax + MonthlyCost;
     }
 }
