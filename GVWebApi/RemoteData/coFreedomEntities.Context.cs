@@ -105,7 +105,7 @@ namespace GVWebapi.RemoteData
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<csDeviceVolumesGrid_Result>("csDeviceVolumesGrid", vd_FromDateParameter, vd_ToDateParameter, vs_DeviceIDParameter, vs_CustomerIDParameter);
         }
     
-        public virtual int Web_SCInsertServiceCall(Nullable<int> equipmentID, string caller, string description, ObjectParameter callID, string customerPO, Nullable<int> eQCustID, string equipDesc, string equipModel, string equipSN, Nullable<int> equipCreate, Nullable<int> callTypeID, Nullable<int> workOrderID, string workOrderNumber, string workOrderRemarks, string callNumber, Nullable<System.DateTime> callDate, Nullable<int> customContractID, Nullable<int> customBillCodeID, Nullable<int> jobID, string userID, Nullable<int> locationID, Nullable<int> itemID)
+        public virtual ObjectResult<Nullable<int>> Web_SCInsertServiceCall(Nullable<int> equipmentID, string caller, string description, ObjectParameter callID)
         {
             var equipmentIDParameter = equipmentID.HasValue ?
                 new ObjectParameter("EquipmentID", equipmentID) :
@@ -119,79 +119,9 @@ namespace GVWebapi.RemoteData
                 new ObjectParameter("Description", description) :
                 new ObjectParameter("Description", typeof(string));
     
-            var customerPOParameter = customerPO != null ?
-                new ObjectParameter("CustomerPO", customerPO) :
-                new ObjectParameter("CustomerPO", typeof(string));
+            
     
-            var eQCustIDParameter = eQCustID.HasValue ?
-                new ObjectParameter("EQCustID", eQCustID) :
-                new ObjectParameter("EQCustID", typeof(int));
-    
-            var equipDescParameter = equipDesc != null ?
-                new ObjectParameter("EquipDesc", equipDesc) :
-                new ObjectParameter("EquipDesc", typeof(string));
-    
-            var equipModelParameter = equipModel != null ?
-                new ObjectParameter("EquipModel", equipModel) :
-                new ObjectParameter("EquipModel", typeof(string));
-    
-            var equipSNParameter = equipSN != null ?
-                new ObjectParameter("EquipSN", equipSN) :
-                new ObjectParameter("EquipSN", typeof(string));
-    
-            var equipCreateParameter = equipCreate.HasValue ?
-                new ObjectParameter("EquipCreate", equipCreate) :
-                new ObjectParameter("EquipCreate", typeof(int));
-    
-            var callTypeIDParameter = callTypeID.HasValue ?
-                new ObjectParameter("CallTypeID", callTypeID) :
-                new ObjectParameter("CallTypeID", typeof(int));
-    
-            var workOrderIDParameter = workOrderID.HasValue ?
-                new ObjectParameter("WorkOrderID", workOrderID) :
-                new ObjectParameter("WorkOrderID", typeof(int));
-    
-            var workOrderNumberParameter = workOrderNumber != null ?
-                new ObjectParameter("WorkOrderNumber", workOrderNumber) :
-                new ObjectParameter("WorkOrderNumber", typeof(string));
-    
-            var workOrderRemarksParameter = workOrderRemarks != null ?
-                new ObjectParameter("WorkOrderRemarks", workOrderRemarks) :
-                new ObjectParameter("WorkOrderRemarks", typeof(string));
-    
-            var callNumberParameter = callNumber != null ?
-                new ObjectParameter("CallNumber", callNumber) :
-                new ObjectParameter("CallNumber", typeof(string));
-    
-            var callDateParameter = callDate.HasValue ?
-                new ObjectParameter("CallDate", callDate) :
-                new ObjectParameter("CallDate", typeof(System.DateTime));
-    
-            var customContractIDParameter = customContractID.HasValue ?
-                new ObjectParameter("CustomContractID", customContractID) :
-                new ObjectParameter("CustomContractID", typeof(int));
-    
-            var customBillCodeIDParameter = customBillCodeID.HasValue ?
-                new ObjectParameter("CustomBillCodeID", customBillCodeID) :
-                new ObjectParameter("CustomBillCodeID", typeof(int));
-    
-            var jobIDParameter = jobID.HasValue ?
-                new ObjectParameter("JobID", jobID) :
-                new ObjectParameter("JobID", typeof(int));
-    
-            var userIDParameter = userID != null ?
-                new ObjectParameter("UserID", userID) :
-                new ObjectParameter("UserID", typeof(string));
-    
-            var locationIDParameter = locationID.HasValue ?
-                new ObjectParameter("LocationID", locationID) :
-                new ObjectParameter("LocationID", typeof(int));
-    
-            var itemIDParameter = itemID.HasValue ?
-                new ObjectParameter("ItemID", itemID) :
-                new ObjectParameter("ItemID", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("Web_SCInsertServiceCall", equipmentIDParameter, callerParameter, descriptionParameter, callID, customerPOParameter, eQCustIDParameter, equipDescParameter, equipModelParameter, equipSNParameter, equipCreateParameter, callTypeIDParameter, workOrderIDParameter, workOrderNumberParameter, workOrderRemarksParameter, callNumberParameter, callDateParameter, customContractIDParameter, customBillCodeIDParameter, jobIDParameter, userIDParameter, locationIDParameter, itemIDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("Web_SCInsertServiceCall", equipmentIDParameter, callerParameter, descriptionParameter, callID);
         }
     }
 }

@@ -4,21 +4,25 @@ using System.Web.Http;
 using GVWebapi.RemoteData;
 using GVWebapi.Models;
 using System.Data.Entity.Core.Objects;
+using System.Data.Common;
+using System.Data;
+using GVWebapi.Services;
+
 namespace GVWebapi.Controllers
 {
     public class DevicesController : ApiController
     {
         private readonly CoFreedomEntities _coFreedomEntities = new CoFreedomEntities();
-        private readonly GlobalViewEntities _globalViewEntities = new GlobalViewEntities(); 
+        private readonly GlobalViewEntities _globalViewEntities = new GlobalViewEntities();
 
-        [HttpGet,Route("api/devices")]
+        [HttpGet, Route("api/devices")]
         public IHttpActionResult Get()
         {
-            var device = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.ToList().Where(d=> d.Active).Take(100);
+            var device = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.ToList().Where(d => d.Active).Take(100);
             return Ok(device);
         }
-        
-        [HttpGet,Route("api/devices/{FprID}")]
+
+        [HttpGet, Route("api/devices/{FprID}")]
         public IHttpActionResult GetDevice(string fprId)
         {
             var modelView = new EquipmentsModelView();
@@ -29,12 +33,34 @@ namespace GVWebapi.Controllers
             modelView.OpenCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.EquipmentNumber == fprId && c.v_Status == "Pending");
             var equipment = _globalViewEntities.EquipmentManagers.FirstOrDefault(m => m.Model.Contains(modelView.equipments.Model));
 
-            if(equipment != null)
+            if (equipment != null)
             {
                 modelView.ModelIntro = equipment.IntroDate.GetValueOrDefault();
                 modelView.RecoVolume = equipment.MFRMoVol.GetValueOrDefault();
             }
-           
+
+            if (modelView.equipments == null)
+            {
+                return NotFound();
+            }
+            return Json(modelView);
+        }
+        [HttpGet, Route("api/mobiledevices/{FprID}")]
+        public IHttpActionResult GetMobileDevice(string fprId)
+        {
+            var modelView = new EquipmentsModelView();
+            modelView.OpenCalls = 0;
+            modelView.equipments = _coFreedomEntities.vw_GVDeviceAnalyzer.FirstOrDefault(c => c.EquipmentNumber == fprId);
+            modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.EquipmentNumber == fprId).OrderByDescending(c => c.Date).Take(3).ToList();
+ 
+            var equipment = _globalViewEntities.EquipmentManagers.FirstOrDefault(m => m.Model.Contains(modelView.equipments.Model));
+
+            if (equipment != null)
+            {
+                modelView.ModelIntro = equipment.IntroDate.GetValueOrDefault();
+                modelView.RecoVolume = equipment.MFRMoVol.GetValueOrDefault();
+            }
+
             if (modelView.equipments == null)
             {
                 return NotFound();
@@ -42,7 +68,7 @@ namespace GVWebapi.Controllers
             return Json(modelView);
         }
 
-        [HttpGet,Route("api/customerdevices/{CustomerID}")]
+        [HttpGet, Route("api/customerdevices/{CustomerID}")]
         public IHttpActionResult GetCustomerDevices(int customerId)
         {
             var modelView = new EquipmentsModelView();
@@ -51,8 +77,8 @@ namespace GVWebapi.Controllers
             modelView.inactivedevices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Count(d => d.CustomerID == customerId && d.Active == false);
             return Json(modelView);
         }
-        
-        [HttpGet,Route("api/alldevices/{CustomerID}")]
+
+        [HttpGet, Route("api/alldevices/{CustomerID}")]
         public IHttpActionResult GetAllDevices(int customerId)
         {
             var modelView = new EquipmentsModelView();
@@ -62,33 +88,33 @@ namespace GVWebapi.Controllers
             return Json(modelView);
         }
 
-        [HttpGet,Route("api/devicevolumes/{CustomerId}/{Id}/{FromDate?}/{ToDate?}")]
-        public IHttpActionResult GetDeviceVolumes(int customerId, string id,DateTime? fromDate, DateTime? toDate)
+        [HttpGet, Route("api/devicevolumes/{CustomerId}/{Id}/{FromDate?}/{ToDate?}")]
+        public IHttpActionResult GetDeviceVolumes(int customerId, string id, DateTime? fromDate, DateTime? toDate)
         {
             fromDate = fromDate ?? DateTime.Now.AddMonths(-11);
             toDate = toDate ?? DateTime.Now;
-           
-                        var bwdevices = _coFreedomEntities.csDeviceVolumes(fromDate,toDate ,id,customerId)
-                            .Where(c => c.MeterType == @"B\W")
-                            .Where(c => c.ReadingDate.HasValue)
-                            .Select(c=> new { Month = c.ReadingDate.Value.ToString("MMM") , c.Volume}).ToList();
 
-                       var colordevices  = _coFreedomEntities.csDeviceVolumes(fromDate, toDate, id, customerId)
-                           .Where(c => c.MeterType == "Color")
-                           .Where(c => c.ReadingDate.HasValue)
-                           .Select(c => new { Month = c.ReadingDate.Value.ToString("MMM"), c.Volume }).ToList();
-             
+            var bwdevices = _coFreedomEntities.csDeviceVolumes(fromDate, toDate, id, customerId)
+                .Where(c => c.MeterType == @"B\W")
+                .Where(c => c.ReadingDate.HasValue)
+                .Select(c => new { Month = c.ReadingDate.Value.ToString("MMM"), c.Volume }).ToList();
+
+            var colordevices = _coFreedomEntities.csDeviceVolumes(fromDate, toDate, id, customerId)
+                .Where(c => c.MeterType == "Color")
+                .Where(c => c.ReadingDate.HasValue)
+                .Select(c => new { Month = c.ReadingDate.Value.ToString("MMM"), c.Volume }).ToList();
+
             var ret = new[]
            {
                    new { label= "B/W Volumes", color = "#768294", data =   bwdevices.Select(c => new object[]{ c.Month ,c.Volume ?? 0m  }) },
                    new { label= "Color Volumes", color = "#1f92fe" , data =  colordevices.Select(c => new object[]{ c.Month ,  c.Volume ?? 0m }) },
-               
+
             };
             return Json(ret);
-     
+
         }
 
-        [HttpGet,Route("api/devicevolumesgrid/{CustomerId}/{Id}/{FromDate?}/{ToDate?}")]
+        [HttpGet, Route("api/devicevolumesgrid/{CustomerId}/{Id}/{FromDate?}/{ToDate?}")]
         public IHttpActionResult GetDeviceVolumesGrid(int customerId, string id, DateTime? fromDate, DateTime? toDate)
         {
             var _fromDate = fromDate == null ? DateTime.Now.AddMonths(-11) : fromDate;
@@ -97,15 +123,15 @@ namespace GVWebapi.Controllers
             var devices = _coFreedomEntities.csDeviceVolumesGrid(_fromDate, _toDate, id, customerId).ToList();
             var maxbwvolume = _coFreedomEntities.csDeviceVolumesGrid(_fromDate, _toDate, id, customerId).Select(d => d.BWVolume).Max();
             var maxclrvolume = _coFreedomEntities.csDeviceVolumesGrid(_fromDate, _toDate, id, customerId).Select(d => d.ColorVolume).Max();
-            
+
             var maxvolume = maxbwvolume > (maxclrvolume == null ? 0 : maxclrvolume) ? maxbwvolume : maxclrvolume;
 
 
-            return Json( new { Devices = devices, MaxVolume = maxvolume});
+            return Json(new { Devices = devices, MaxVolume = maxvolume });
 
         }
-        
-        [HttpGet,Route("api/replacementdevices/{CustomerID}")]
+
+        [HttpGet, Route("api/replacementdevices/{CustomerID}")]
         public IHttpActionResult GetReplacementDevices(int customerId)
         {
             var modelView = new EquipmentsModelView();
@@ -113,24 +139,24 @@ namespace GVWebapi.Controllers
             modelView.ReplacementTotals = modelView.allassetreplacements.Sum(s => s.ReplacementValue);
             return Json(modelView);
         }
-        
-        [HttpGet,Route("api/getreplacement/{replacementid}")]
+
+        [HttpGet, Route("api/getreplacement/{replacementid}")]
         public IHttpActionResult GetReplacementDevice(int replacementid)
         {
             var modelView = _globalViewEntities.AssetReplacements.Find(replacementid);
             if (modelView == null) return NotFound();
             return Json(modelView);
-           
+
         }
-        
-        [HttpGet,Route("api/equipmentmodels/")]
+
+        [HttpGet, Route("api/equipmentmodels/")]
         public IHttpActionResult GetEquipmentModels()
         {
             var models = _coFreedomEntities.vw_EquipmentModels.ToList();
             return Json(models);
         }
-        
-        [HttpPost,Route("api/addreplacement/")]
+
+        [HttpPost, Route("api/addreplacement/")]
         public IHttpActionResult AddReplacement(AssetReplacement replacment)
         {
             if (replacment.CustomerID != null)
@@ -142,7 +168,7 @@ namespace GVWebapi.Controllers
                 replacementDevice.NewModel = replacment.NewModel;
                 replacementDevice.NewSerialNumber = replacment.NewSerialNumber;
                 replacementDevice.ReplacementDate = replacment.ReplacementDate;
-                replacementDevice.Location =   _coFreedomEntities.vw_CustomersOnContract.Where(c => c.CustomerID == replacment.CustomerID).Select(c => c.CustomerName).FirstOrDefault();
+                replacementDevice.Location = _coFreedomEntities.vw_CustomersOnContract.Where(c => c.CustomerID == replacment.CustomerID).Select(c => c.CustomerName).FirstOrDefault();
                 replacementDevice.ReplacementValue = replacment.ReplacementValue;
                 _globalViewEntities.AssetReplacements.Add(replacementDevice);
                 _globalViewEntities.SaveChanges();
@@ -150,12 +176,12 @@ namespace GVWebapi.Controllers
                 var modelView = new EquipmentsModelView();
                 modelView.allassetreplacements = _globalViewEntities.AssetReplacements.ToList().Where(d => d.CustomerID == replacment.CustomerID);
                 return Json(modelView);
-                
+
             }
             return Ok("Device not saved.");
         }
-        
-        [HttpPost,Route("api/editreplacement/")]
+
+        [HttpPost, Route("api/editreplacement/")]
         public IHttpActionResult EditReplacement(AssetReplacement replacment)
         {
             if (replacment.CustomerID != null)
@@ -179,8 +205,8 @@ namespace GVWebapi.Controllers
             }
             return Ok("Device not saved.");
         }
-        
-        [HttpPost,Route("api/deletereplacement/{id}")]
+
+        [HttpPost, Route("api/deletereplacement/{id}")]
         public IHttpActionResult DeleteReplacement(int? id)
         {
             if (id != null)
@@ -198,27 +224,27 @@ namespace GVWebapi.Controllers
         {
             var schedule = _globalViewEntities.Schedules.Find(scheduleId);
             var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.ScheduleNumber == schedule.Name && x.CustomerID == schedule.CustomerId && x.NumberOfContractsActive > 0).ToList();
-           schedule.MonthlyHwCost = devices.Select(i => Decimal.Parse(i.MonthlyCost)).Sum();
+            schedule.MonthlyHwCost = devices.Select(i => Decimal.Parse(i.MonthlyCost)).Sum();
             _globalViewEntities.SaveChanges();
             return Json(devices);
         }
         [HttpGet, Route("api/getdevicesremoved/{customerId}")]
         public IHttpActionResult GetDevicesRemoved(int customerId)
         {
-            
+
             var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.CustomerID == customerId && x.NumberOfContractsActive == null).ToList();
             return Json(devices);
         }
         [HttpGet, Route("api/getdevicesunallocated/{customerId}")]
         public IHttpActionResult GetDevicesUnallocated(int customerId)
         {
-            var schedules = _globalViewEntities.Schedules.Where(x => x.CustomerId == customerId && x.IsDeleted == false).Select(x=> x.Name).ToList();
+            var schedules = _globalViewEntities.Schedules.Where(x => x.CustomerId == customerId && x.IsDeleted == false).Select(x => x.Name).ToList();
             var scheduleList = _globalViewEntities.Schedules.Where(x => x.CustomerId == customerId && x.IsDeleted == false).Select(x => new { Name = x.Name, ScheduleID = x.ScheduleId }).ToList();
             var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => (x.CustomerID == customerId && x.NumberOfContractsActive > 0) && !schedules.Contains(x.ScheduleNumber)).ToList();
             return Json(new { devices, schedules = scheduleList });
         }
-        [HttpPost,Route("api/updateproperty/{id}/{property}/{value?}")]
-        public IHttpActionResult UpdateProperty(int? id, int? property,string value)
+        [HttpPost, Route("api/updateproperty/{id}/{property}/{value?}")]
+        public IHttpActionResult UpdateProperty(int? id, int? property, string value)
         {
             if (id != null && property != null)
             {
@@ -233,16 +259,16 @@ namespace GVWebapi.Controllers
                 {
                     device.TextVal = value;
                 }
-               
+
                 _coFreedomEntities.SaveChanges();
                 return Ok("Device Updated");
             }
             return Ok("Device not Updated.");
         }
-        [HttpPost,Route("api/placeservicecall/")]
+        [HttpPost, Route("api/placeservicecall/")]
         public IHttpActionResult PlaceServiceCall(ServiceCallModel model)
         {
-            var callID =  new  ObjectParameter("callID", typeof(int));
+            
             if (model != null)
             {
 
@@ -255,62 +281,66 @@ namespace GVWebapi.Controllers
                     model.Description = model.Description + " This device is not functioning";
                 }
 
-           //     _coFreedomEntities.Web_SCInsertServiceCall(model.EquipmentID, model.Name,
-           //                                           model.Description, callID,
-           //                                           model.CallTypeID, model.UserID,DateTime.Now);
+                var Id = InsertServiceCall(model);
+                
+               var success =  MailParser.EmailServiceCall(Id, model, 1);
+                if (success)
+                {
+                    return Json(new { status = "submitted", results = model });
+                }  
+                
             }
-           
-            return Ok();
+
+            return Json(new { status = "error", results = BadRequest() });
         }
         [HttpPost, Route("api/placesupplycall/")]
         public IHttpActionResult PlaceSupplyCall(ServiceCallModel model)
         {
-            var callID = new ObjectParameter("callID", typeof(int));
+           
             if (model != null)
             {
-                var Device = _coFreedomEntities.vw_admin_SCEquipments_22.Find(model.EquipmentID);
-                 
-                model.Description = "Supply Order For Device " + Device.EquipmentNumber + "\r\n Black =" + model.Black + "\r\n Cyan=" + model.Cyan + "\r\n Magenta=" + model.Magenta + "\r\n Yellow=" + model.Yellow + "\r\n Do they have supplies?:" + model.isWorking.ToString() + "\r\n Comments:\r\n " + model.Description ;
-
-             //   _coFreedomEntities.Web_SCInsertServiceCall(model.EquipmentID, model.Name,
-             //                                         model.Description, callID,
-             //                                         model.CallTypeID, model.UserID, DateTime.Now);
+                var Id = InsertSupplyCall(model);
+                var success = MailParser.EmailServiceCall(Id, model, 2);
+                if (success)
+                {
+                    return Json(new { status = "submitted", results = model });
+                }
             }
+            return Json(new { status = "error", results = BadRequest() });
 
-            return Ok();
         }
 
-        [HttpGet,Route("api/servicecalls/{CustomerID}/{StartDate}/{EndDate}/{Type}/{Status}")]
-        public IHttpActionResult GetCustomerservicecalls(int customerId,DateTime startDate,DateTime endDate,string type,string status)
+        [HttpGet, Route("api/servicecalls/{CustomerID}/{StartDate}/{EndDate}/{Type}/{Status}")]
+        public IHttpActionResult GetCustomerservicecalls(int customerId, DateTime startDate, DateTime endDate, string type, string status)
         {
             var modelView = new EquipmentsModelView();
             modelView.servicehistories = null;
             modelView.ClosedCalls = 0;
             modelView.OpenCalls = 0;
             modelView.TotalDevices = 0;
-//            modelView.EndDate = EndDate.AddDays(1);
+            //            modelView.EndDate = EndDate.AddDays(1);
             if (type == "All")
             {
-              switch (status)
+                switch (status)
                 {
-                 case   "All" :
+                    case "All":
                         modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled")).OrderByDescending(c => c.Date).ToList();
-                         modelView.ClosedCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled"));
+                        modelView.ClosedCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled"));
                         modelView.OpenCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "Pending"));
 
                         break;
                     case "Completed":
-                         modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == status)).OrderByDescending(c => c.Date).ToList();
-                         modelView.ClosedCalls =   _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled"));
-                        modelView.OpenCalls = 0; 
+                        modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == status)).OrderByDescending(c => c.Date).ToList();
+                        modelView.ClosedCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled"));
+                        modelView.OpenCalls = 0;
                         break;
                     case "Pending":
                         modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == status)).OrderByDescending(c => c.Date).ToList();
-                        modelView.OpenCalls =   _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "Pending"));
-                        modelView.ClosedCalls = 0; 
+                        modelView.OpenCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "Pending"));
+                        modelView.ClosedCalls = 0;
                         break;
                     case "None":
-                        modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "None")).OrderByDescending(c => c.Date).ToList(); 
+                        modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "None")).OrderByDescending(c => c.Date).ToList();
                         modelView.ClosedCalls = 0;
                         modelView.OpenCalls = 0;
                         break;
@@ -334,12 +364,12 @@ namespace GVWebapi.Controllers
                     case "Completed":
                         modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == status && c.Type == type)).OrderByDescending(c => c.Date).ToList();
                         modelView.ClosedCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled" && c.Type == type));
-                        modelView.OpenCalls = 0; 
+                        modelView.OpenCalls = 0;
                         break;
                     case "Pending":
                         modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == status && c.Type == type)).OrderByDescending(c => c.Date).ToList();
                         modelView.OpenCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "Pending" && c.Type == type));
-                        modelView.ClosedCalls = 0; 
+                        modelView.ClosedCalls = 0;
                         break;
                     case "None":
                         modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "None")).OrderByDescending(c => c.Date).ToList();
@@ -347,11 +377,115 @@ namespace GVWebapi.Controllers
                         modelView.OpenCalls = 0;
                         break;
                 }
-                      modelView.TotalDevices = _coFreedomEntities.vw_admin_SCEquipments_22.Where(c => c.CustomerID == customerId & c.Active == true).Count();
+                modelView.TotalDevices = _coFreedomEntities.vw_admin_SCEquipments_22.Where(c => c.CustomerID == customerId & c.Active == true).Count();
 
             }
-           
+
             return Json(modelView);
         }
+        public static string InsertSupplyCall(ServiceCallModel oSupplyInfo)
+        {
+            var db = new CoFreedomEntities();
+            DbConnection con = db.Database.Connection;
+            DbCommand cmd = con.CreateCommand();
+            try
+            {
+                con.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "Web_SCInsertServiceCall";
+
+                DbParameter paramCaller = cmd.CreateParameter();
+                paramCaller.ParameterName = "Caller";
+                paramCaller.Value = oSupplyInfo.Name;
+                cmd.Parameters.Add(paramCaller);
+
+                DbParameter paramEquipid = cmd.CreateParameter();
+                paramEquipid.ParameterName = "EquipmentID";
+                paramEquipid.Value = oSupplyInfo.EquipmentID;
+                cmd.Parameters.Add(paramEquipid);
+
+                DbParameter paramDescription = cmd.CreateParameter();
+                paramDescription.ParameterName = "Description";
+                paramDescription.Value = "Supply Order For Device " + oSupplyInfo.EquipmentNumber + "\r\n Black =" + oSupplyInfo.Black + "\r\n Cyan=" + oSupplyInfo.Cyan + "\r\n Magenta=" + oSupplyInfo.Magenta + "\r\n Yellow=" + oSupplyInfo.Yellow + "\r\n Do they have supplies?:" + oSupplyInfo.isWorking.ToString() + "\r\n Comments:\r\n " + oSupplyInfo.Description;
+                cmd.Parameters.Add(paramDescription);
+
+                DbParameter paramCallType = cmd.CreateParameter();
+                paramCallType.ParameterName = "CallTypeID";
+                paramCallType.Value = 4;
+                cmd.Parameters.Add(paramCallType);
+
+                DbParameter paramCallId = cmd.CreateParameter();
+                paramCallId.ParameterName = "CallID";
+                paramCallId.DbType = DbType.Int32;
+                paramCallId.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(paramCallId);
+
+                cmd.ExecuteNonQuery();
+
+                return cmd.Parameters["CallID"].Value.ToString();
+            }
+            catch (Exception)
+            {
+                return "!UNKNOWN!";
+            }
+            finally
+            {
+                cmd.Dispose();
+                con.Dispose();
+            }
+        }
+        public static string InsertServiceCall(ServiceCallModel oSupplyInfo)
+        {
+            var db = new CoFreedomEntities();
+            DbConnection con = db.Database.Connection;
+            DbCommand cmd = con.CreateCommand();
+            try
+            {
+                con.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "Web_SCInsertServiceCall";
+
+                DbParameter paramCaller = cmd.CreateParameter();
+                paramCaller.ParameterName = "Caller";
+                paramCaller.Value = oSupplyInfo.Name;
+                cmd.Parameters.Add(paramCaller);
+
+                DbParameter paramEquipid = cmd.CreateParameter();
+                paramEquipid.ParameterName = "EquipmentID";
+                paramEquipid.Value = oSupplyInfo.EquipmentID;
+                cmd.Parameters.Add(paramEquipid);
+
+                DbParameter paramDescription = cmd.CreateParameter();
+                paramDescription.ParameterName = "Description";
+                paramDescription.Value = oSupplyInfo.Description;
+                cmd.Parameters.Add(paramDescription);
+
+                DbParameter paramCallType = cmd.CreateParameter();
+                paramCallType.ParameterName = "CallTypeID";
+                paramCallType.Value = 4;
+                cmd.Parameters.Add(paramCallType);
+
+                DbParameter paramCallId = cmd.CreateParameter();
+                paramCallId.ParameterName = "CallID";
+                paramCallId.DbType = DbType.Int32;
+                paramCallId.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(paramCallId);
+
+                cmd.ExecuteNonQuery();
+
+                return cmd.Parameters["CallID"].Value.ToString();
+            }
+            catch (Exception ex)
+            {
+                return "!UNKNOWN!";
+            }
+            finally
+            {
+                cmd.Dispose();
+                con.Dispose();
+            }
+
+        }
     }
+ 
 }

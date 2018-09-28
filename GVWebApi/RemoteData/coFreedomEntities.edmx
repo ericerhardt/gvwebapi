@@ -2364,7 +2364,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
           </AssociationSet>
           <EntitySet Name="vw_maplocations" EntityType="CoFreedomModel.vw_maplocations" />
           <EntitySet Name="vw_AssetCountbyDeviceType_Cust" EntityType="CoFreedomModel.vw_AssetCountbyDeviceType_Cust" />
-          <FunctionImport Name="Web_SCInsertServiceCall">
+          <FunctionImport Name="Web_SCInsertServiceCall" ReturnType="Collection(Int32)">
             <Parameter Name="EquipmentID" Mode="In" Type="Int32" />
             <Parameter Name="Caller" Mode="In" Type="String" />
             <Parameter Name="Description" Mode="In" Type="String" />

@@ -623,6 +623,7 @@
     <Compile Include="Services\DeviceService.cs" />
     <Compile Include="Services\EditScheduleService.cs" />
     <Compile Include="Services\LocationsService.cs" />
+    <Compile Include="Services\MailParser.cs" />
     <Compile Include="Services\ReconciliationService.cs" />
     <Compile Include="Services\ScheduleService.cs" />
     <Compile Include="Services\ScheduleServicesService.cs" />
