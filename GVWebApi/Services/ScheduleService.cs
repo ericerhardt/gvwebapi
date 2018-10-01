@@ -67,7 +67,7 @@ namespace GVWebapi.Services
             if (model.CoterminousId != 0)
             {
                 schedulesEntity.CoterminousSchedule = _repository.Load<SchedulesEntity>(model.CoterminousId.Value);
-
+               
 
             }
             else

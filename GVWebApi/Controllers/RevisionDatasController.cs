@@ -69,7 +69,39 @@ namespace GVWebapi.Controllers
             }
                    
         }
-        
+
+        [HttpGet, Route("api/revisiondatas/getreconciliationinvoiced/{ContractId}/{StartDate}/{EndDate}")]
+        public IHttpActionResult GetReconciliationInvoiced(int contractId,DateTime startDate,DateTime endDate)
+        {
+
+            using (var _dbAudit = new RevisionDataEntities())
+            {
+                var meterGroups = (from mg in _dbAudit.MeterGroups
+                                   where mg.ERPContractID == contractId
+                                   select mg).ToList();
+
+
+
+
+                if (meterGroups.Count > 0)
+                {
+                     RevisionHistoryModel model = new RevisionHistoryModel();
+ 
+                        model.detail = _revisionDbContext.PeriodHistoryView.Where(r => (r.PeriodDate >= startDate && r.PeriodDate <= endDate) && r.ERPContractID == contractId).ToList();
+
+                     
+
+                    return Json(model);
+                }
+                else
+                {
+                    return Json(HttpStatusCode.NoContent);
+                }
+            }
+
+        }
+
+
         [HttpGet,Route("api/revisiondatas/getrevisionsummary/{ContractId}")]
         public IHttpActionResult GetRevisionSummary(int contractId)
         {

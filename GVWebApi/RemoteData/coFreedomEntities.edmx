@@ -4682,7 +4682,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
         <EntityTypeShape EntityType="CoFreedomModel.vw_admin_EquipmentList_MeterGroup" Width="2.5" PointX="17.75" PointY="13.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_admin_SCBillingMeters_MeterGroup" Width="1.5" PointX="11.75" PointY="18.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_admin_SCEquipments_22" Width="1.5" PointX="13.75" PointY="18.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="CoFreedomModel.vw_invoicedMeterGroups" Width="1.5" PointX="19.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="CoFreedomModel.vw_invoicedMeterGroups" Width="2.375" PointX="19.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.SCBillingCycle" Width="1.5" PointX="0.75" PointY="19.375" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.SCContract" Width="1.5" PointX="3" PointY="2.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.SCEquipmentCustomProperty" Width="2.25" PointX="19.75" PointY="3.75" IsExpanded="true" />

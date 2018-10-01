@@ -4,6 +4,7 @@ using GV.CoFreedomDomain;
 using GV.Domain;
 using GV.Domain.Entities;
 using GV.Domain.Views;
+using GVWebapi.RemoteData;
 using GV.ExtensionMethods;
 using GV.Services;
 using GVWebapi.Models.Reconciliation;
@@ -75,8 +76,13 @@ namespace GVWebapi.Services
 
         private IList<InvoicedServiceModel> GetInvoicedServices(ReconciliationViewModel model, CyclesEntity cycle)
         {
-            var query = $"select * from _custom_placeholder.vw_csquarterlyhistory where customerid = {cycle.CustomerId} and date >= '{model.StartDate:yyyy/MM/dd}' and date <= '{model.EndDate:yyyy/MM/dd}'";
-            var items = _coFreedomRepository.ExecuteSQL<ViewCsQuarterlyHistory>(query);
+            var PeriodDate = model.EndDate.AddMonths(1).AddDays(-1);
+            var query = $"select * from _custom_placeholder.vw_REVisionInvoices where CustomerID = {cycle.CustomerId} and PeriodDate = '{PeriodDate:yyyy-MM-dd}'";
+            //[vw_REVisionInvoices]
+            var invoice = _coFreedomRepository.ExecuteSQL<vw_REVisionInvoices>(query).FirstOrDefault();
+
+            var query1 = $"select * from _custom_placeholder.vw_RevisionHistory where InvoiceID = {invoice.InvoiceID} and OverageToDate = '{PeriodDate:yyyy-MM-dd}'";
+            var items = _coFreedomRepository.ExecuteSQL<vw_RevisionHistory>(query1);
 
             var distinctMeterGroups = items.Select(x => x.ContractMeterGroup).Distinct().ToList();
 
@@ -92,12 +98,14 @@ namespace GVWebapi.Services
                     cycle.AddNewReconService(cycleRecon);
                     _unitOfWork.Commit();
                 }
-
+               var CPP =  allItemsInThisMeterGroup.Sum(x => x.CPP).Value;
                 var invoiceServiceModel = new InvoicedServiceModel();
                 invoiceServiceModel.MeterGroup = meterGroup;
-                invoiceServiceModel.ActualPages = allItemsInThisMeterGroup.Sum(x => x.CountedCopies);
-                invoiceServiceModel.ContractedPages = allItemsInThisMeterGroup.Sum(x => x.CoveredCopies);
-                invoiceServiceModel.OverageCost = allItemsInThisMeterGroup.Sum(x => x.TotalChargeAmount);
+                invoiceServiceModel.ActualPages = allItemsInThisMeterGroup.Sum(x => x.ActualVolume).Value;
+                invoiceServiceModel.ContractedPages = allItemsInThisMeterGroup.Sum(x => x.ContractVolume).Value;
+                invoiceServiceModel.BaseServiceForCycle = invoiceServiceModel.ContractedPages * CPP;
+                var Overage = (invoiceServiceModel.ActualPages - invoiceServiceModel.ContractedPages);
+                invoiceServiceModel.OverageCost = Overage > 0 ? Overage * CPP : 0;
                 invoiceServiceModel.Credit = cycleRecon.Credit;
                 invoiceServiceModel.CycleReconciliationServiceId = cycleRecon.CycleReconciliationServiceId;
                 invoicedServices.Add(invoiceServiceModel);
@@ -108,8 +116,13 @@ namespace GVWebapi.Services
 
         private IList<CostByDeviceModel> GetCostByDevice(ReconciliationViewModel model, CyclesEntity cycle)
         {
-            var query = $"select * from _custom_eviews.vw_monthly_device_costs where customerId = {cycle.CustomerId} and beginmeterdate >= '{model.StartDate:yyyy-MM-dd}' and endmeterdate <= '{model.EndDate:yyyy-MM-dd}'";
-            var items = _coFreedomRepository.ExecuteSQL<ViewMonthlyDeviceCosts>(query);
+            var PeriodDate = model.EndDate.AddMonths(1).AddDays(-1);
+            var query = $"select * from _custom_placeholder.vw_REVisionInvoices where CustomerID = {cycle.CustomerId} and PeriodDate = '{PeriodDate:yyyy-MM-dd}'";
+            //[vw_REVisionInvoices]
+            var invoice = _coFreedomRepository.ExecuteSQL<vw_REVisionInvoices>(query).FirstOrDefault();
+
+            var query1 = $"select * from _custom_eviews.vw_monthly_device_costs where InvoiceID = {invoice.InvoiceID}";
+            var items = _coFreedomRepository.ExecuteSQL<ViewMonthlyDeviceCosts>(query1);
 
             var costByDevices = new List<CostByDeviceModel>();
             var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevices(cycle.CustomerId);
