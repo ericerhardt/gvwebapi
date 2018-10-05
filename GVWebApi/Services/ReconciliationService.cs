@@ -142,8 +142,11 @@ namespace GVWebapi.Services
                 costByDeviceModel.Location = coFreedomDevice?.Location;
                 costByDeviceModel.User = coFreedomDevice?.AssetUser;
                 costByDeviceModel.CostCenter = coFreedomDevice?.CostCenter;
+                costByDeviceModel.BWVolume = GetBWVolume(items, equipmentID);
+                costByDeviceModel.ColorVolume = GetColorVolume(items, equipmentID);
                 costByDeviceModel.BWCopies = GetBwCopies(items, equipmentID);
                 costByDeviceModel.BWPrints = GetBwPrints(items, equipmentID);
+                costByDeviceModel.ColorPrints = GetColorPrints(items, equipmentID);
                 costByDeviceModel.ColorCopies = GetColorCopies(items, equipmentID);
                 costByDevices.Add(costByDeviceModel);
             }
@@ -155,7 +158,15 @@ namespace GVWebapi.Services
         {
             return items
                 .Where(x => x.EquipmentID == equipmentNumber)
-                .Where(x => x.ContractMeterGroup.EqualsIgnore("color laser prints")|| x.ContractMeterGroup.EqualsIgnore("color copies (color pages)"))
+                .Where(x => x.ContractMeterGroup.EqualsIgnore("Color Copier (Color Pages)"))
+                .Sum(x => x.BilledAmount);
+        }
+
+        private static decimal GetColorPrints(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber)
+        {
+            return items
+                .Where(x => x.EquipmentID == equipmentNumber)
+                .Where(x => x.ContractMeterGroup.EqualsIgnore("Color Laser Prints") )
                 .Sum(x => x.BilledAmount);
         }
 
@@ -163,7 +174,7 @@ namespace GVWebapi.Services
         {
             return items
                 .Where(x => x.EquipmentID == equipmentNumber)
-                .Where(x => x.ContractMeterGroup.EqualsIgnore("b/w copies"))
+                .Where(x => x.ContractMeterGroup.EqualsIgnore("B/W Laser Prints"))
                 .Sum(x => x.BilledAmount);
         }
 
@@ -171,8 +182,23 @@ namespace GVWebapi.Services
         {
             return items
                 .Where(x => x.EquipmentID == equipmentNumber)
-                .Where(x => x.ContractMeterGroup.EqualsIgnore("b/w laser prints"))
+                .Where(x => x.ContractMeterGroup.EqualsIgnore("B/W Copies"))
                 .Sum(x => x.BilledAmount);
+        }
+
+        private static decimal GetBWVolume(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber)
+        {
+            return items
+                .Where(x => x.EquipmentID == equipmentNumber)
+                .Where(x => x.ContractMeterGroup.EqualsIgnore("B/W Copies") || x.ContractMeterGroup.EqualsIgnore("B/W Laser Prints"))
+                .Sum(x => x.DifferenceCopies);
+        }
+        private static decimal GetColorVolume(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber)
+        {
+            return items
+                .Where(x => x.EquipmentID == equipmentNumber)
+                .Where(x => x.ContractMeterGroup.EqualsIgnore("Color Copier (Color Pages)") || x.ContractMeterGroup.EqualsIgnore("Color Laser Prints"))
+                .Sum(x => x.DifferenceCopies);
         }
 
         private static void SetDates(ReconciliationViewModel model, CyclesEntity cycle)

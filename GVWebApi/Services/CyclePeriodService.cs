@@ -242,6 +242,14 @@ namespace GVWebapi.Services
         public decimal Allocated { get; set; }
     }
 
+    public class CycleReconcilieModel
+    {
+        public long CyclePeriodId { get; set; }
+        public bool IsReconciled { get; set; }
+        public decimal Billed { get; set; }
+        public decimal Allocated { get; set; }
+    }
+
     public class CyclePeriodSummaryModel
     {
         public DateTime PeriodDate { get; set; }

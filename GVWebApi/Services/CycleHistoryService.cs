@@ -4,6 +4,7 @@ using System.Linq;
 using FluentDateTime;
 using GV.Domain;
 using GV.Domain.Entities;
+using GVWebapi.Models.Reconciliation;
 
 namespace GVWebapi.Services
 {
@@ -21,11 +22,13 @@ namespace GVWebapi.Services
     {
         private readonly IRepository _repository;
         private readonly ICyclePeriodService _cyclePeriodService;
+        private readonly IReconciliationService _cycleReconService;
 
-        public CycleHistoryService(IRepository repository, ICyclePeriodService cyclePeriodService)
+        public CycleHistoryService(IRepository repository, ICyclePeriodService cyclePeriodService,IReconciliationService cycleReconService)
         {
             _repository = repository;
             _cyclePeriodService = cyclePeriodService;
+            _cycleReconService = cycleReconService;
         }
 
         public List<DateTime> GetAvailableCycles(long customerId)
@@ -113,6 +116,7 @@ namespace GVWebapi.Services
             {
                 item.CycleNumber = maxItem;
                 item.Periods = _cyclePeriodService.GetCyclePeriods(item.CycleHistoryId);
+                item.ReconcileTotal = _cycleReconService.GetReconciliation(item.CycleHistoryId).InvoicedService.Sum(x => x.OverageCost);
                 maxItem--;
             }
 
@@ -173,6 +177,7 @@ namespace GVWebapi.Services
         public decimal Billed {get; set; }
         public decimal Allocated { get; set; }
         public IList<CyclePeriodModel> Periods { get; set; } = new List<CyclePeriodModel>();
+        public decimal ReconcileTotal { get; set; } 
         public bool IsReconciled { get; set; }
     }
 
