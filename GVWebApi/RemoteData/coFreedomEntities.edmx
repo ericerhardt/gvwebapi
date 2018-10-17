@@ -1403,6 +1403,12 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
           <Parameter Name="vs_DeviceID" Type="varchar" Mode="In" />
           <Parameter Name="vs_CustomerID" Type="int" Mode="In" />
         </Function>
+        <Function Name="csVolumeTrend" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="_custom_placeholder">
+          <Parameter Name="vd_FromDate" Type="datetime" Mode="In" />
+          <Parameter Name="vd_ToDate" Type="datetime" Mode="In" />
+          <Parameter Name="vs_Customer" Type="varchar" Mode="In" />
+          <Parameter Name="vs_CustomerNumber" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="Web_SCInsertServiceCall" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="EquipmentID" Type="int" Mode="In" />
           <Parameter Name="Caller" Type="varchar" Mode="In" />
@@ -2387,6 +2393,12 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
             <Parameter Name="UserID" Mode="In" Type="String" />
             <Parameter Name="LocationID" Mode="In" Type="Int32" />
             <Parameter Name="ItemID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="csVolumeTrend">
+            <Parameter Name="vd_FromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="vd_ToDate" Mode="In" Type="DateTime" />
+            <Parameter Name="vs_Customer" Mode="In" Type="String" />
+            <Parameter Name="vs_CustomerNumber" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="v_SCEquipmentPreview_Custom">
@@ -4632,6 +4644,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="Web_SCInsertServiceCall" FunctionName="CoFreedomModel.Store.Web_SCInsertServiceCall" />
+          <FunctionImportMapping FunctionImportName="csVolumeTrend" FunctionName="CoFreedomModel.Store.csVolumeTrend" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

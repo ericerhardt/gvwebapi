@@ -193,5 +193,26 @@ namespace GVWebapi.RemoteData
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("Web_SCInsertServiceCall", equipmentIDParameter, callerParameter, descriptionParameter, callID, customerPOParameter, eQCustIDParameter, equipDescParameter, equipModelParameter, equipSNParameter, equipCreateParameter, callTypeIDParameter, workOrderIDParameter, workOrderNumberParameter, workOrderRemarksParameter, callNumberParameter, callDateParameter, customContractIDParameter, customBillCodeIDParameter, jobIDParameter, userIDParameter, locationIDParameter, itemIDParameter);
         }
+    
+        public virtual int csVolumeTrend(Nullable<System.DateTime> vd_FromDate, Nullable<System.DateTime> vd_ToDate, string vs_Customer, string vs_CustomerNumber)
+        {
+            var vd_FromDateParameter = vd_FromDate.HasValue ?
+                new ObjectParameter("vd_FromDate", vd_FromDate) :
+                new ObjectParameter("vd_FromDate", typeof(System.DateTime));
+    
+            var vd_ToDateParameter = vd_ToDate.HasValue ?
+                new ObjectParameter("vd_ToDate", vd_ToDate) :
+                new ObjectParameter("vd_ToDate", typeof(System.DateTime));
+    
+            var vs_CustomerParameter = vs_Customer != null ?
+                new ObjectParameter("vs_Customer", vs_Customer) :
+                new ObjectParameter("vs_Customer", typeof(string));
+    
+            var vs_CustomerNumberParameter = vs_CustomerNumber != null ?
+                new ObjectParameter("vs_CustomerNumber", vs_CustomerNumber) :
+                new ObjectParameter("vs_CustomerNumber", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("csVolumeTrend", vd_FromDateParameter, vd_ToDateParameter, vs_CustomerParameter, vs_CustomerNumberParameter);
+        }
     }
 }

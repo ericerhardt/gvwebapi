@@ -54,6 +54,9 @@
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.8.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.8.1\lib\net40\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -183,6 +186,7 @@
     <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -241,6 +245,7 @@
     <Compile Include="Controllers\LocationsApiController.cs" />
     <Compile Include="Controllers\NotFoundWithMessage.cs" />
     <Compile Include="Controllers\ReconciliationApiController.cs" />
+    <Compile Include="Controllers\ReportingController.cs" />
     <Compile Include="Controllers\RevisionDatasController.cs" />
     <Compile Include="Controllers\RolloverPagesController.cs" />
     <Compile Include="Controllers\ScheduleApiController.cs" />
@@ -311,6 +316,7 @@
     <Compile Include="Models\Schedules\ScheduleEditModel.cs" />
     <Compile Include="Models\Schedules\ScheduleSaveModel.cs" />
     <Compile Include="Models\Schedules\SchedulesModel.cs" />
+    <Compile Include="Models\IntegrisServiceCallModel.cs" />
     <Compile Include="Models\ServiceCallModel.cs" />
     <Compile Include="Models\ServiceCallsViewModel.cs" />
     <Compile Include="Models\SurveyPostModel.cs" />

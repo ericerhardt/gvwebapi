@@ -168,6 +168,7 @@ namespace GVWebapi.Controllers
                 replacementDevice.NewModel = replacment.NewModel;
                 replacementDevice.NewSerialNumber = replacment.NewSerialNumber;
                 replacementDevice.ReplacementDate = replacment.ReplacementDate;
+                replacementDevice.Comments = replacment.Comments;
                 replacementDevice.Location = _coFreedomEntities.vw_CustomersOnContract.Where(c => c.CustomerID == replacment.CustomerID).Select(c => c.CustomerName).FirstOrDefault();
                 replacementDevice.ReplacementValue = replacment.ReplacementValue;
                 _globalViewEntities.AssetReplacements.Add(replacementDevice);
@@ -293,12 +294,125 @@ namespace GVWebapi.Controllers
 
             return Json(new { status = "error", results = BadRequest() });
         }
+        [HttpPost, Route("api/webservicecall/")]
+        public IHttpActionResult WebServiceCall(ServiceCallModel model)
+        {
+            var CallId = "0";
+            if (model != null)
+            {
+                if (model.EquipmentID == 0)
+                {
+                    var equip = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.FirstOrDefault(x => x.EquipmentNumber == model.EquipmentNumber);
+                    if (equip != null)
+                    {
+                        model.EquipmentID = equip.EquipmentID;
+                        if (model.isWorking)
+                        {
+                            model.Description = model.Description + " This device is functioning";
+                        }
+                        else
+                        {
+                            model.Description = model.Description + " This device is not functioning";
+                        }
+
+                         CallId = InsertServiceCall(model);
+                        var success = MailParser.EmailServiceCall(CallId, model, 1);
+                        if (success)
+                        {
+
+                            return Redirect("https://www.fprus.com/servicesupply_ty");
+                        }
+                        
+                    } else
+                    {
+                        var success = MailParser.EmailServiceCall(CallId, model, 3);
+                        if (success)
+                        {
+
+                            return Redirect("https://www.fprus.com/servicesupply_ty");
+                        }
+                       
+                    }
+                     
+                }
+
+            }
+
+            return Redirect("https://www.fprus.com/service_call_error");
+        }
+        [HttpPost, Route("api/integrisservicecall/")]
+        public IHttpActionResult IntegrisServiceCall(IntegrisServiceCallModel imodel)
+        {
+            var CallId = "0";
+            if (imodel != null)
+            {
+                var model = new ServiceCallModel
+                {
+                    EquipmentNumber = imodel.EquipmentNumber,
+                    Name = imodel.Name,
+                    Phone = imodel.Phone,
+                    Email = imodel.Email,
+                    Description = imodel.Description,
+                    isWorking = imodel.IsWorking
+                };
+
+
+                if (model.EquipmentID == 0)
+                {
+                    var equip = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.FirstOrDefault(x => x.EquipmentNumber == model.EquipmentNumber);
+                    if (equip != null)
+                    {
+                        imodel.EquipmentID = equip.EquipmentID;
+                        model.EquipmentID = equip.EquipmentID;
+                        if (model.isWorking)
+                        {
+                            model.Description = model.Description + ". This device is functioning.";
+                        }
+                        else
+                        {
+                            model.Description = model.Description + ". This device is not functioning.";
+                        }
+                        if (imodel.CanPrint)
+                        {
+                            model.Description = model.Description + "  We can not print to another device.";
+                        }
+                        if (imodel.PatientCare)
+                        {
+                            model.Description = model.Description + " This is impacting patient care.";
+                        }
+                        imodel.Description = model.Description;
+                        CallId = InsertServiceCall(model);
+                        var success = MailParser.EmailIntegrisServiceCall(CallId, imodel, 1);
+                        if (success)
+                        {
+                            return Redirect("https://www.fprus.com/client-integris/integris-servicesupply_ty");
+                        }
+                    }
+                    else
+                    {
+                        var success = MailParser.EmailIntegrisServiceCall(CallId, imodel, 3);
+                        if (success)
+                        {
+                            return Redirect("http://www.fprus.com/client-integris/integris-servicesupply_ty");
+                        }
+
+                    }
+
+
+                }
+ 
+            }
+
+            return Redirect("https://www.fprus.com/service_call_error");
+        }
+
         [HttpPost, Route("api/placesupplycall/")]
         public IHttpActionResult PlaceSupplyCall(ServiceCallModel model)
         {
-           
+             
             if (model != null)
             {
+               
                 var Id = InsertSupplyCall(model);
                 var success = MailParser.EmailServiceCall(Id, model, 2);
                 if (success)
@@ -309,7 +423,90 @@ namespace GVWebapi.Controllers
             return Json(new { status = "error", results = BadRequest() });
 
         }
+        [HttpPost, Route("api/websupplycall/")]
+        public IHttpActionResult WebSupplyCall(ServiceCallModel model)
+        {
+            var CallId = "0";
+            if (model != null)
+            {
+                var equip = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.FirstOrDefault(x => x.EquipmentNumber == model.EquipmentNumber);
+                if (equip != null)
+                {
+                    model.EquipmentID = equip.EquipmentID;
+                    CallId = InsertSupplyCall(model);
+                    var success = MailParser.EmailServiceCall(CallId, model, 2);
+                    if (success)
+                    {
+                        return Redirect("https://www.fprus.com/servicesupply_ty");
+                    }
+                    
+                } else
+                {
+                    var success = MailParser.EmailServiceCall(CallId, model, 4);
+                    if (success)
+                    {
+                        return Redirect("https://www.fprus.com/servicesupply_ty");
+                    }
+                   
+                }
+                
+                  
+                
+            }
+            return Redirect("https://www.fprus.com/service_call_error");
 
+        }
+        [HttpPost, Route("api/integrissupplycall/")]
+        public IHttpActionResult IntegrisSupplyCall(IntegrisServiceCallModel imodel)
+        {
+            var CallId = "0";
+            if (imodel != null)
+            {
+                var model = new ServiceCallModel
+                {
+                    EquipmentNumber = imodel.EquipmentNumber,
+                    Name = imodel.Name,
+                    Phone = imodel.Phone,
+                    Email = imodel.Email,
+                    Description = imodel.Description,
+                    isWorking = imodel.IsWorking,
+                    Black = imodel.Black,
+                    Cyan = imodel.Cyan,
+                    Magenta = imodel.Magenta,
+                    Yellow = imodel.Yellow,
+
+
+                };
+
+                var equip = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.FirstOrDefault(x => x.EquipmentNumber == model.EquipmentNumber);
+                if (equip != null)
+                {
+                    imodel.EquipmentID = equip.EquipmentID;
+                    model.EquipmentID = equip.EquipmentID;
+                    CallId = InsertSupplyCall(model);
+                    var success = MailParser.EmailIntegrisServiceCall(CallId, imodel, 2);
+                    if (success)
+                    {
+                        return Redirect(" https://www.fprus.com/client-integris/integris-servicesupply_ty");
+                    }
+
+                }
+                else
+                {
+                    var success = MailParser.EmailIntegrisServiceCall(CallId, imodel, 4);
+                    if (success)
+                    {
+                        return Redirect(" https://www.fprus.com/client-integris/integris-servicesupply_ty");
+                    }
+
+                }
+
+
+
+            }
+            return Redirect("https://www.fprus.com/service_call_error");
+
+        }
         [HttpGet, Route("api/servicecalls/{CustomerID}/{StartDate}/{EndDate}/{Type}/{Status}")]
         public IHttpActionResult GetCustomerservicecalls(int customerId, DateTime startDate, DateTime endDate, string type, string status)
         {
@@ -396,7 +593,7 @@ namespace GVWebapi.Controllers
 
                 DbParameter paramCaller = cmd.CreateParameter();
                 paramCaller.ParameterName = "Caller";
-                paramCaller.Value = oSupplyInfo.Name;
+                paramCaller.Value = oSupplyInfo.Name +"("+ oSupplyInfo.Phone +")";
                 cmd.Parameters.Add(paramCaller);
 
                 DbParameter paramEquipid = cmd.CreateParameter();
@@ -447,7 +644,7 @@ namespace GVWebapi.Controllers
 
                 DbParameter paramCaller = cmd.CreateParameter();
                 paramCaller.ParameterName = "Caller";
-                paramCaller.Value = oSupplyInfo.Name;
+                paramCaller.Value = oSupplyInfo.Name + "(" + oSupplyInfo.Phone + ")"; ;
                 cmd.Parameters.Add(paramCaller);
 
                 DbParameter paramEquipid = cmd.CreateParameter();
