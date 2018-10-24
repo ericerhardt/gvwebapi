@@ -13,7 +13,8 @@
         <EntityTypeShape EntityType="CustomerPortalModel.SurveyQuestionsWithAnswer" Width="2.125" PointX="2.75" PointY="2.625" />
         <EntityTypeShape EntityType="CustomerPortalModel.easylinkimport" Width="1.5" PointX="0.75" PointY="5.75" />
         <EntityTypeShape EntityType="CustomerPortalModel.EasylinkImportHistory" Width="1.5" PointX="2.75" PointY="5.75" />
-        <EntityTypeShape EntityType="CustomerPortalModel.EasyLinkMapping" Width="1.5" PointX="5.75" PointY="4.75" />
+        <EntityTypeShape EntityType="CustomerPortalModel.EasyLinkMapping" Width="3.5" PointX="5.75" PointY="4.75" />
+        <EntityTypeShape EntityType="CustomerPortalModel.vw_SurveySummaryList" Width="1.5" PointX="5.375" PointY="7.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

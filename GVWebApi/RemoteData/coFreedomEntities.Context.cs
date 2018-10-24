@@ -62,6 +62,7 @@ namespace GVWebapi.RemoteData
         public virtual DbSet<ARCustomer> ARCustomers { get; set; }
         public virtual DbSet<vw_maplocations> vw_maplocations { get; set; }
         public virtual DbSet<vw_AssetCountbyDeviceType_Cust> vw_AssetCountbyDeviceType_Cust { get; set; }
+        public virtual DbSet<vw_ModelMatrix> vw_ModelMatrix { get; set; }
     
         public virtual ObjectResult<csDeviceVolumes_Result> csDeviceVolumes(Nullable<System.DateTime> vd_FromDate, Nullable<System.DateTime> vd_ToDate, string vs_DeviceID, Nullable<int> vs_CustomerID)
         {
@@ -213,6 +214,23 @@ namespace GVWebapi.RemoteData
                 new ObjectParameter("vs_CustomerNumber", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("csVolumeTrend", vd_FromDateParameter, vd_ToDateParameter, vs_CustomerParameter, vs_CustomerNumberParameter);
+        }
+    
+        public virtual int csModelMatrix(Nullable<System.DateTime> vd_FromDate, Nullable<System.DateTime> vd_ToDate, string vs_CustomerNumber)
+        {
+            var vd_FromDateParameter = vd_FromDate.HasValue ?
+                new ObjectParameter("vd_FromDate", vd_FromDate) :
+                new ObjectParameter("vd_FromDate", typeof(System.DateTime));
+    
+            var vd_ToDateParameter = vd_ToDate.HasValue ?
+                new ObjectParameter("vd_ToDate", vd_ToDate) :
+                new ObjectParameter("vd_ToDate", typeof(System.DateTime));
+    
+            var vs_CustomerNumberParameter = vs_CustomerNumber != null ?
+                new ObjectParameter("vs_CustomerNumber", vs_CustomerNumber) :
+                new ObjectParameter("vs_CustomerNumber", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("csModelMatrix", vd_FromDateParameter, vd_ToDateParameter, vs_CustomerNumberParameter);
         }
     }
 }

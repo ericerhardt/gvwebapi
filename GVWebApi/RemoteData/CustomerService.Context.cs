@@ -12,6 +12,8 @@ namespace GVWebapi.RemoteData
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class CustomerPortalEntities : DbContext
     {
@@ -34,5 +36,23 @@ namespace GVWebapi.RemoteData
         public virtual DbSet<easylinkimport> easylinkimports { get; set; }
         public virtual DbSet<EasylinkImportHistory> EasylinkImportHistories { get; set; }
         public virtual DbSet<EasyLinkMapping> EasyLinkMappings { get; set; }
+        public virtual DbSet<vw_SurveySummaryList> vw_SurveySummaryList { get; set; }
+    
+        public virtual ObjectResult<EasylinkReportByDate_Result> EasylinkReportByDate(Nullable<int> clientId, string startDate, string endDate)
+        {
+            var clientIdParameter = clientId.HasValue ?
+                new ObjectParameter("clientId", clientId) :
+                new ObjectParameter("clientId", typeof(int));
+    
+            var startDateParameter = startDate != null ?
+                new ObjectParameter("startDate", startDate) :
+                new ObjectParameter("startDate", typeof(string));
+    
+            var endDateParameter = endDate != null ?
+                new ObjectParameter("endDate", endDate) :
+                new ObjectParameter("endDate", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<EasylinkReportByDate_Result>("EasylinkReportByDate", clientIdParameter, startDateParameter, endDateParameter);
+        }
     }
 }

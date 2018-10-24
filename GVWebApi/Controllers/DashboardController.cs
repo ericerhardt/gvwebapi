@@ -90,7 +90,7 @@ namespace GVWebapi.Controllers
         {
             using (var _dbAudit = new RevisionDataEntities())
             {
-                var VisionDataList = new List<VisionData>();
+                var VisionDataList = new List<Models.VisionData>();
 
                 var revisions = (from r in _dbAudit.RevisionDataViews
                                  where r.ERPContractID == ContractID
@@ -140,17 +140,17 @@ namespace GVWebapi.Controllers
                 foreach (var revision in summary)
                 {
                     Int32 monthsDiff = TotelMonthDifference(revision.clientPeriodDate, revision.clientStartDate);
-                    var a = new VisionData();
+                    var a = new  Models.VisionData();
                     a.ERPContractID = ContractID;
                     //  a.clientPeriodDates = revision.clientPeriodDates.AddMonths(-monthsDiff).ToString("MMM") + " - " + revision.clientPeriodDates.ToString("MMM yyyy");
-                    a.clientPeriodDates = revision.clientPeriodDates.AddMonths(-monthsDiff).ToString("MMM") + " - " + revision.clientPeriodDates.ToString("MMM yyyy");
-                    a.fprOverageCost = Convert.ToDouble(revision.fprOverageCost);
-                    a.clientOverageCost = Convert.ToDouble(revision.prefprOverageCost);
-                    a.fprCost = Convert.ToDouble(revision.fprCost);
-                    a.clientCost = Convert.ToDouble(revision.clientCost);
-                    a.credits = Convert.ToDouble(revision.credits);
-                    a.savings = Convert.ToDouble(revision.savings);
-                    a.pct = Convert.ToDouble(revision.pct);
+                    a.ClientPeriodDates = revision.clientPeriodDates.AddMonths(-monthsDiff).ToString("MMM") + " - " + revision.clientPeriodDates.ToString("MMM yyyy");
+                    a.FPROverageCost = Convert.ToDouble(revision.fprOverageCost);
+                    a.ClientOverageCost = Convert.ToDouble(revision.prefprOverageCost);
+                    a.FPRCost = Convert.ToDouble(revision.fprCost);
+                    a.ClientCost = Convert.ToDouble(revision.clientCost);
+                    a.Credits = Convert.ToDouble(revision.credits);
+                    a.Savings = Convert.ToDouble(revision.savings);
+                    a.Pct = Convert.ToDouble(revision.pct);
                     VisionDataList.Add(a);
                 }
                 try
@@ -159,27 +159,27 @@ namespace GVWebapi.Controllers
                                     group s by new
                                     {
 
-                                        clientPeriodDates = s.clientPeriodDates,
-                                        clientPeriodStart = s.clientPeriodDates,
-                                        fprCost = s.fprCost,
-                                        clientCost = s.clientCost
+                                        clientPeriodDates = s.ClientPeriodDates,
+                                        clientPeriodStart = s.ClientStartDate,
+                                        fprCost = s.FPRCost,
+                                        clientCost = s.ClientCost
 
                                     }
                                         into v
                                     select new
                                     {
                                         
-                                        fprOverageCost = v.Sum(o => o.fprOverageCost),
-                                        prefprOverageCost = v.Sum(o => o.clientOverageCost),
+                                        fprOverageCost = v.Sum(o => o.FPROverageCost),
+                                        prefprOverageCost = v.Sum(o => o.ClientOverageCost),
                                         fprCost = v.Key.fprCost,
-                                        clientOverageCost = v.Sum(o => o.clientOverageCost),
+                                        clientOverageCost = v.Sum(o => o.ClientOverageCost),
                                         clientCost = v.Key.clientCost,
-                                        credits = v.Sum(o => o.credits),
-                                        savings = v.Sum(o => o.savings),
-                                        pct = v.Sum(o => o.pct)
+                                        credits = v.Sum(o => o.Credits),
+                                        savings = v.Sum(o => o.Savings),
+                                        pct = v.Sum(o => o.Pct)
                                     }).Distinct();
-                    var savings = summary2.Sum(s => s.savings).Value;
-                    var credits = summary2.Sum(s => s.credits).Value;
+                    var savings = summary2.Sum(s => s.savings);
+                    var credits = summary2.Sum(s => s.credits);
                     return savings + credits;
                 }
                 catch (Exception e)

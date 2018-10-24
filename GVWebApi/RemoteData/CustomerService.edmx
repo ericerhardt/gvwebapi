@@ -128,6 +128,38 @@ warning 6002: The table/view 'CustomerPortal.dbo.SurveyWithAvg' does not have a 
           <Property Name="CustomerName" Type="varchar" MaxLength="120" />
           <Property Name="Attachment" Type="varchar(max)" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'CustomerPortal.dbo.vw_SurveySummaryList' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_SurveySummaryList">
+          <Key>
+            <PropertyRef Name="SurveyID" />
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="SurveyID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="Title" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="120" />
+          <Property Name="Phone" Type="varchar" MaxLength="50" />
+          <Property Name="SurveyDate" Type="datetime" />
+          <Property Name="Answer1" Type="decimal" Precision="21" Scale="0" />
+          <Property Name="Comment1" Type="varchar" MaxLength="1050" />
+          <Property Name="Answer2" Type="decimal" Precision="21" Scale="0" />
+          <Property Name="Comment2" Type="varchar" MaxLength="1050" />
+          <Property Name="Answer3" Type="decimal" Precision="21" Scale="0" />
+          <Property Name="Comment3" Type="varchar" MaxLength="1050" />
+          <Property Name="Answer4" Type="decimal" Precision="21" Scale="0" />
+          <Property Name="Comment4" Type="varchar" MaxLength="1050" />
+          <Property Name="Answer5" Type="decimal" Precision="21" Scale="0" />
+          <Property Name="Comment5" Type="varchar" MaxLength="1050" />
+          <Property Name="SurveyComments" Type="varchar" MaxLength="1050" />
+          <Property Name="CustomerName" Type="varchar" MaxLength="120" />
+        </EntityType>
+        <Function Name="EasylinkReportByDate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="clientId" Type="int" Mode="In" />
+          <Parameter Name="startDate" Type="varchar" Mode="In" />
+          <Parameter Name="endDate" Type="varchar" Mode="In" />
+        </Function>
         <EntityContainer Name="CustomerPortalModelStoreContainer">
           <EntitySet Name="CostAvoidance" EntityType="Self.CostAvoidance" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="easylinkimport" EntityType="Self.easylinkimport" Schema="dbo" store:Type="Tables" />
@@ -161,6 +193,29 @@ warning 6002: The table/view 'CustomerPortal.dbo.SurveyWithAvg' does not have a 
     [SurveyWithAvg].[CustomerName] AS [CustomerName], 
     [SurveyWithAvg].[Attachment] AS [Attachment]
     FROM [dbo].[SurveyWithAvg] AS [SurveyWithAvg]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vw_SurveySummaryList" EntityType="Self.vw_SurveySummaryList" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_SurveySummaryList].[SurveyID] AS [SurveyID], 
+    [vw_SurveySummaryList].[CustomerID] AS [CustomerID], 
+    [vw_SurveySummaryList].[Name] AS [Name], 
+    [vw_SurveySummaryList].[Title] AS [Title], 
+    [vw_SurveySummaryList].[Email] AS [Email], 
+    [vw_SurveySummaryList].[Phone] AS [Phone], 
+    [vw_SurveySummaryList].[SurveyDate] AS [SurveyDate], 
+    [vw_SurveySummaryList].[Answer1] AS [Answer1], 
+    [vw_SurveySummaryList].[Comment1] AS [Comment1], 
+    [vw_SurveySummaryList].[Answer2] AS [Answer2], 
+    [vw_SurveySummaryList].[Comment2] AS [Comment2], 
+    [vw_SurveySummaryList].[Answer3] AS [Answer3], 
+    [vw_SurveySummaryList].[Comment3] AS [Comment3], 
+    [vw_SurveySummaryList].[Answer4] AS [Answer4], 
+    [vw_SurveySummaryList].[Comment4] AS [Comment4], 
+    [vw_SurveySummaryList].[Answer5] AS [Answer5], 
+    [vw_SurveySummaryList].[Comment5] AS [Comment5], 
+    [vw_SurveySummaryList].[SurveyComments] AS [SurveyComments], 
+    [vw_SurveySummaryList].[CustomerName] AS [CustomerName]
+    FROM [dbo].[vw_SurveySummaryList] AS [vw_SurveySummaryList]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -214,6 +269,12 @@ warning 6002: The table/view 'CustomerPortal.dbo.SurveyWithAvg' does not have a 
           <EntitySet Name="easylinkimports" EntityType="CustomerPortalModel.easylinkimport" />
           <EntitySet Name="EasylinkImportHistories" EntityType="CustomerPortalModel.EasylinkImportHistory" />
           <EntitySet Name="EasyLinkMappings" EntityType="CustomerPortalModel.EasyLinkMapping" />
+          <EntitySet Name="vw_SurveySummaryList" EntityType="CustomerPortalModel.vw_SurveySummaryList" />
+          <FunctionImport Name="EasylinkReportByDate" ReturnType="Collection(CustomerPortalModel.EasylinkReportByDate_Result)">
+            <Parameter Name="clientId" Mode="In" Type="Int32" />
+            <Parameter Name="startDate" Mode="In" Type="String" />
+            <Parameter Name="endDate" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="SurveyWithAvg">
           <Key>
@@ -297,6 +358,36 @@ warning 6002: The table/view 'CustomerPortal.dbo.SurveyWithAvg' does not have a 
           <Property Name="ClientId" Type="Int32" />
           <Property Name="ClientName" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="vw_SurveySummaryList">
+          <Key>
+            <PropertyRef Name="SurveyID" />
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="SurveyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="120" FixedLength="false" Unicode="false" />
+          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SurveyDate" Type="DateTime" Precision="3" />
+          <Property Name="Answer1" Type="Decimal" Precision="21" Scale="0" />
+          <Property Name="Comment1" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
+          <Property Name="Answer2" Type="Decimal" Precision="21" Scale="0" />
+          <Property Name="Comment2" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
+          <Property Name="Answer3" Type="Decimal" Precision="21" Scale="0" />
+          <Property Name="Comment3" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
+          <Property Name="Answer4" Type="Decimal" Precision="21" Scale="0" />
+          <Property Name="Comment4" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
+          <Property Name="Answer5" Type="Decimal" Precision="21" Scale="0" />
+          <Property Name="Comment5" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
+          <Property Name="SurveyComments" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
+          <Property Name="CustomerName" Type="String" MaxLength="120" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <ComplexType Name="EasylinkReportByDate_Result">
+          <Property Type="String" Name="emailaddress" Nullable="true" MaxLength="254" />
+          <Property Type="Int32" Name="Pages" Nullable="true" />
+          <Property Type="String" Name="FaxNumber" Nullable="true" MaxLength="150" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -428,6 +519,40 @@ warning 6002: The table/view 'CustomerPortal.dbo.SurveyWithAvg' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="vw_SurveySummaryList">
+            <EntityTypeMapping TypeName="CustomerPortalModel.vw_SurveySummaryList">
+              <MappingFragment StoreEntitySet="vw_SurveySummaryList">
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="SurveyComments" ColumnName="SurveyComments" />
+                <ScalarProperty Name="Comment5" ColumnName="Comment5" />
+                <ScalarProperty Name="Answer5" ColumnName="Answer5" />
+                <ScalarProperty Name="Comment4" ColumnName="Comment4" />
+                <ScalarProperty Name="Answer4" ColumnName="Answer4" />
+                <ScalarProperty Name="Comment3" ColumnName="Comment3" />
+                <ScalarProperty Name="Answer3" ColumnName="Answer3" />
+                <ScalarProperty Name="Comment2" ColumnName="Comment2" />
+                <ScalarProperty Name="Answer2" ColumnName="Answer2" />
+                <ScalarProperty Name="Comment1" ColumnName="Comment1" />
+                <ScalarProperty Name="Answer1" ColumnName="Answer1" />
+                <ScalarProperty Name="SurveyDate" ColumnName="SurveyDate" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="SurveyID" ColumnName="SurveyID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="EasylinkReportByDate" FunctionName="CustomerPortalModel.Store.EasylinkReportByDate">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CustomerPortalModel.EasylinkReportByDate_Result">
+                <ScalarProperty Name="emailaddress" ColumnName="emailaddress" />
+                <ScalarProperty Name="Pages" ColumnName="Pages" />
+                <ScalarProperty Name="FaxNumber" ColumnName="FaxNumber" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -1283,6 +1283,21 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
           <Property Name="Active" Type="bit" Nullable="false" />
           <Property Name="CustomerNameNumber" Type="varchar" MaxLength="163" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_ModelMatrix">
+          <Key>
+            <PropertyRef Name="InvoiceID" />
+            <PropertyRef Name="ModelCategory" />
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="InvoiceID" Type="int" Nullable="false" />
+          <Property Name="Model" Type="varchar" MaxLength="32" />
+          <Property Name="ModelCategory" Type="varchar" MaxLength="15" Nullable="false" />
+          <Property Name="CustomerID" Type="int" Nullable="false" />
+          <Property Name="EndMeterDate" Type="datetime" />
+          <Property Name="Volume" Type="decimal" Precision="18" Scale="6" />
+        </EntityType>
         <Association Name="FK_ARCustomers_LocationID_ARCustomers">
           <End Role="ARCustomers" Type="Self.ARCustomers" Multiplicity="0..1" />
           <End Role="ARCustomers1" Type="Self.ARCustomers" Multiplicity="*" />
@@ -1402,6 +1417,11 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
           <Parameter Name="vd_ToDate" Type="datetime" Mode="In" />
           <Parameter Name="vs_DeviceID" Type="varchar" Mode="In" />
           <Parameter Name="vs_CustomerID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="csModelMatrix" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="_custom_placeholder">
+          <Parameter Name="vd_FromDate" Type="datetime" Mode="In" />
+          <Parameter Name="vd_ToDate" Type="datetime" Mode="In" />
+          <Parameter Name="vs_CustomerNumber" Type="varchar" Mode="In" />
         </Function>
         <Function Name="csVolumeTrend" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="_custom_placeholder">
           <Parameter Name="vd_FromDate" Type="datetime" Mode="In" />
@@ -2070,6 +2090,16 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
     [vw_maplocations].[CustomerNameNumber] AS [CustomerNameNumber]
     FROM [dbo].[vw_maplocations] AS [vw_maplocations]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="vw_ModelMatrix" EntityType="Self.vw_ModelMatrix" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_ModelMatrix].[InvoiceID] AS [InvoiceID], 
+    [vw_ModelMatrix].[Model] AS [Model], 
+    [vw_ModelMatrix].[ModelCategory] AS [ModelCategory], 
+    [vw_ModelMatrix].[CustomerID] AS [CustomerID], 
+    [vw_ModelMatrix].[EndMeterDate] AS [EndMeterDate], 
+    [vw_ModelMatrix].[Volume] AS [Volume]
+    FROM [dbo].[vw_ModelMatrix] AS [vw_ModelMatrix]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK_ARCustomers_LocationID_ARCustomers" Association="Self.FK_ARCustomers_LocationID_ARCustomers">
             <End Role="ARCustomers" EntitySet="ARCustomers" />
             <End Role="ARCustomers1" EntitySet="ARCustomers" />
@@ -2400,6 +2430,12 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
             <Parameter Name="vs_Customer" Mode="In" Type="String" />
             <Parameter Name="vs_CustomerNumber" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="csModelMatrix">
+            <Parameter Name="vd_FromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="vd_ToDate" Mode="In" Type="DateTime" />
+            <Parameter Name="vs_CustomerNumber" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="vw_ModelMatrix" EntityType="CoFreedomModel.vw_ModelMatrix" />
         </EntityContainer>
         <EntityType Name="v_SCEquipmentPreview_Custom">
           <Key>
@@ -3586,6 +3622,19 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
           <Property Name="Devices" Type="Int32" />
           <Property Name="CustomerID" Type="Int32" Nullable="false" />
         </EntityType>
+        <EntityType Name="vw_ModelMatrix">
+          <Key>
+            <PropertyRef Name="InvoiceID" />
+            <PropertyRef Name="ModelCategory" />
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="InvoiceID" Type="Int32" Nullable="false" />
+          <Property Name="Model" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="ModelCategory" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Volume" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="EndMeterDate" Type="DateTime" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -4644,7 +4693,21 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="Web_SCInsertServiceCall" FunctionName="CoFreedomModel.Store.Web_SCInsertServiceCall" />
-          <FunctionImportMapping FunctionImportName="csVolumeTrend" FunctionName="CoFreedomModel.Store.csVolumeTrend" />
+          <FunctionImportMapping FunctionImportName="csVolumeTrend" FunctionName="CoFreedomModel.Store.csVolumeTrend" >
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="csModelMatrix" FunctionName="CoFreedomModel.Store.csModelMatrix" />
+          <EntitySetMapping Name="vw_ModelMatrix">
+            <EntityTypeMapping TypeName="CoFreedomModel.vw_ModelMatrix">
+              <MappingFragment StoreEntitySet="vw_ModelMatrix">
+                <ScalarProperty Name="EndMeterDate" ColumnName="EndMeterDate" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="Volume" ColumnName="Volume" />
+                <ScalarProperty Name="ModelCategory" ColumnName="ModelCategory" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -4676,7 +4739,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
         <EntityTypeShape EntityType="CoFreedomModel.vw_CSQuarterlyHistory" Width="3.125" PointX="9.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_CSQuarterlyHistoryByInvoice" Width="3.125" PointX="8.125" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_csSCBillingContracts" Width="1.5" PointX="11.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="CoFreedomModel.vw_CSServiceCallHistory" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="CoFreedomModel.vw_CSServiceCallHistory" Width="1.5" PointX="2.5" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_CSServiceCallSummarybyPeriod" Width="1.5" PointX="11.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_customer_contacts" Width="1.5" PointX="11.75" PointY="12.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_CustomerLocations" Width="1.5" PointX="13.75" PointY="0.75" IsExpanded="true" />
@@ -4697,7 +4760,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
         <EntityTypeShape EntityType="CoFreedomModel.vw_admin_SCEquipments_22" Width="1.5" PointX="13.75" PointY="18.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_invoicedMeterGroups" Width="2.375" PointX="19.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.SCBillingCycle" Width="1.5" PointX="0.75" PointY="19.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="CoFreedomModel.SCContract" Width="1.5" PointX="3" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="CoFreedomModel.SCContract" Width="1.5" PointX="4.125" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.SCEquipmentCustomProperty" Width="2.25" PointX="19.75" PointY="3.75" IsExpanded="true" />
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_BaseAccrualCycleID_SCBillingCycles" ManuallyRouted="false" />
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_BaseBillingCycleID_SCBillingCycles" ManuallyRouted="false" />
@@ -4712,6 +4775,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a pri
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_OvgBillToID_ARCustomers" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_maplocations" Width="1.5" PointX="22.375" PointY="0.75" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_AssetCountbyDeviceType_Cust" Width="1.5" PointX="22.375" PointY="5.75" />
+        <EntityTypeShape EntityType="CoFreedomModel.vw_ModelMatrix" Width="2.75" PointX="0.75" PointY="7.75" />
       </Diagram>
     </Diagrams>
   </Designer>
