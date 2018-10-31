@@ -21,5 +21,7 @@ namespace GVWebapi.RemoteData
         public Nullable<decimal> FprBase { get; set; }
         public string Comment { get; set; }
         public Nullable<System.DateTime> UpdatedOn { get; set; }
+        public Nullable<System.DateTime> EndDate { get; set; }
+        public string UpdatedBy { get; set; }
     }
 }

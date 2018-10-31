@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using GVWebapi.RemoteData;
+using GVWebapi.Helpers;
 
 namespace GVWebapi.Controllers
 {
@@ -56,7 +57,7 @@ namespace GVWebapi.Controllers
 
                         model.peroid = period.PeriodDate;
                         model.detail = _revisionDbContext.PeriodHistoryView.Where(r => r.PeriodDate == period.PeriodDate && r.ERPContractID == contractId).ToList();
- 
+                      
                         RevisionModel.Add(model);
                     }
                     
@@ -105,112 +106,95 @@ namespace GVWebapi.Controllers
         [HttpGet,Route("api/revisiondatas/getrevisionsummary/{ContractId}")]
         public IHttpActionResult GetRevisionSummary(int contractId)
         {
-            using (var _dbAudit = new RevisionDataEntities())
+         
+        var Revision = new ExcelRevisionExport();
+        var results = Revision.bindRevionDetailSummary(contractId);
+         
+           return Json(results);
+         
+        }
+        [HttpPost, Route("api/revisiondatas/updatemetergroup/")]
+        public IHttpActionResult UpdateMeterGroup(MeterGroup model)
+        {
+            var meterGroup = _revisionDataEntities.MeterGroups.Find(model.MeterGroupID);
+            if(meterGroup != null)
             {
-                var VisionDataList = new List<VisionData>();
+                meterGroup.MeterGroupDesc = model.MeterGroupDesc;
+                meterGroup.ERPMeterGroupID = model.ERPMeterGroupID;
+                meterGroup.CPP = model.CPP;
+                meterGroup.rollovers = model.rollovers;
+                _revisionDataEntities.SaveChanges();
+            }
+            return Ok();
+        }
 
-                var revisions = (from r in _dbAudit.RevisionDataViews
-                                 where r.ERPContractID == contractId
-                                 orderby r.PeriodDate descending
-                                 select new
-                                 {
-                                     ERPContarctID = contractId,
-                                     PeriodDates = r.PeriodDate.Value,
-                                     StartDate = r.StartDate.Value,
-                                     Difference = ((r.PeriodDate.Value.Year - r.StartDate.Value.Year) * 12) + (r.PeriodDate.Value.Month - r.StartDate.Value.Month) + 1,
-                                     PreFPRBaseExpense = r.ClientContractBase,
-                                     PreFPROverageExpense = r.OverageNoFPR,
-                                     FPRBaseExpense = r.FBRContractBase,
-                                     FPROverageExpense = r.OverageExpense,
-                                     r.Credits,
-                                     PeriodSavings = (r.OverageNoFPR + r.ClientContractBase) - (r.OverageExpense + r.FBRContractBase),
-                                     PctSavings = r.NetSavings.Value != 0 && r.OverageNoFPR.Value != 0 ? r.NetSavings / (r.ClientContractBase + r.OverageNoFPR) : 0
-                                 }).ToList();
-                var summary = (from s in revisions
-                               group s by new
-                               {
+        [HttpPost, Route("api/revisiondatas/addexpense/")]
+        public IHttpActionResult AddExpense(BaseHistory model)
+        {
 
-                                   clientPeriodDates = s.PeriodDates,
-                                   clientPeriodStart = s.StartDate,
-                                   diff = s.Difference,
-                                   fprCost = s.FPRBaseExpense,
-                                   clientCost = s.PreFPRBaseExpense
+            BaseHistory expense = new BaseHistory();
+            expense.ContractID = model.ContractID;
+            expense.FprBase = model.FprBase;
+            expense.PreBase = model.PreBase;
+            expense.OverrideDate = model.OverrideDate;
+            expense.EndDate = model.EndDate;
+            expense.UpdatedOn = DateTime.Now;
+            expense.UpdatedBy = model.UpdatedBy;
+            expense.Comment = model.Comment;
+            _revisionDataEntities.BaseHistories.Add(expense);
 
-                               }
-                                   into v
-                               select new
-                               {
-                                   v.Key.clientPeriodDates,
-                                   clientPeriodDate = v.Key.clientPeriodDates,
-                                   clientStartDate = v.Key.clientPeriodStart,
-                                   fprOverageCost = v.Sum(o => o.FPROverageExpense),
-                                   prefprOverageCost = v.Sum(o => o.PreFPROverageExpense),
-                                   fprCost = v.Key.fprCost * v.Key.diff,
-                                   clientOverageCost = v.Sum(o => o.PreFPROverageExpense),
-                                   clientCost = v.Key.clientCost * v.Key.diff,
-                                   credits = v.Sum(o => o.Credits),
-                                   savings = v.Sum(o => o.PeriodSavings),
-                                   pct = v.Sum(o => o.PctSavings)
-                               }).Distinct();
+            _revisionDataEntities.SaveChanges();
+           
+            return Ok();
+        }
+        [HttpPost, Route("api/revisiondatas/updateexpense/")]
+        public IHttpActionResult UpdateExpense(BaseHistory model)
+        {
 
+            var expense = _revisionDataEntities.BaseHistories.Find(model.ID);
+            if (expense != null)
+            {
+                expense.FprBase = model.FprBase;
+                expense.PreBase = model.PreBase;
+                expense.OverrideDate = model.OverrideDate;
+                expense.EndDate = model.EndDate;
+                expense.UpdatedOn = DateTime.Now;
+                expense.UpdatedBy = model.UpdatedBy;
+                expense.Comment = model.Comment;
+                _revisionDataEntities.SaveChanges();
+            }
+           
+            return Ok();
+        }
+        [HttpPost, Route("api/revisiondatas/updaterevision/")]
+        public IHttpActionResult UpdateRevision(RevisionData model)
+        {
 
-                foreach (var revision in summary)
-                {
-                    Int32 monthsDiff = TotelMonthDifference(revision.clientPeriodDate, revision.clientStartDate);
-                    var a = new VisionData();
-                    a.ERPContractID = contractId;
-                  //  a.clientPeriodDates = revision.clientPeriodDates.AddMonths(-monthsDiff).ToString("MMM") + " - " + revision.clientPeriodDates.ToString("MMM yyyy");
-                    a.clientPeriodDates = revision.clientPeriodDates.AddMonths(-monthsDiff).ToString("MMM") + " - " + revision.clientPeriodDates.ToString("MMM yyyy"); 
-                    a.fprOverageCost = Convert.ToDouble(revision.fprOverageCost);
-                    a.clientOverageCost = Convert.ToDouble(revision.prefprOverageCost);
-                    a.fprCost = Convert.ToDouble(revision.fprCost);
-                    a.clientCost = Convert.ToDouble(revision.clientCost);
-                    a.credits = Convert.ToDouble(revision.credits);
-                    a.savings = Convert.ToDouble(revision.savings);
-                    a.pct = Convert.ToDouble(revision.pct);
-                    VisionDataList.Add(a);
-                }
-                try
-                {
-                    var summary2 = (from s in VisionDataList
-                                    group s by new
-                                    {
-
-                                        clientPeriodDates = s.clientPeriodDates,
-                                        clientPeriodStart = s.clientPeriodDates,
-                                        fprCost = s.fprCost,
-                                        clientCost = s.clientCost
-
-                                    }
-                                        into v
-                                    select new
-                                    {
-                                        clientPeriodDates = v.Key.clientPeriodDates,
-                                        clientPeriodDate = v.Key.clientPeriodDates,
-                                        clientStartDate = v.Key.clientPeriodStart,
-                                        fprOverageCost = v.Sum(o => o.fprOverageCost),
-                                        prefprOverageCost = v.Sum(o => o.clientOverageCost),
-                                        fprCost = v.Key.fprCost,
-                                        clientOverageCost = v.Sum(o => o.clientOverageCost),
-                                        clientCost = v.Key.clientCost,
-                                        credits = v.Sum(o => o.credits),
-                                        savings = v.Sum(o => o.savings),
-                                        pct = v.Sum(o => o.pct)
-                                    }).Distinct();
-
-                }
-                catch (Exception e)
-                {
-                    throw(e);
-                }
-
-              var results = VisionDataList.OrderByDescending(o => o.clientPeriodDates);
-                return Json(results);
-                 
+            var revision = _revisionDataEntities.RevisionDatas.Find(model.RevisionDataID);
+            if (revision != null)
+            {
+                revision.Rollover = model.Rollover;
+                revision.Credits = model.Credits;
+               
+                _revisionDataEntities.SaveChanges();
             }
 
+            return Ok();
         }
-        
+        [HttpGet, Route("api/revisiondatas/deleteexpense/")]
+        public IHttpActionResult DeleteExpense(int id)
+        {
+
+            var expense = _revisionDataEntities.BaseHistories.Find(id);
+            if (expense != null)
+            {
+                _revisionDataEntities.BaseHistories.Remove(expense);
+                _revisionDataEntities.SaveChanges();
+            }
+
+            return Ok();
+        }
+
         [HttpGet,Route("api/revisiondatas/getmetergroups/{contractid}")]
         public IHttpActionResult GetMeterGroups(int contractId)
         {

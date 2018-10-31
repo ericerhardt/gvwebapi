@@ -10869,7 +10869,7 @@ namespace GVWebapi.Helpers.Reporting
             Cell c;
             c = new Cell() { StyleIndex = (UInt32Value)169U, DataType = CellValues.String };
             c.CellReference = "B" + index.ToString();
-            c.CellValue = new CellValue(VisionDataList.ClientStartDate);
+            c.CellValue = new CellValue(VisionDataList.ClientPeriodDates);
             r.Append(c);
 
             c = new Cell() { StyleIndex = (UInt32Value)75U };

@@ -24,5 +24,6 @@ namespace GVWebapi.Models
       public Int32? Rollover { get; set; }//[Rollover]
       public decimal? OverageExpense { get; set; }//[OverageExpense]
       public int? ERPMeterGroupID { get; set; }//[ERPMeterGroupID]
+    
     }
 }

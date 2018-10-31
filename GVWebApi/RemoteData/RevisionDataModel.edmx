@@ -16,6 +16,8 @@
           <Property Name="FprBase" Type="decimal" Precision="16" Scale="2" />
           <Property Name="Comment" Type="varchar" MaxLength="1250" />
           <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="EndDate" Type="datetime" />
+          <Property Name="UpdatedBy" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="BillingTypeReference">
           <Key>
@@ -340,6 +342,8 @@ warning 6002: The table/view 'RevisionData.dbo.RolloverView' does not have a pri
           <Property Name="FprBase" Type="Decimal" Precision="16" Scale="2" />
           <Property Name="Comment" Type="String" MaxLength="1250" FixedLength="false" Unicode="false" />
           <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="BillingTypeReference">
           <Key>
@@ -580,6 +584,8 @@ warning 6002: The table/view 'RevisionData.dbo.RolloverView' does not have a pri
           <EntitySetMapping Name="BaseHistories">
             <EntityTypeMapping TypeName="RevisionDataModel.BaseHistory">
               <MappingFragment StoreEntitySet="BaseHistory">
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ContractID" ColumnName="ContractID" />
                 <ScalarProperty Name="OverrideDate" ColumnName="OverrideDate" />
