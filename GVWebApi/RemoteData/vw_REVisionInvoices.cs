@@ -18,5 +18,6 @@ namespace GVWebapi.RemoteData
         public int ContractID { get; set; }
         public Nullable<System.DateTime> PeriodDate { get; set; }
         public int CustomerID { get; set; }
+        public Nullable<System.DateTime> StartDate { get; set; }
     }
 }

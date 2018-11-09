@@ -393,7 +393,7 @@ namespace GVWebapi.Controllers
                         var success = MailParser.EmailIntegrisServiceCall(CallId, imodel, 3);
                         if (success)
                         {
-                            return Redirect("http://www.fprus.com/client-integris/integris-servicesupply_ty");
+                            return Redirect("https://www.fprus.com/client-integris/integris-servicesupply_ty");
                         }
 
                     }
@@ -593,7 +593,7 @@ namespace GVWebapi.Controllers
 
                 DbParameter paramCaller = cmd.CreateParameter();
                 paramCaller.ParameterName = "Caller";
-                paramCaller.Value = oSupplyInfo.Name +"("+ oSupplyInfo.Phone +")";
+                paramCaller.Value = oSupplyInfo.Name +"("+ oSupplyInfo.Phone +"/"+oSupplyInfo.Email+")";
                 cmd.Parameters.Add(paramCaller);
 
                 DbParameter paramEquipid = cmd.CreateParameter();
@@ -644,7 +644,8 @@ namespace GVWebapi.Controllers
 
                 DbParameter paramCaller = cmd.CreateParameter();
                 paramCaller.ParameterName = "Caller";
-                paramCaller.Value = oSupplyInfo.Name + "(" + oSupplyInfo.Phone + ")"; ;
+               
+                paramCaller.Value = oSupplyInfo.Name + "(" + oSupplyInfo.Phone + "/" + oSupplyInfo.Email + ")";
                 cmd.Parameters.Add(paramCaller);
 
                 DbParameter paramEquipid = cmd.CreateParameter();

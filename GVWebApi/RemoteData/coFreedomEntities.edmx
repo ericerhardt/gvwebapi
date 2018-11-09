@@ -128,6 +128,53 @@
           <Property Name="LastUpdate" Type="datetime" Nullable="false" />
           <Property Name="timestamp" Type="timestamp" StoreGeneratedPattern="Computed" />
         </EntityType>
+        <EntityType Name="SCContractMeterGroups">
+          <Key>
+            <PropertyRef Name="ContractMeterGroupID" />
+          </Key>
+          <Property Name="ContractMeterGroupID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ContractMeterGroup" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="128" Nullable="false" />
+          <Property Name="ContractID" Type="int" Nullable="false" />
+          <Property Name="CoveredCopies" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="ApplyToExpiration" Type="bit" />
+          <Property Name="OverageTypeID" Type="int" />
+          <Property Name="UseOverages" Type="bit" Nullable="false" />
+          <Property Name="MeterCount" Type="int" Nullable="false" />
+          <Property Name="NextOvgIncreaseDate" Type="datetime" />
+          <Property Name="NextOvgScheduleDetailID" Type="int" />
+          <Property Name="OvgRateScheduleStartDate" Type="datetime" />
+          <Property Name="OvgRateScheduleStartDateType" Type="int" />
+          <Property Name="OvgRateScheduleIsRenewalType" Type="bit" />
+          <Property Name="CreatorID" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="UpdatorID" Type="char" MaxLength="8" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="LastUpdate" Type="datetime" Nullable="false" />
+          <Property Name="timestamp" Type="timestamp" StoreGeneratedPattern="Computed" />
+          <Property Name="OverageMethodID" Type="int" Nullable="false" />
+          <Property Name="CreditRate" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="RolloverUsage" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="BaseDistributionCodeID" Type="int" />
+          <Property Name="BilledCoveredCopiesBalance" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="BillMeterGroupBaseAmount" Type="bit" Nullable="false" />
+          <Property Name="BaseRatePerCopy" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="RoundBaseAmountDigits" Type="int" Nullable="false" />
+          <Property Name="UnearnedBalance" Type="money" Nullable="false" />
+          <Property Name="BaseRateScheduleIsRenewalType" Type="bit" />
+          <Property Name="BaseRateScheduleStartDate" Type="datetime" />
+          <Property Name="BaseRateScheduleStartDateType" Type="int" />
+          <Property Name="NextBaseIncreaseDate" Type="datetime" />
+          <Property Name="NextBaseScheduleDetailID" Type="int" />
+          <Property Name="NextCoveredCopies" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="NextCoveredCopiesDate" Type="datetime" />
+          <Property Name="CoveredCopiesPer" Type="int" Nullable="false" />
+          <Property Name="BilledCoveredCopiesBalanceAdjustment" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="OverageBillingCycleID" Type="int" />
+          <Property Name="OverageBilledThruDate" Type="datetime" />
+          <Property Name="OverageNextBillingDate" Type="datetime" />
+          <Property Name="OverageLastBillingDate" Type="datetime" />
+          <Property Name="OverageBilledThruDateInitial" Type="datetime" />
+        </EntityType>
         <EntityType Name="SCContracts">
           <Key>
             <PropertyRef Name="ContractID" />
@@ -944,6 +991,7 @@ warning 6002: The table/view 'CoFreedom._custom_placeholder.vw_REVisionInvoices'
           <Property Name="ContractID" Type="int" Nullable="false" />
           <Property Name="PeriodDate" Type="datetime" />
           <Property Name="CustomerID" Type="int" Nullable="false" />
+          <Property Name="StartDate" Type="datetime" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'CoFreedom._custom_placeholder.vw_RevisionMeterGroups' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1322,6 +1370,30 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_SCContractMeterGroups_ContractID_SCContracts">
+          <End Role="SCContracts" Type="Self.SCContracts" Multiplicity="1" />
+          <End Role="SCContractMeterGroups" Type="Self.SCContractMeterGroups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SCContracts">
+              <PropertyRef Name="ContractID" />
+            </Principal>
+            <Dependent Role="SCContractMeterGroups">
+              <PropertyRef Name="ContractID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SCContractMeterGroups_OverageBillingCycleID_SCBillingCycles">
+          <End Role="SCBillingCycles" Type="Self.SCBillingCycles" Multiplicity="0..1" />
+          <End Role="SCContractMeterGroups" Type="Self.SCContractMeterGroups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SCBillingCycles">
+              <PropertyRef Name="BillingCycleID" />
+            </Principal>
+            <Dependent Role="SCContractMeterGroups">
+              <PropertyRef Name="OverageBillingCycleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_SCContracts_BaseAccrualCycleID_SCBillingCycles">
           <End Role="SCBillingCycles" Type="Self.SCBillingCycles" Multiplicity="0..1" />
           <End Role="SCContracts" Type="Self.SCContracts" Multiplicity="*" />
@@ -1456,6 +1528,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
         <EntityContainer Name="CoFreedomModelStoreContainer">
           <EntitySet Name="ARCustomers" EntityType="Self.ARCustomers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SCBillingCycles" EntityType="Self.SCBillingCycles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SCContractMeterGroups" EntityType="Self.SCContractMeterGroups" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SCContracts" EntityType="Self.SCContracts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SCEquipmentCustomProperties" EntityType="Self.SCEquipmentCustomProperties" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="vw_admin_EquipmentList_MeterGroup" EntityType="Self.vw_admin_EquipmentList_MeterGroup" store:Type="Views" store:Schema="_custom_eviews">
@@ -1871,7 +1944,8 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
     [vw_REVisionInvoices].[InvoiceID] AS [InvoiceID], 
     [vw_REVisionInvoices].[ContractID] AS [ContractID], 
     [vw_REVisionInvoices].[PeriodDate] AS [PeriodDate], 
-    [vw_REVisionInvoices].[CustomerID] AS [CustomerID]
+    [vw_REVisionInvoices].[CustomerID] AS [CustomerID], 
+    [vw_REVisionInvoices].[StartDate] AS [StartDate]
     FROM [_custom_placeholder].[vw_REVisionInvoices] AS [vw_REVisionInvoices]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="vw_RevisionMeterGroups" EntityType="Self.vw_RevisionMeterGroups" store:Type="Views" store:Schema="_custom_placeholder">
@@ -2107,6 +2181,14 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
           <AssociationSet Name="FK_ARCustomers_MailToID_ARCustomers" Association="Self.FK_ARCustomers_MailToID_ARCustomers">
             <End Role="ARCustomers" EntitySet="ARCustomers" />
             <End Role="ARCustomers1" EntitySet="ARCustomers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SCContractMeterGroups_ContractID_SCContracts" Association="Self.FK_SCContractMeterGroups_ContractID_SCContracts">
+            <End Role="SCContracts" EntitySet="SCContracts" />
+            <End Role="SCContractMeterGroups" EntitySet="SCContractMeterGroups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SCContractMeterGroups_OverageBillingCycleID_SCBillingCycles" Association="Self.FK_SCContractMeterGroups_OverageBillingCycleID_SCBillingCycles">
+            <End Role="SCBillingCycles" EntitySet="SCBillingCycles" />
+            <End Role="SCContractMeterGroups" EntitySet="SCContractMeterGroups" />
           </AssociationSet>
           <AssociationSet Name="FK_SCContracts_BaseAccrualCycleID_SCBillingCycles" Association="Self.FK_SCContracts_BaseAccrualCycleID_SCBillingCycles">
             <End Role="SCBillingCycles" EntitySet="SCBillingCycles" />
@@ -2436,6 +2518,15 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
             <Parameter Name="vs_CustomerNumber" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="vw_ModelMatrix" EntityType="CoFreedomModel.vw_ModelMatrix" />
+          <EntitySet Name="SCContractMeterGroups" EntityType="CoFreedomModel.SCContractMeterGroup" />
+          <AssociationSet Name="FK_SCContractMeterGroups_OverageBillingCycleID_SCBillingCycles" Association="CoFreedomModel.FK_SCContractMeterGroups_OverageBillingCycleID_SCBillingCycles">
+            <End Role="SCBillingCycle" EntitySet="SCBillingCycles" />
+            <End Role="SCContractMeterGroup" EntitySet="SCContractMeterGroups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SCContractMeterGroups_ContractID_SCContracts" Association="CoFreedomModel.FK_SCContractMeterGroups_ContractID_SCContracts">
+            <End Role="SCContract" EntitySet="SCContracts" />
+            <End Role="SCContractMeterGroup" EntitySet="SCContractMeterGroups" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="v_SCEquipmentPreview_Custom">
           <Key>
@@ -2841,6 +2932,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
           <Property Name="ContractID" Type="Int32" Nullable="false" />
           <Property Name="PeriodDate" Type="DateTime" Precision="3" />
           <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="StartDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="vw_RevisionMeterGroups">
           <Key>
@@ -3075,6 +3167,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
           <NavigationProperty Name="SCContracts1" Relationship="CoFreedomModel.FK_SCContracts_BaseBillingCycleID_SCBillingCycles" FromRole="SCBillingCycle" ToRole="SCContract" />
           <NavigationProperty Name="SCContracts2" Relationship="CoFreedomModel.FK_SCContracts_OverageBillingCycleID_SCBillingCycles" FromRole="SCBillingCycle" ToRole="SCContract" />
           <NavigationProperty Name="SCContracts3" Relationship="CoFreedomModel.FK_SCContracts_RenewalCycleID_SCBillingCycles" FromRole="SCBillingCycle" ToRole="SCContract" />
+          <NavigationProperty Name="SCContractMeterGroups" Relationship="CoFreedomModel.FK_SCContractMeterGroups_OverageBillingCycleID_SCBillingCycles" FromRole="SCBillingCycle" ToRole="SCContractMeterGroup" />
         </EntityType>
         <EntityType Name="SCContract">
           <Key>
@@ -3273,6 +3366,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
           <NavigationProperty Name="ARCustomer" Relationship="CoFreedomModel.FK_SCContracts_BillToID_ARCustomers" FromRole="SCContract" ToRole="ARCustomer" />
           <NavigationProperty Name="ARCustomer1" Relationship="CoFreedomModel.FK_SCContracts_CustomerID_ARCustomers" FromRole="SCContract" ToRole="ARCustomer" />
           <NavigationProperty Name="ARCustomer2" Relationship="CoFreedomModel.FK_SCContracts_OvgBillToID_ARCustomers" FromRole="SCContract" ToRole="ARCustomer" />
+          <NavigationProperty Name="SCContractMeterGroups" Relationship="CoFreedomModel.FK_SCContractMeterGroups_ContractID_SCContracts" FromRole="SCContract" ToRole="SCContractMeterGroup" />
         </EntityType>
         <Association Name="FK_SCContracts_BaseAccrualCycleID_SCBillingCycles">
           <End Type="CoFreedomModel.SCBillingCycle" Role="SCBillingCycle" Multiplicity="0..1" />
@@ -3635,6 +3729,79 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
           <Property Name="CustomerID" Type="Int32" Nullable="false" />
           <Property Name="EndMeterDate" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="SCContractMeterGroup">
+          <Key>
+            <PropertyRef Name="ContractMeterGroupID" />
+          </Key>
+          <Property Name="ContractMeterGroupID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ContractMeterGroup" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="ContractID" Type="Int32" Nullable="false" />
+          <Property Name="CoveredCopies" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="ApplyToExpiration" Type="Boolean" />
+          <Property Name="OverageTypeID" Type="Int32" />
+          <Property Name="UseOverages" Type="Boolean" Nullable="false" />
+          <Property Name="MeterCount" Type="Int32" Nullable="false" />
+          <Property Name="NextOvgIncreaseDate" Type="DateTime" Precision="3" />
+          <Property Name="NextOvgScheduleDetailID" Type="Int32" />
+          <Property Name="OvgRateScheduleStartDate" Type="DateTime" Precision="3" />
+          <Property Name="OvgRateScheduleStartDateType" Type="Int32" />
+          <Property Name="OvgRateScheduleIsRenewalType" Type="Boolean" />
+          <Property Name="CreatorID" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="UpdatorID" Type="String" Nullable="false" MaxLength="8" FixedLength="true" Unicode="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LastUpdate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="timestamp" Type="Binary" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="OverageMethodID" Type="Int32" Nullable="false" />
+          <Property Name="CreditRate" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="RolloverUsage" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="BaseDistributionCodeID" Type="Int32" />
+          <Property Name="BilledCoveredCopiesBalance" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="BillMeterGroupBaseAmount" Type="Boolean" Nullable="false" />
+          <Property Name="BaseRatePerCopy" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="RoundBaseAmountDigits" Type="Int32" Nullable="false" />
+          <Property Name="UnearnedBalance" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="BaseRateScheduleIsRenewalType" Type="Boolean" />
+          <Property Name="BaseRateScheduleStartDate" Type="DateTime" Precision="3" />
+          <Property Name="BaseRateScheduleStartDateType" Type="Int32" />
+          <Property Name="NextBaseIncreaseDate" Type="DateTime" Precision="3" />
+          <Property Name="NextBaseScheduleDetailID" Type="Int32" />
+          <Property Name="NextCoveredCopies" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="NextCoveredCopiesDate" Type="DateTime" Precision="3" />
+          <Property Name="CoveredCopiesPer" Type="Int32" Nullable="false" />
+          <Property Name="BilledCoveredCopiesBalanceAdjustment" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="OverageBillingCycleID" Type="Int32" />
+          <Property Name="OverageBilledThruDate" Type="DateTime" Precision="3" />
+          <Property Name="OverageNextBillingDate" Type="DateTime" Precision="3" />
+          <Property Name="OverageLastBillingDate" Type="DateTime" Precision="3" />
+          <Property Name="OverageBilledThruDateInitial" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="SCBillingCycle" Relationship="CoFreedomModel.FK_SCContractMeterGroups_OverageBillingCycleID_SCBillingCycles" FromRole="SCContractMeterGroup" ToRole="SCBillingCycle" />
+          <NavigationProperty Name="SCContract" Relationship="CoFreedomModel.FK_SCContractMeterGroups_ContractID_SCContracts" FromRole="SCContractMeterGroup" ToRole="SCContract" />
+        </EntityType>
+        <Association Name="FK_SCContractMeterGroups_OverageBillingCycleID_SCBillingCycles">
+          <End Type="CoFreedomModel.SCBillingCycle" Role="SCBillingCycle" Multiplicity="0..1" />
+          <End Type="CoFreedomModel.SCContractMeterGroup" Role="SCContractMeterGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SCBillingCycle">
+              <PropertyRef Name="BillingCycleID" />
+            </Principal>
+            <Dependent Role="SCContractMeterGroup">
+              <PropertyRef Name="OverageBillingCycleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SCContractMeterGroups_ContractID_SCContracts">
+          <End Type="CoFreedomModel.SCContract" Role="SCContract" Multiplicity="1" />
+          <End Type="CoFreedomModel.SCContractMeterGroup" Role="SCContractMeterGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SCContract">
+              <PropertyRef Name="ContractID" />
+            </Principal>
+            <Dependent Role="SCContractMeterGroup">
+              <PropertyRef Name="ContractID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -4078,6 +4245,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
           <EntitySetMapping Name="vw_REVisionInvoices">
             <EntityTypeMapping TypeName="CoFreedomModel.vw_REVisionInvoices">
               <MappingFragment StoreEntitySet="vw_REVisionInvoices">
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
                 <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
                 <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
                 <ScalarProperty Name="ContractID" ColumnName="ContractID" />
@@ -4708,6 +4876,54 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="SCContractMeterGroups">
+            <EntityTypeMapping TypeName="CoFreedomModel.SCContractMeterGroup">
+              <MappingFragment StoreEntitySet="SCContractMeterGroups">
+                <ScalarProperty Name="OverageBilledThruDateInitial" ColumnName="OverageBilledThruDateInitial" />
+                <ScalarProperty Name="OverageLastBillingDate" ColumnName="OverageLastBillingDate" />
+                <ScalarProperty Name="OverageNextBillingDate" ColumnName="OverageNextBillingDate" />
+                <ScalarProperty Name="OverageBilledThruDate" ColumnName="OverageBilledThruDate" />
+                <ScalarProperty Name="OverageBillingCycleID" ColumnName="OverageBillingCycleID" />
+                <ScalarProperty Name="BilledCoveredCopiesBalanceAdjustment" ColumnName="BilledCoveredCopiesBalanceAdjustment" />
+                <ScalarProperty Name="CoveredCopiesPer" ColumnName="CoveredCopiesPer" />
+                <ScalarProperty Name="NextCoveredCopiesDate" ColumnName="NextCoveredCopiesDate" />
+                <ScalarProperty Name="NextCoveredCopies" ColumnName="NextCoveredCopies" />
+                <ScalarProperty Name="NextBaseScheduleDetailID" ColumnName="NextBaseScheduleDetailID" />
+                <ScalarProperty Name="NextBaseIncreaseDate" ColumnName="NextBaseIncreaseDate" />
+                <ScalarProperty Name="BaseRateScheduleStartDateType" ColumnName="BaseRateScheduleStartDateType" />
+                <ScalarProperty Name="BaseRateScheduleStartDate" ColumnName="BaseRateScheduleStartDate" />
+                <ScalarProperty Name="BaseRateScheduleIsRenewalType" ColumnName="BaseRateScheduleIsRenewalType" />
+                <ScalarProperty Name="UnearnedBalance" ColumnName="UnearnedBalance" />
+                <ScalarProperty Name="RoundBaseAmountDigits" ColumnName="RoundBaseAmountDigits" />
+                <ScalarProperty Name="BaseRatePerCopy" ColumnName="BaseRatePerCopy" />
+                <ScalarProperty Name="BillMeterGroupBaseAmount" ColumnName="BillMeterGroupBaseAmount" />
+                <ScalarProperty Name="BilledCoveredCopiesBalance" ColumnName="BilledCoveredCopiesBalance" />
+                <ScalarProperty Name="BaseDistributionCodeID" ColumnName="BaseDistributionCodeID" />
+                <ScalarProperty Name="RolloverUsage" ColumnName="RolloverUsage" />
+                <ScalarProperty Name="CreditRate" ColumnName="CreditRate" />
+                <ScalarProperty Name="OverageMethodID" ColumnName="OverageMethodID" />
+                <ScalarProperty Name="timestamp" ColumnName="timestamp" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="UpdatorID" ColumnName="UpdatorID" />
+                <ScalarProperty Name="CreatorID" ColumnName="CreatorID" />
+                <ScalarProperty Name="OvgRateScheduleIsRenewalType" ColumnName="OvgRateScheduleIsRenewalType" />
+                <ScalarProperty Name="OvgRateScheduleStartDateType" ColumnName="OvgRateScheduleStartDateType" />
+                <ScalarProperty Name="OvgRateScheduleStartDate" ColumnName="OvgRateScheduleStartDate" />
+                <ScalarProperty Name="NextOvgScheduleDetailID" ColumnName="NextOvgScheduleDetailID" />
+                <ScalarProperty Name="NextOvgIncreaseDate" ColumnName="NextOvgIncreaseDate" />
+                <ScalarProperty Name="MeterCount" ColumnName="MeterCount" />
+                <ScalarProperty Name="UseOverages" ColumnName="UseOverages" />
+                <ScalarProperty Name="OverageTypeID" ColumnName="OverageTypeID" />
+                <ScalarProperty Name="ApplyToExpiration" ColumnName="ApplyToExpiration" />
+                <ScalarProperty Name="CoveredCopies" ColumnName="CoveredCopies" />
+                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ContractMeterGroup" ColumnName="ContractMeterGroup" />
+                <ScalarProperty Name="ContractMeterGroupID" ColumnName="ContractMeterGroupID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -4776,6 +4992,9 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
         <EntityTypeShape EntityType="CoFreedomModel.vw_maplocations" Width="1.5" PointX="22.375" PointY="0.75" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_AssetCountbyDeviceType_Cust" Width="1.5" PointX="22.375" PointY="5.75" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_ModelMatrix" Width="2.75" PointX="0.75" PointY="7.75" />
+        <EntityTypeShape EntityType="CoFreedomModel.SCContractMeterGroup" Width="3.75" PointX="8.125" PointY="23" />
+        <AssociationConnector Association="CoFreedomModel.FK_SCContractMeterGroups_OverageBillingCycleID_SCBillingCycles" />
+        <AssociationConnector Association="CoFreedomModel.FK_SCContractMeterGroups_ContractID_SCContracts" />
       </Diagram>
     </Diagrams>
   </Designer>

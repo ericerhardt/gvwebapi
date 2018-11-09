@@ -14,6 +14,12 @@ namespace GVWebapi.RemoteData
     
     public partial class SCContract
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public SCContract()
+        {
+            this.SCContractMeterGroups = new HashSet<SCContractMeterGroup>();
+        }
+    
         public int ContractID { get; set; }
         public string ContractNumber { get; set; }
         public string ContractMajor { get; set; }
@@ -208,5 +214,7 @@ namespace GVWebapi.RemoteData
         public virtual ARCustomer ARCustomer { get; set; }
         public virtual ARCustomer ARCustomer1 { get; set; }
         public virtual ARCustomer ARCustomer2 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SCContractMeterGroup> SCContractMeterGroups { get; set; }
     }
 }

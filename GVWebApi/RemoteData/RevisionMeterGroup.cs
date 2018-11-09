@@ -12,7 +12,7 @@ namespace GVWebapi.RemoteData
     using System;
     using System.Collections.Generic;
     
-    public partial class MeterGroup
+    public partial class RevisionMeterGroup
     {
         public long MeterGroupID { get; set; }
         public Nullable<int> ERPMeterGroupID { get; set; }

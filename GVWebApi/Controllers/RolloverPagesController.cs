@@ -8,114 +8,69 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using GVWebapi.RemoteData;
 using GVWebapi.Models;
-
+using GVWebapi.Helpers;
 namespace GVWebapi.Controllers
 {
     public class RolloverPagesController : ApiController
     {
-        private RevisionDataEntities db = new RevisionDataEntities();
+        private readonly ExcelRevisionExport db = new ExcelRevisionExport();
 
-        public IQueryable<RolloverView> GetRolloverViews()
-        {
-            return db.RolloverViews;
-        }
+        private readonly CoFreedomEntities ea = new CoFreedomEntities();
 
-        [ResponseType(typeof(RolloverView))]
+        [HttpGet, Route("api/RolloverPages/{id}")]
         public IHttpActionResult GetRolloverView(int id)
         {
-            var periodDates = db.RolloverViews.OrderByDescending(r => r.PeriodDate).Where(r => r.CustomerID == id).Select(r => r.PeriodDate).Distinct().ToList();
-            var values = new List<RolloverPagesModel>();
-            foreach (var period in periodDates)
-            {
-                var ret = new RolloverPagesModel()
-                {
-                    Period = period,
-                    Data = db.RolloverViews.Where(c => c.PeriodDate == period && c.CustomerID == id).Select(c => new Rollovers { ERPMeterGroupDesc = c.ERPMeterGroupDesc, Rollover = c.Rollover, CPP = c.CPP, Savings = (c.Rollover * c.CPP) }).ToList()
-                };
-                values.Add(ret);
-            }
-            var totalSavings = db.RolloverViews.Where(c => c.CustomerID == id).Sum(r => r.Rollover * r.CPP);
+            var ContractID = db.GetContractID(id);
+            var periods = db.GetRolloverHistory(ContractID).OrderByDescending(r => r.Period).ToList();
+            var rollovers = ea.SCContractMeterGroups.Where(o => o.ContractID == ContractID).Select(o =>
+              new RolloverUsageModel
+              {
+                  ContractID = o.ContractID,
+                  ContractMeterGroupID = o.ContractMeterGroupID,
+                  ContractMeterGroup = o.ContractMeterGroup,
+                  RolloverUsage = o.RolloverUsage
+              }).ToList();
+            var totalSavings = periods.Sum(p=> p.TotalSavings);
 
-            return Json(new { data = values, savings = totalSavings });
+            return Json(new { rollovers = periods, contractrollovers = rollovers, savings = totalSavings });
         }
 
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutRolloverView(string id, RolloverView rolloverView)
+        [HttpGet, Route("api/getmetergroups/{id}")]
+        public IHttpActionResult getmetergrpups(int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
-            if (id != rolloverView.ERPCustomerNumber)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(rolloverView).State = EntityState.Modified;
-
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RolloverViewExists(id))
+            var ContractID = db.GetContractID(id);
+            var rollovers = ea.SCContractMeterGroups.Where(o=> o.ContractID == ContractID).Select(o=>
+                new RolloverUsageModel
                 {
-                    return NotFound();
+                    ContractID = o.ContractID,
+                    ContractMeterGroupID = o.ContractMeterGroupID,
+                    ContractMeterGroup = o.ContractMeterGroup,
+                    RolloverUsage = o.RolloverUsage
+                }).ToList();
+ 
+
+            return Json(rollovers);
+        }
+        [HttpPost, Route("api/updatemetergrouprollovers/")]
+        public IHttpActionResult UpdateMeterGroupRollovers(IEnumerable<RolloverUsageModel> model)
+        {
+            foreach(var rollover in model)
+            {
+                var _rollover = ea.SCContractMeterGroups.Find(rollover.ContractMeterGroupID);
+                if (_rollover != null)
+                {
+                    
+                    _rollover.RolloverUsage = rollover.RolloverUsage;
+                    ea.SaveChanges();
+
                 }
 
-                throw;
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+
+            return Ok();
         }
 
-        [ResponseType(typeof(RolloverView))]
-        public async Task<IHttpActionResult> PostRolloverView(RolloverView rolloverView)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            db.RolloverViews.Add(rolloverView);
-
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (RolloverViewExists(rolloverView.ERPCustomerNumber))
-                {
-                    return Conflict();
-                }
-
-                throw;
-            }
-
-            return CreatedAtRoute("DefaultApi", new { id = rolloverView.ERPCustomerNumber }, rolloverView);
-        }
-
-        [ResponseType(typeof(RolloverView))]
-        public async Task<IHttpActionResult> DeleteRolloverView(string id)
-        {
-            var rolloverView = await db.RolloverViews.FindAsync(id);
-            if (rolloverView == null)
-            {
-                return NotFound();
-            }
-
-            db.RolloverViews.Remove(rolloverView);
-            await db.SaveChangesAsync();
-
-            return Ok(rolloverView);
-        }
-
-        private bool RolloverViewExists(string id)
-        {
-            return db.RolloverViews.Count(e => e.ERPCustomerNumber == id) > 0;
-        }
     }
 }

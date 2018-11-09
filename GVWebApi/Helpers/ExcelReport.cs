@@ -6,7 +6,7 @@ using Ap = DocumentFormat.OpenXml.ExtendedProperties;
 using Vt = DocumentFormat.OpenXml.VariantTypes;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Spreadsheet;
-using X14 = DocumentFormat.OpenXml.Office2010.Excel;
+using X14 = DocumentFormat.OpenXml.Office2013.Excel;
 using A = DocumentFormat.OpenXml.Drawing;
 using GVWebapi.RemoteData;
 using GVWebapi.Models;
@@ -14,7 +14,7 @@ using System.Data.SqlClient;
 
 namespace GVWebapi.Helpers.Reporting
 {
-    public class ExcelReport2
+    public class ExcelReport
     {
 
         // Static Var's
@@ -45,8 +45,35 @@ namespace GVWebapi.Helpers.Reporting
             using (SpreadsheetDocument package = SpreadsheetDocument.Create(filePath, SpreadsheetDocumentType.Workbook))
             {
                 CreateParts(package);
+                FixFormating(package);
                 package.Close();
             }
+        }
+        private void FixFormating(SpreadsheetDocument document)
+        {
+            
+                WorkbookPart workbookPart = document.WorkbookPart;
+                IEnumerable<string> worksheetIds = workbookPart.Workbook.Descendants<Sheet>().Select(w => w.Id.Value);
+                WorksheetPart worksheetPart;
+                foreach (string worksheetId in worksheetIds)
+                {
+                    worksheetPart = ((WorksheetPart)workbookPart.GetPartById(worksheetId));
+                    PageSetup pageSetup = worksheetPart.Worksheet.Descendants<PageSetup>().FirstOrDefault();
+                    if (pageSetup != null)
+                    {
+                        pageSetup.Orientation = OrientationValues.Landscape;
+                    }
+                    else
+                    {
+                        pageSetup = new PageSetup();
+                        pageSetup.Orientation = OrientationValues.Landscape;
+                        pageSetup.FitToWidth = 1;
+                        worksheetPart.Worksheet.AppendChild(pageSetup);
+                    }
+                    worksheetPart.Worksheet.Save();
+                }
+                workbookPart.Workbook.Save();
+            
         }
         // Adds child parts and generates content of the specified part.
         private void CreateParts(SpreadsheetDocument document)
@@ -3403,9 +3430,9 @@ namespace GVWebapi.Helpers.Reporting
 
             StylesheetExtension stylesheetExtension1 = new StylesheetExtension() { Uri = "{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}" };
             stylesheetExtension1.AddNamespaceDeclaration("x14", "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main");
-            X14.SlicerStyles slicerStyles1 = new X14.SlicerStyles() { DefaultSlicerStyle = "SlicerStyleLight1" };
+            //X14.SlicerStyles slicerStyles1 = new X14.SlicerStyles() { DefaultSlicerStyle = "SlicerStyleLight1" };
 
-            stylesheetExtension1.Append(slicerStyles1);
+            //stylesheetExtension1.Append(slicerStyles1);
 
             stylesheetExtensionList1.Append(stylesheetExtension1);
 
@@ -5038,11 +5065,11 @@ namespace GVWebapi.Helpers.Reporting
 
             DateTime period = Convert.ToDateTime(_period);
             CoFreedomEntities db = new CoFreedomEntities();
-            RevisionDataEntities db3 = new RevisionDataEntities();
+            GlobalViewEntities db3 = new GlobalViewEntities();
             var overridedate = Convert.ToDateTime(_overrideDate);
-            var query = (from r in db3.RevisionDatas
-                         where r.ERPContractID == _contractID  && r.PeriodDate >= overridedate
-                         orderby r.PeriodDate descending, r.ERPMeterGroupDesc ascending 
+            var query = (from r in db.vw_RevisionInvoiceHistory
+                         where r.ContractID == _contractID  && r.OverageToDate >= overridedate
+                         orderby r.OverageToDate descending, r.MeterGroup ascending 
                          select r).ToList();
 
             SheetProperties sheetProperties1 = new SheetProperties() {  CodeName = "Sheet14" };
@@ -5187,7 +5214,7 @@ namespace GVWebapi.Helpers.Reporting
             {
 
                 _rowindex++;
-                if (PeriodChange  != item.PeriodDate.Value.ToShortDateString())
+                if (PeriodChange  != item.OverageToDate.Value.ToShortDateString())
                 {
                     Row row4a = new Row() { RowIndex = (UInt32Value)_rowindex, Spans = new ListValue<StringValue>() { InnerText = "1:10" }, Height = 15.5D, CustomHeight = true, DyDescent = 0.25D };
                     Cell cell31a = new Cell() { CellReference = "A" + _rowindex.ToString(), StyleIndex = (UInt32Value)19U };
@@ -5234,7 +5261,7 @@ namespace GVWebapi.Helpers.Reporting
                     Cell cell32 = new Cell() { CellReference = "B" + _rowindex.ToString()  };
                     cell32.StyleIndex = PeriodChange == "" ? 14U : 14U;
                     CellValue cellValuePeriod = new CellValue();
-                    cellValuePeriod.Text = item.StartDate.Value.ToString("MMMM yyyy") + " - " + item.PeriodDate.Value.ToString("MMMM yyyy");
+                    cellValuePeriod.Text = item.OverageFromDate.Value.ToString("MMMM yyyy") + " - " + item.OverageToDate.Value.ToString("MMMM yyyy");
                     cell32.Append(cellValuePeriod);
                     Cell cell33 = new Cell() { CellReference = "C" + _rowindex.ToString()};
                     cell33.StyleIndex = PeriodChange == "" ? 19U : 19U;
@@ -5327,7 +5354,7 @@ namespace GVWebapi.Helpers.Reporting
                     sheetData1.Append(row4);
                     sheetData1.Append(row6);
 
-                   PeriodChange =  item.PeriodDate.Value.ToShortDateString();
+                   PeriodChange =  item.OverageToDate.Value.ToShortDateString();
                     _rowindex++;
                     StartRow = _rowindex;
                 }
@@ -5338,12 +5365,12 @@ namespace GVWebapi.Helpers.Reporting
                     row7.RowIndex = _rowindex;
                     Cell cell49 = new Cell() { CellReference = "B" + _rowindex.ToString(), StyleIndex = (UInt32Value)60U, DataType = CellValues.String };
                     CellValue cellValue13 = new CellValue();
-                    cellValue13.Text = item.ERPMeterGroupDesc;
+                    cellValue13.Text = item.MeterGroup;
 
                     cell49.Append(cellValue13);
                     Cell cell50 = new Cell() { CellReference = "C" + _rowindex.ToString(), StyleIndex = (UInt32Value)73U, DataType = CellValues.String };
                     CellValue SavingsTypeValue = new CellValue();
-                    SavingsTypeValue.Text = item.ContractedVolume.Value.ToString("#,##0");
+                    SavingsTypeValue.Text = item.ContractVolume.Value.ToString("#,##0");
                     cell50.Append(SavingsTypeValue);
 
                     Cell cell51 = new Cell() { CellReference = "D" + _rowindex.ToString(), StyleIndex = (UInt32Value)73U, DataType = CellValues.String };
@@ -5372,7 +5399,7 @@ namespace GVWebapi.Helpers.Reporting
 
                     Cell cell55 = new Cell() { CellReference = "H" + _rowindex.ToString(), StyleIndex = (UInt32Value)200U, DataType = CellValues.Number };
                     CellValue CostSavingsAmountValue = new CellValue();
-                    CostSavingsAmountValue.Text = item.CPPRate.Value.ToString();
+                    CostSavingsAmountValue.Text = item.CPP.Value.ToString();
                     cell55.Append(CostSavingsAmountValue);
 
                     Cell cell56 = new Cell() { CellReference = "I" + _rowindex.ToString(), StyleIndex = (UInt32Value)213U, DataType = CellValues.Number };
@@ -5400,12 +5427,12 @@ namespace GVWebapi.Helpers.Reporting
                     row7.RowIndex = _rowindex;
                     Cell cell49 = new Cell() { CellReference = "B" + _rowindex.ToString(), StyleIndex = (UInt32Value)58U, DataType = CellValues.String };
                     CellValue cellValue13 = new CellValue();
-                    cellValue13.Text = item.ERPMeterGroupDesc;
+                    cellValue13.Text = item.MeterGroup;
 
                     cell49.Append(cellValue13);
                     Cell cell50 = new Cell() { CellReference = "C" + _rowindex.ToString(), StyleIndex = (UInt32Value)6U, DataType = CellValues.String };
                     CellValue SavingsTypeValue = new CellValue();
-                    SavingsTypeValue.Text = item.ContractedVolume.Value.ToString("#,##0");
+                    SavingsTypeValue.Text = item.ContractVolume.Value.ToString("#,##0");
                     cell50.Append(SavingsTypeValue);
 
                     Cell cell51 = new Cell() { CellReference = "D" + _rowindex.ToString(), StyleIndex = (UInt32Value)6U, DataType = CellValues.String };
@@ -5432,7 +5459,7 @@ namespace GVWebapi.Helpers.Reporting
 
                     Cell cell55 = new Cell() { CellReference = "H" + _rowindex.ToString(), StyleIndex = (UInt32Value)201U, DataType = CellValues.Number };
                     CellValue CostSavingsAmountValue = new CellValue();
-                    CostSavingsAmountValue.Text = item.CPPRate.Value.ToString();
+                    CostSavingsAmountValue.Text = item.CPP.Value.ToString();
                     cell55.Append(CostSavingsAmountValue);
 
                     Cell cell56 = new Cell() { CellReference = "I" + _rowindex.ToString(), StyleIndex = (UInt32Value)212U, DataType = CellValues.String };
@@ -5574,28 +5601,14 @@ namespace GVWebapi.Helpers.Reporting
 
             int _even = 1;
           
-            RevisionDataEntities db3 = new RevisionDataEntities();
-
-
+            ExcelRevisionExport db3 = new ExcelRevisionExport();
             var overridedate = Convert.ToDateTime(_overrideDate);
 
-            var query = (from r in db3.RolloverViews
-                         where r.ERPContractID == _contractID && r.PeriodDate >= overridedate
-                         select new
-                         {
-                             period = r.PeriodDate,
-                             MeterGroupDesc = r.ERPMeterGroupDesc,
-                             RolloverUsage = r.Rollover.Value,
-                             PreCPP = r.CPP,
-                             Monthly = r.Rollover * r.CPP,
-                             startdate = r.StartDate
-                         }).Distinct().OrderByDescending(o=> o.period).ToList();
+            var periods = db3.GetRolloverHistory(_contractID).Where(o=> o.Period >= overridedate).OrderByDescending(r => r.Period).ToList();
  
-                var totals = (from r in query
-                              select r.Monthly).Sum();
-                _rolloverTotalString = totals.Value.ToString();
+                _rolloverTotalString = periods.Sum(o => o.TotalSavings).ToString();
 
-                String RefNum = query.Count() == 0 ? "31" : query.Count().ToString();
+                String RefNum = periods.Count() == 0 ? "31" : periods.Count().ToString();
                 SheetProperties sheetProperties1 = new SheetProperties() { CodeName = "Sheet14" };
                 SheetDimension sheetDimension1 = new SheetDimension() { Reference = "A1:F" + RefNum };
 
@@ -5699,7 +5712,7 @@ namespace GVWebapi.Helpers.Reporting
 
                 sheetData1.Append(row3);
 
-                if (query.Count() == 0)
+                if (periods.Count() == 0)
                 {
                     _rowindex = 5U;
                     Row row6 = new Row() { RowIndex = (UInt32Value)_rowindex, Spans = new ListValue<StringValue>() { InnerText = "1:10" }, Height = 27.75D, CustomHeight = true, DyDescent = 0.25D };
@@ -5838,128 +5851,95 @@ namespace GVWebapi.Helpers.Reporting
                 else
                 {
                     UInt32Value StartRow = 5;
-                    String PeriodChange = "";
-                    foreach (var item in query)
+                   
+                _rowindex++;
+                foreach (var period in periods)
+                {
+                  
+                    Row row5 = new Row() { RowIndex = (UInt32Value)_rowindex, Spans = new ListValue<StringValue>() { InnerText = "1:10" }, Height = 15.5D, CustomHeight = true, DyDescent = 0.25D };
+                    Cell cell31b = new Cell() { CellReference = "A" + _rowindex.ToString() };
+                    Cell cell32b = new Cell() { CellReference = "B" + _rowindex.ToString(), DataType = CellValues.String };
+                    cell32b.StyleIndex = 194U;
+                    CellValue cellPeriodValue = new CellValue();
+                    cellPeriodValue.Text = period.StartDate.Value.ToString("MMMM yyyy") + " - " + period.Period.Value.ToString("MMMM yyyy");
+                    cell32b.Append(cellPeriodValue);
+                    Cell cell33b = new Cell() { CellReference = "C" + _rowindex.ToString() };
+                    cell33b.StyleIndex = _invoiceID == 0 ? 19U : 164U;
+                    Cell cell34b = new Cell() { CellReference = "D" + _rowindex.ToString() };
+                    cell34b.StyleIndex = _invoiceID == 0 ? 19U : 164U;
+                    Cell cell35b = new Cell() { CellReference = "E" + _rowindex.ToString() };
+                    cell35b.StyleIndex = _invoiceID == 0 ? 19U : 164U;
+
+
+                    row5.Append(cell31b);
+                    row5.Append(cell32b);
+                    row5.Append(cell33b);
+                    row5.Append(cell34b);
+                    row5.Append(cell35b);
+
+                    sheetData1.Append(row5);
+                    _rowindex++;
+                    Row row6 = new Row() { RowIndex = (UInt32Value)_rowindex, Spans = new ListValue<StringValue>() { InnerText = "1:10" }, Height = 27.75D, CustomHeight = true, DyDescent = 0.25D };
+
+                    Cell cell41 = new Cell() { CellReference = "B" + _rowindex.ToString(), StyleIndex = (UInt32Value)47U, DataType = CellValues.String };
+                    CellValue cellValue5 = new CellValue();
+                    cellValue5.Text = "Meter Group";
+
+                    cell41.Append(cellValue5);
+
+                    Cell cell42 = new Cell() { CellReference = "C" + _rowindex.ToString(), StyleIndex = (UInt32Value)45U, DataType = CellValues.String };
+                    CellValue cellValue6 = new CellValue();
+                    cellValue6.Text = "Rollover Pages For Period";
+
+                    cell42.Append(cellValue6);
+
+                    Cell cell43 = new Cell() { CellReference = "D" + _rowindex.ToString(), StyleIndex = (UInt32Value)45U, DataType = CellValues.String };
+                    CellValue cellValue7 = new CellValue();
+                    cellValue7.Text = "Pre-FPR CPP";
+
+                    cell43.Append(cellValue7);
+
+                    Cell cell44 = new Cell() { CellReference = "E" + _rowindex.ToString(), StyleIndex = (UInt32Value)46U, DataType = CellValues.String };
+                    CellValue cellValue8 = new CellValue();
+                    cellValue8.Text = "Rollover Savings";
+
+                    cell44.Append(cellValue8);
+                    row6.Append(cell41);
+                    row6.Append(cell42);
+                    row6.Append(cell43);
+                    row6.Append(cell44);
+
+                    sheetData1.Append(row6);
+
+
+                   
+                    StartRow = _rowindex.Value;
+
+
+                    var peroidData = period.Data.Where(o=> o.InvoiceID == period.InvoiceID);
+                    foreach (var item in peroidData)
                     {
 
+
                         _rowindex++;
-                        if (PeriodChange != item.period.Value.ToShortDateString())
-                        {
-
-                            Row row4a = new Row() { RowIndex = (UInt32Value)_rowindex, Spans = new ListValue<StringValue>() { InnerText = "1:10" }, DyDescent = 0.25D };
-                            Cell cell31a = new Cell() { CellReference = "A" + _rowindex.ToString() };
-                            Cell cell32a = new Cell() { CellReference = "B" + _rowindex.ToString() };
-                            cell32a.StyleIndex = _invoiceID == 0 ? 19U : 174U;
-                            Cell cell33a = new Cell() { CellReference = "C" + _rowindex.ToString() };
-                            cell33a.StyleIndex = _invoiceID == 0 ? 19U : 174U;
-                            Cell cell34a = new Cell() { CellReference = "D" + _rowindex.ToString() };
-                            cell34a.StyleIndex = _invoiceID == 0 ? 19U : 209U;
-                            CellValue TotalLabel = new CellValue();
-                            TotalLabel.Text = _invoiceID == 0 ? "" : "Total Rollover Savings: ";
-                            cell34a.Append(TotalLabel);
-                            Cell cell35a = new Cell() { CellReference = "E" + _rowindex.ToString() };
-                            cell35a.StyleIndex = _invoiceID == 0 ? 19U : 174U;
-                            CellFormula RollOverTotal = new CellFormula();
-                            UInt32Value EndRow = _rowindex - 1;
-                            RollOverTotal.Text = "SUM(E" + StartRow.Value.ToString() + ":E" + EndRow.Value.ToString() + ")";
-                            StartRow = _rowindex++;
-                            RollOverTotal.CalculateCell = true;
-                            cell35a.Append(RollOverTotal);
-                            if (_rolloverTotalString == null && PeriodChange != "")
-                            {
-                                UInt32Value endpoint = _rowindex - 1;
-                                //  _rolloverTotalString = "='Rollover History'!$E$" + endpoint.ToString();
-                            }
-                            row4a.Append(cell31a);
-                            row4a.Append(cell32a);
-                            row4a.Append(cell33a);
-                            row4a.Append(cell34a);
-                            row4a.Append(cell35a);
-                            if (PeriodChange != "")
-                            {
-                                sheetData1.Append(row4a);
-                                _rowindex++;
-                            }
-                            Row row5 = new Row() { RowIndex = (UInt32Value)_rowindex, Spans = new ListValue<StringValue>() { InnerText = "1:10" }, Height = 15.5D, CustomHeight = true, DyDescent = 0.25D };
-                            Cell cell31b = new Cell() { CellReference = "A" + _rowindex.ToString() };
-                            Cell cell32b = new Cell() { CellReference = "B" + _rowindex.ToString(), DataType = CellValues.String };
-                            cell32b.StyleIndex = 194U;
-                            CellValue cellPeriodValue = new CellValue();
-                            cellPeriodValue.Text = item.startdate.Value.ToString("MMMM yyyy") + " - " + item.period.Value.ToString("MMMM yyyy");
-                            cell32b.Append(cellPeriodValue);
-                            Cell cell33b = new Cell() { CellReference = "C" + _rowindex.ToString() };
-                            cell33b.StyleIndex = _invoiceID == 0 ? 19U : 164U;
-                            Cell cell34b = new Cell() { CellReference = "D" + _rowindex.ToString() };
-                            cell34b.StyleIndex = _invoiceID == 0 ? 19U : 164U;
-                            Cell cell35b = new Cell() { CellReference = "E" + _rowindex.ToString() };
-                            cell35b.StyleIndex = _invoiceID == 0 ? 19U : 164U;
-
-
-                            row5.Append(cell31b);
-                            row5.Append(cell32b);
-                            row5.Append(cell33b);
-                            row5.Append(cell34b);
-                            row5.Append(cell35b);
-
-                            sheetData1.Append(row5);
-
-
-                            _rowindex++;
-                            Row row6 = new Row() { RowIndex = (UInt32Value)_rowindex, Spans = new ListValue<StringValue>() { InnerText = "1:10" }, Height = 27.75D, CustomHeight = true, DyDescent = 0.25D };
-
-                            Cell cell41 = new Cell() { CellReference = "B" + _rowindex.ToString(), StyleIndex = (UInt32Value)47U, DataType = CellValues.String };
-                            CellValue cellValue5 = new CellValue();
-                            cellValue5.Text = "Meter Group";
-
-                            cell41.Append(cellValue5);
-
-                            Cell cell42 = new Cell() { CellReference = "C" + _rowindex.ToString(), StyleIndex = (UInt32Value)45U, DataType = CellValues.String };
-                            CellValue cellValue6 = new CellValue();
-                            cellValue6.Text = "Rollover Pages For Period";
-
-                            cell42.Append(cellValue6);
-
-                            Cell cell43 = new Cell() { CellReference = "D" + _rowindex.ToString(), StyleIndex = (UInt32Value)45U, DataType = CellValues.String };
-                            CellValue cellValue7 = new CellValue();
-                            cellValue7.Text = "Pre-FPR CPP";
-
-                            cell43.Append(cellValue7);
-
-                            Cell cell44 = new Cell() { CellReference = "E" + _rowindex.ToString(), StyleIndex = (UInt32Value)46U, DataType = CellValues.String };
-                            CellValue cellValue8 = new CellValue();
-                            cellValue8.Text = "Rollover Savings";
-
-                            cell44.Append(cellValue8);
-                            row6.Append(cell41);
-                            row6.Append(cell42);
-                            row6.Append(cell43);
-                            row6.Append(cell44);
-
-                            sheetData1.Append(row6);
-
-
-                            PeriodChange = item.period.Value.ToShortDateString();
-                            _rowindex++;
-                            StartRow = _rowindex.Value;
-                        }
-
+ 
                         if (_even <= 2)
                         {
                             Row row7 = new Row() { Spans = new ListValue<StringValue>() { InnerText = "1:10" }, DyDescent = 0.25D };
                             row7.RowIndex = _rowindex;
                             Cell cell49 = new Cell() { CellReference = "B" + _rowindex.ToString(), StyleIndex = (UInt32Value)60U, DataType = CellValues.String };
                             CellValue cellValue13 = new CellValue();
-                            cellValue13.Text = item.MeterGroupDesc;
+                            cellValue13.Text = item.ERPMeterGroupDesc;
 
                             cell49.Append(cellValue13);
                             Cell cell50 = new Cell() { CellReference = "C" + _rowindex.ToString(), StyleIndex = (UInt32Value)73U, DataType = CellValues.String };
                             CellValue SavingsTypeValue = new CellValue();
-                            SavingsTypeValue.Text = item.RolloverUsage.ToString("#,##0");
+                            SavingsTypeValue.Text = item.Rollover.Value.ToString("#,##0");
                             cell50.Append(SavingsTypeValue);
 
                             Cell cell51 = new Cell() { CellReference = "D" + _rowindex.ToString(), StyleIndex = (UInt32Value)73U, DataType = CellValues.String };
                             CellValue MonthsValues = new CellValue();
-                            MonthsValues.Text = item.PreCPP.ToString("$ .0000");
+                            MonthsValues.Text = item.CPP.ToString("$ .0000");
                             cell51.Append(MonthsValues);
 
                             Cell cell52 = new Cell() { CellReference = "E" + _rowindex.ToString(), StyleIndex = (UInt32Value)61U, DataType = CellValues.Number };
@@ -5984,17 +5964,17 @@ namespace GVWebapi.Helpers.Reporting
                             row7.RowIndex = _rowindex;
                             Cell cell49 = new Cell() { CellReference = "B" + _rowindex.ToString(), StyleIndex = (UInt32Value)58U, DataType = CellValues.String };
                             CellValue cellValue13 = new CellValue();
-                            cellValue13.Text = item.MeterGroupDesc;
+                            cellValue13.Text = item.ERPMeterGroupDesc;
 
                             cell49.Append(cellValue13);
                             Cell cell50 = new Cell() { CellReference = "C" + _rowindex.ToString(), StyleIndex = (UInt32Value)6U, DataType = CellValues.String };
                             CellValue SavingsTypeValue = new CellValue();
-                            SavingsTypeValue.Text = item.RolloverUsage.ToString("#,##0");
+                            SavingsTypeValue.Text = item.Rollover.Value.ToString("#,##0");
                             cell50.Append(SavingsTypeValue);
 
                             Cell cell51 = new Cell() { CellReference = "D" + _rowindex.ToString(), StyleIndex = (UInt32Value)6U, DataType = CellValues.String };
                             CellValue MonthsValues = new CellValue();
-                            MonthsValues.Text = item.PreCPP.ToString("$ .0000");
+                            MonthsValues.Text = item.CPP.ToString("$ .0000");
                             cell51.Append(MonthsValues);
 
                             Cell cell52 = new Cell() { CellReference = "E" + _rowindex.ToString(), StyleIndex = (UInt32Value)59U, DataType = CellValues.String };
@@ -6016,35 +5996,59 @@ namespace GVWebapi.Helpers.Reporting
 
 
                     }
-
-
                     _rowindex++;
+                    Row row4a = new Row() { RowIndex = (UInt32Value)_rowindex, Spans = new ListValue<StringValue>() { InnerText = "1:10" }, DyDescent = 0.25D };
+                    Cell cell31a = new Cell() { CellReference = "A" + _rowindex.ToString() };
+                    cell31a.StyleIndex = 19U;
+                    Cell cell32a = new Cell() { CellReference = "B" + _rowindex.ToString() };
+                    cell32a.StyleIndex = 174U;
+                    Cell cell33a = new Cell() { CellReference = "C" + _rowindex.ToString() };
+                    cell33a.StyleIndex = 174U;
+                    Cell cell34a = new Cell() { CellReference = "D" + _rowindex.ToString() };
+                    cell34a.StyleIndex =   174U; ;
+                    CellValue TotalLabel2a = new CellValue();
+                    TotalLabel2a.Text = "Rollover Savings: ";
+                    cell34a.Append(TotalLabel2a);
+                 
+                    Cell cell35a = new Cell() { CellReference = "E" + _rowindex.ToString() };
+                    cell35a.StyleIndex =  174U;
+                    CellFormula RollOverTotal = new CellFormula();
+                    UInt32Value EndRow = _rowindex - 1;
+                    RollOverTotal.Text = "SUM(E" + StartRow.Value.ToString() + ":E" + EndRow.Value.ToString() + ")";
+                    StartRow = _rowindex++;
+                    RollOverTotal.CalculateCell = true;
+                    cell35a.Append(RollOverTotal);
+                     
+                    row4a.Append(cell31a);
+                    row4a.Append(cell32a);
+                    row4a.Append(cell33a);
+                    row4a.Append(cell34a);
+                    row4a.Append(cell35a);
+                    
+                    sheetData1.Append(row4a);
+                    _rowindex++;
+                   
 
+                }
+                 
                     Row row4 = new Row() { RowIndex = (UInt32Value)_rowindex, Spans = new ListValue<StringValue>() { InnerText = "1:10" }, DyDescent = 0.25D };
                     Cell cell31 = new Cell() { CellReference = "A" + _rowindex.ToString() };
-                    cell31.StyleIndex = 19U;
+                    cell31.StyleIndex = 6U;
                     Cell cell32 = new Cell() { CellReference = "B" + _rowindex.ToString() };
-                    cell32.StyleIndex = 174U;
+                    cell32.StyleIndex = 6U;
                     Cell cell33 = new Cell() { CellReference = "C" + _rowindex.ToString() };
-                    cell33.StyleIndex = 174U;
+                    cell33.StyleIndex = 6U;
                     Cell cell34 = new Cell() { CellReference = "D" + _rowindex.ToString() };
-                    cell34.StyleIndex = _invoiceID == 0 ? 19U : 209U; ;
+                    cell34.StyleIndex = 174U; ;
                     CellValue TotalLabel2 = new CellValue();
                     TotalLabel2.Text = "Total Rollover Savings: ";
                     cell34.Append(TotalLabel2);
                     Cell cell35 = new Cell() { CellReference = "E" + _rowindex.ToString() };
                     cell35.StyleIndex = 174U;
-                    CellFormula RollOverTotal2 = new CellFormula();
-                    UInt32Value EndRow2 = _rowindex - 1;
-                    RollOverTotal2.Text = "SUM(E" + StartRow.Value.ToString() + ":E" + EndRow2.Value.ToString() + ")";
-                    RollOverTotal2.CalculateCell = true;
+                    CellValue RollOverTotal2 = new CellValue();
+                    RollOverTotal2.Text = _rolloverTotalString;          
                     cell35.Append(RollOverTotal2);
-                    if (_rolloverTotalString == null && PeriodChange != "")
-                    {
-                        UInt32Value endpoint = _rowindex - 1;
-                        _rolloverTotalString = "='Rollover History'!$E$" + endpoint.ToString();
-                    }
-                    //   row4.Append(cell31);
+                   
                     row4.Append(cell32);
                     row4.Append(cell33);
                     row4.Append(cell34);
@@ -7734,8 +7738,8 @@ namespace GVWebapi.Helpers.Reporting
             sheetData3.Append(row65);
             sheetData3.Append(row66);
 
-            RevisionDataEntities db3 = new RevisionDataEntities();
-            var metergroups = (from pf in db3.MeterGroups
+            GlobalViewEntities db3 = new GlobalViewEntities();
+            var metergroups = (from pf in db3.RevisionMeterGroups
                                where pf.ERPContractID.Value == _contractID
                                select new
                                {
@@ -11322,17 +11326,27 @@ namespace GVWebapi.Helpers.Reporting
 
             DateTime period = Convert.ToDateTime(_period);
             CoFreedomEntities db = new CoFreedomEntities();
-            RevisionDataEntities db3 = new RevisionDataEntities();
-
-            var query = (from r in db3.RevisionDatas
-                         where r.ERPContractID == _contractID && r.PeriodDate == period
-                         orderby r.PeriodDate descending
-                         select r).ToList();
-
-            //var query = (from r in db.vw_RevisionInvoiceHistory
-            //             where r.CustomerID == _customerID && r.Void == false && r.OverageToDate == period
-            //             orderby r.OverageFromDate descending
-            //             select r).Distinct().ToList();
+            GlobalViewEntities gv = new GlobalViewEntities();
+            var eadata = db.vw_RevisionInvoiceHistory.Where(o => o.ContractID == _contractID).ToList();
+            var gvdata = gv.RevisionDatas.Where(r => r.ContractID == _contractID).ToList();
+            var query = (from r in eadata
+                         join g in gvdata
+                         on new { MeterGroup = r.ContractMeterGroupID.Value, InvoiceID = r.InvoiceID } equals new { MeterGroup = g.MeterGroupID, InvoiceID = g.InvoiceID }
+                         where r.ContractID == _contractID && r.OverageToDate.Value == period
+                         orderby r.OverageToDate descending
+                         select new vw_RevisionInvoiceHistory
+                         {
+                            OverageFromDate = r.OverageFromDate,
+                            OverageToDate = r.OverageToDate,
+                            MeterGroup = r.MeterGroup,
+                            ContractVolume = r.ContractVolume,
+                            ActualVolume = r.ActualVolume,
+                            CPP = r.CPP,
+                            OverageCharge = r.OverageCharge,
+                            CreditAmount = r.CreditAmount,
+                            Rollover = g.Rollover.Value
+                         }).ToList();
+ 
 
            
             _rowindex++;
@@ -11340,7 +11354,7 @@ namespace GVWebapi.Helpers.Reporting
             {
 
                 _rowindex++;
-                if (PeriodChange != item.PeriodDate.Value.ToShortDateString())
+                if (PeriodChange != item.OverageToDate.Value.ToShortDateString())
                 {
                     Row row4 = new Row() { RowIndex = (UInt32Value)_rowindex, Spans = new ListValue<StringValue>() { InnerText = "1:10" }, Height = 25.5D, CustomHeight = true, DyDescent = 0.25D };
                     Cell cell31 = new Cell() { CellReference = "A" + _rowindex.ToString(), StyleIndex = (UInt32Value)19U };
@@ -11349,7 +11363,7 @@ namespace GVWebapi.Helpers.Reporting
                     Cell cell32 = new Cell() { CellReference = "B" + _rowindex.ToString() };
                     cell32.StyleIndex = _invoiceID == 0 ? 19U : 162U;
                     CellValue cellValuePeriod = new CellValue();
-                    cellValuePeriod.Text = "From " + item.StartDate.Value.ToString("MMM. yyyy") + " to " + item.PeriodDate.Value.ToString("MMM. yyyy");
+                    cellValuePeriod.Text = "From " + item.OverageFromDate.Value.ToString("MMM. yyyy") + " to " + item.OverageToDate.Value.ToString("MMM. yyyy");
                     cell32.Append(cellValuePeriod);
                     Cell cell33 = new Cell() { CellReference = "C" + _rowindex.ToString() };
                     cell33.StyleIndex = _invoiceID == 0 ? 19U : 160U;
@@ -11451,7 +11465,7 @@ namespace GVWebapi.Helpers.Reporting
 
 
 
-                    PeriodChange = item.PeriodDate.Value.ToShortDateString();
+                    PeriodChange = item.OverageToDate.Value.ToShortDateString();
                     _rowindex++;
                 }
 
@@ -11461,12 +11475,12 @@ namespace GVWebapi.Helpers.Reporting
                     row7.RowIndex = _rowindex;
                     Cell cell49 = new Cell() { CellReference = "B" + _rowindex.ToString(), StyleIndex = (UInt32Value)60U, DataType = CellValues.String };
                     CellValue cellValue13 = new CellValue();
-                    cellValue13.Text = item.ERPMeterGroupDesc;
+                    cellValue13.Text = item.MeterGroup;
 
                     cell49.Append(cellValue13);
                     Cell cell50 = new Cell() { CellReference = "C" + _rowindex.ToString(), StyleIndex = (UInt32Value)73U, DataType = CellValues.String };
                     CellValue SavingsTypeValue = new CellValue();
-                    SavingsTypeValue.Text = item.ContractedVolume.Value.ToString("#,##0");
+                    SavingsTypeValue.Text = item.ContractVolume.Value.ToString("#,##0");
                     cell50.Append(SavingsTypeValue);
 
                     Cell cell51 = new Cell() { CellReference = "D" + _rowindex.ToString(), StyleIndex = (UInt32Value)73U, DataType = CellValues.String };
@@ -11493,11 +11507,11 @@ namespace GVWebapi.Helpers.Reporting
                     cell54.Append(CommentValue);
                     Cell cell55 = new Cell() { CellReference = "H" + _rowindex.ToString(), StyleIndex = (UInt32Value)75U, DataType = CellValues.String };
                     CellValue CostSavingsAmountValue = new CellValue();
-                    CostSavingsAmountValue.Text = item.CPPRate.Value.ToString("$ 0.0000");
+                    CostSavingsAmountValue.Text = item.CPP.Value.ToString("$ 0.0000");
                     cell55.Append(CostSavingsAmountValue);
                     Cell cell55a = new Cell() { CellReference = "I" + _rowindex.ToString(), StyleIndex = (UInt32Value)218U, DataType = CellValues.Number };
                     CellValue CreditsAmountValue = new CellValue();
-                    CreditsAmountValue.Text = item.Credits.Value.ToString();
+                    CreditsAmountValue.Text = item.CreditAmount.ToString();
                     cell55a.Append(CreditsAmountValue);
                     Cell cell56 = new Cell() { CellReference = "J" + _rowindex.ToString(), StyleIndex = (UInt32Value)203U, DataType = CellValues.Number };
                     CellFormula OverageCharge = new CellFormula();
@@ -11524,12 +11538,12 @@ namespace GVWebapi.Helpers.Reporting
                     row7.RowIndex = _rowindex;
                     Cell cell49 = new Cell() { CellReference = "B" + _rowindex.ToString(), StyleIndex = (UInt32Value)58U, DataType = CellValues.String };
                     CellValue cellValue13 = new CellValue();
-                    cellValue13.Text = item.ERPMeterGroupDesc;
+                    cellValue13.Text = item.MeterGroup;
 
                     cell49.Append(cellValue13);
                     Cell cell50 = new Cell() { CellReference = "C" + _rowindex.ToString(), StyleIndex = (UInt32Value)6U, DataType = CellValues.String };
                     CellValue SavingsTypeValue = new CellValue();
-                    SavingsTypeValue.Text = item.ContractedVolume.Value.ToString("#,##0");
+                    SavingsTypeValue.Text = item.ContractVolume.Value.ToString("#,##0");
                     cell50.Append(SavingsTypeValue);
 
                     Cell cell51 = new Cell() { CellReference = "D" + _rowindex.ToString(), StyleIndex = (UInt32Value)6U, DataType = CellValues.String };
@@ -11556,12 +11570,12 @@ namespace GVWebapi.Helpers.Reporting
 
                     Cell cell55 = new Cell() { CellReference = "H" + _rowindex.ToString(), StyleIndex = (UInt32Value)17U, DataType = CellValues.String };
                     CellValue CostSavingsAmountValue = new CellValue();
-                    CostSavingsAmountValue.Text = item.CPPRate.Value.ToString("$ 0.0000");
+                    CostSavingsAmountValue.Text = item.CPP.Value.ToString("$ 0.0000");
                     cell55.Append(CostSavingsAmountValue);
                     
                     Cell cell55a = new Cell() { CellReference = "I" + _rowindex.ToString(), StyleIndex = (UInt32Value)217U, DataType = CellValues.Number };
                     CellValue CreditsAmountValue = new CellValue();
-                    CreditsAmountValue.Text = item.Credits.Value.ToString();
+                    CreditsAmountValue.Text = item.CreditAmount.ToString();
                     cell55a.Append(CreditsAmountValue);
 
                     Cell cell56 = new Cell() { CellReference = "J" + _rowindex.ToString(), StyleIndex = (UInt32Value)202U, DataType = CellValues.Number };
@@ -11815,50 +11829,48 @@ namespace GVWebapi.Helpers.Reporting
             //    sheetData3.Append(row49);
 
             ExcelRevisionExport export = new ExcelRevisionExport();
-
-            var VisionDataList = new List<VisionDataDetail>();
+           
+           
             DateTime overridedate = Convert.ToDateTime(_overrideDate);
-            VisionDataList = export.bindRevisionLegecy(_contractID).Where(o => o.PeriodDate > overridedate).ToList();
+            var RevisionHistory = export.GetRevisionHistory(_contractID).Where(o => o.peroid >= overridedate).ToList();
             uint RowIndex = 3;
             int footerIndex = 1;
             int Count = 0;
             int _even = 0;
-            string CurrentPeriod = String.Empty;
-            foreach (VisionDataDetail VDL in VisionDataList)
+            DateTime CurrentPeriod =  new DateTime();
+            foreach (var revision in RevisionHistory)
             {
-                if (VDL.ClientPeriodDates != CurrentPeriod)
+                 var revisiondetail = revision.detail;
+                
+                RowIndex++;
+                CurrentPeriod = revision.peroid.Value;
+                sheetData3.Append(CreateHeader(RowIndex, CurrentPeriod.ToShortDateString()));
+                RowIndex++;
+                sheetData3.Append(CreateHeaderLabels(RowIndex));
+                RowIndex++;
+                foreach (var detail in revisiondetail)
                 {
-                    RowIndex++;
-                    CurrentPeriod = VDL.ClientPeriodDates;
-                    Count = VisionDataList.Where(o => o.ClientPeriodDates == CurrentPeriod).Count();
+                    if (_even == 0)
+                    {
+                        sheetData3.Append(CreateContentBLU(RowIndex, detail));
+                        _even = 1;
 
-                    sheetData3.Append(CreateHeader(RowIndex, CurrentPeriod));
-                    RowIndex++;
-                    sheetData3.Append(CreateHeaderLabels(RowIndex));
+                    }
+                    else
+                    {
+                        sheetData3.Append(CreateContentWHT(RowIndex, detail));
+
+                        _even = 0;
+                    }
                     RowIndex++;
                 }
-
-                if (_even == 0)
-                {
-                    sheetData3.Append(CreateContentBLU(RowIndex, VDL));
-                    _even = 1;
-
-                }
-                else
-                {
-                    sheetData3.Append(CreateContentWHT(RowIndex, VDL));
-
-                    _even = 0;
-                }
-
-
 
                 RowIndex++;
                 if (footerIndex++ == Count)
                 {
                     footerIndex = 1;
-                    string Notes = export.GetPeroidNotes(VDL.PeriodDate, _contractID);
-                    sheetData3.Append(Createfooter(RowIndex, Notes));
+                     
+                    sheetData3.Append(Createfooter(RowIndex, revision.Notes));
                     RowIndex++;
                 }
             }
@@ -11932,7 +11944,7 @@ namespace GVWebapi.Helpers.Reporting
           
             worksheetPart3.Worksheet = worksheet3;
         }
-        public Row CreateContentBLU(UInt32Value index, VisionDataDetail VisionDataList)
+        public Row CreateContentBLU(UInt32Value index, RevisionDataModel VisionDataList)
         {
             Row r = new Row() { Spans = new ListValue<StringValue>() { InnerText = "1:11" }, Height = 14.25D, DyDescent = 0.3D };
             r.RowIndex = index;
@@ -11945,13 +11957,13 @@ namespace GVWebapi.Helpers.Reporting
 
             Cell cell384 = new Cell() { CellReference = "B" + index.ToString(), StyleIndex = (UInt32Value)73U };
             CellValue cellValue48 = new CellValue();
-            cellValue48.Text = VisionDataList.ContractVolume.ToString("N0");
+            cellValue48.Text = VisionDataList.ContractVolume.Value.ToString("N0");
 
             cell384.Append(cellValue48);
 
             Cell cell385 = new Cell() { CellReference = "C" + index.ToString(), StyleIndex = (UInt32Value)73U };
             CellValue cellValue49 = new CellValue();
-            DoubleValue AdjustedVolume = VisionDataList.ActualVolume;
+            DecimalValue AdjustedVolume = VisionDataList.ActualVolume.Value;
             cellValue49.Text = AdjustedVolume.Value.ToString("N0");
 
             cell385.Append(cellValue49);
@@ -11959,7 +11971,7 @@ namespace GVWebapi.Helpers.Reporting
             Cell cell386 = new Cell() { CellReference = "D" + index.ToString(), StyleIndex = (UInt32Value) 165U, DataType = CellValues.String  };
             CellValue cellValue50 = new CellValue();
 
-            cellValue50.Text = VisionDataList.CPP.ToString("$0.#####");
+            cellValue50.Text = VisionDataList.CPP.Value.ToString("$0.#####");
 
             cell386.Append(cellValue50);
 
@@ -11983,7 +11995,7 @@ namespace GVWebapi.Helpers.Reporting
 
             Cell cell386b = new Cell() { CellReference = "G" + index.ToString(), StyleIndex = (UInt32Value)73U, DataType = CellValues.Number };
             CellValue cellValue50a = new CellValue();
-            cellValue50a.Text = VisionDataList.RolloverVolume.ToString();
+            cellValue50a.Text = VisionDataList.Rollover.ToString();
 
             cell386b.Append(cellValue50a);
 
@@ -11999,13 +12011,13 @@ namespace GVWebapi.Helpers.Reporting
 
             Cell cell386A = new Cell() { CellReference = "I" + index.ToString(), StyleIndex = (UInt32Value)75U };
             CellValue cellValue50A = new CellValue();
-            cellValue50A.Text = VisionDataList.CreditAmount.ToString("F2");
+            cellValue50A.Text = VisionDataList.CreditAmount.Value.ToString("F2");
 
             cell386A.Append(cellValue50A);
 
             Cell cell390 = new Cell() { CellReference = "J" + index.ToString(), StyleIndex = (UInt32Value)75U };
             CellFormula cellFormula14 = new CellFormula();
-            cellFormula14.Text = "SUM(F" + index + "* " + VisionDataList.ClientCPP + ")";
+            cellFormula14.Text = "SUM(F" + index + "* " + VisionDataList.CPP.Value + ")";
             CellValue cellValue54 = new CellValue();
             cellValue54.Text = "8";
 
@@ -12042,7 +12054,7 @@ namespace GVWebapi.Helpers.Reporting
 
             return r;
         }
-        public Row CreateContentWHT(UInt32Value index, VisionDataDetail VisionDataList)
+        public Row CreateContentWHT(UInt32Value index, RevisionDataModel VisionDataList)
         {
             Row r = new Row() { Spans = new ListValue<StringValue>() { InnerText = "1:11" }, Height = 14.25D, DyDescent = 0.3D };
             r.RowIndex = index;
@@ -12055,13 +12067,13 @@ namespace GVWebapi.Helpers.Reporting
 
             Cell cell384 = new Cell() { CellReference = "B" + index.ToString(), StyleIndex = (UInt32Value)6U };
             CellValue cellValue48 = new CellValue();
-            cellValue48.Text = VisionDataList.ContractVolume.ToString("N0");
+            cellValue48.Text = VisionDataList.ContractVolume.Value.ToString("N0");
 
             cell384.Append(cellValue48);
 
             Cell cell385 = new Cell() { CellReference = "C" + index.ToString(), StyleIndex = (UInt32Value)6U };
             CellValue cellValue49 = new CellValue();
-            DoubleValue AdjustedVolume = VisionDataList.ActualVolume;
+            DecimalValue AdjustedVolume = VisionDataList.ActualVolume.Value;
             cellValue49.Text = AdjustedVolume.Value.ToString("N0");
 
             cell385.Append(cellValue49);
@@ -12069,7 +12081,7 @@ namespace GVWebapi.Helpers.Reporting
             Cell cell386 = new Cell() { CellReference = "D" + index.ToString(), StyleIndex = (UInt32Value)6U };
             CellValue cellValue50 = new CellValue();
 
-            cellValue50.Text = VisionDataList.CPP.ToString("$0.#####");
+            cellValue50.Text = VisionDataList.CPP.Value.ToString("$0.#####");
 
             cell386.Append(cellValue50);
 
@@ -12093,7 +12105,7 @@ namespace GVWebapi.Helpers.Reporting
 
             Cell cell386b = new Cell() { CellReference = "G" + index.ToString(), StyleIndex = (UInt32Value)6U };
             CellValue cellValue50a = new CellValue();
-            cellValue50a.Text = VisionDataList.RolloverVolume.ToString();
+            cellValue50a.Text = VisionDataList.Rollover.ToString();
 
             cell386b.Append(cellValue50a);
 
@@ -12109,13 +12121,13 @@ namespace GVWebapi.Helpers.Reporting
 
             Cell cell386A = new Cell() { CellReference = "I" + index.ToString(), StyleIndex = (UInt32Value)17U };
             CellValue cellValue50A = new CellValue();
-            cellValue50A.Text = VisionDataList.CreditAmount.ToString("F2");
+            cellValue50A.Text = VisionDataList.CreditAmount.Value.ToString("F2");
 
             cell386A.Append(cellValue50A);
 
             Cell cell390 = new Cell() { CellReference = "J" + index.ToString(), StyleIndex = (UInt32Value)17U };
             CellFormula cellFormula14 = new CellFormula();
-            cellFormula14.Text = "SUM(F" + index + "* " + VisionDataList.ClientCPP + ")";
+            cellFormula14.Text = "SUM(F" + index + "* " + VisionDataList.CPP.Value + ")";
             CellValue cellValue54 = new CellValue();
             cellValue54.Text = "8";
 

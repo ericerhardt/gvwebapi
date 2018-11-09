@@ -21,6 +21,7 @@ namespace GVWebapi.RemoteData
             this.SCContracts1 = new HashSet<SCContract>();
             this.SCContracts2 = new HashSet<SCContract>();
             this.SCContracts3 = new HashSet<SCContract>();
+            this.SCContractMeterGroups = new HashSet<SCContractMeterGroup>();
         }
     
         public int BillingCycleID { get; set; }
@@ -45,5 +46,7 @@ namespace GVWebapi.RemoteData
         public virtual ICollection<SCContract> SCContracts2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SCContract> SCContracts3 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SCContractMeterGroup> SCContractMeterGroups { get; set; }
     }
 }

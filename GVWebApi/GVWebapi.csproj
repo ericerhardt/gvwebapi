@@ -143,21 +143,6 @@
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.4\lib\net45\System.Web.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Http, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.4\lib\net45\System.Web.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http.Cors, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Cors.5.2.4\lib\net45\System.Web.Http.Cors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http.WebHost, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.4\lib\net45\System.Web.Http.WebHost.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Mvc, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.4\lib\net45\System.Web.Mvc.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.4\lib\net45\System.Web.Razor.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.dll</HintPath>
@@ -256,35 +241,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DateTimeExtensions.cs" />
-    <Compile Include="Helpers\ExcelReport2.cs" />
+    <Compile Include="Helpers\ExcelReport.cs" />
     <Compile Include="Helpers\InMemoryMultipartFormDataStreamProvider.cs" />
     <Compile Include="Helpers\RevisionExcel.cs" />
     <Compile Include="Helpers\SqlExtensions.cs" />
-    <Compile Include="Migrations\201712092250024_InitialCreate.cs" />
-    <Compile Include="Migrations\201712092250024_InitialCreate.Designer.cs">
-      <DependentUpon>201712092250024_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201712100050193_first.cs" />
-    <Compile Include="Migrations\201712100050193_first.Designer.cs">
-      <DependentUpon>201712100050193_first.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201712100059201_second.cs" />
-    <Compile Include="Migrations\201712100059201_second.Designer.cs">
-      <DependentUpon>201712100059201_second.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201712100101514_third.cs" />
-    <Compile Include="Migrations\201712100101514_third.Designer.cs">
-      <DependentUpon>201712100101514_third.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201712100104274_forth.cs" />
-    <Compile Include="Migrations\201712100104274_forth.Designer.cs">
-      <DependentUpon>201712100104274_forth.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201712100107185_fifth.cs" />
-    <Compile Include="Migrations\201712100107185_fifth.Designer.cs">
-      <DependentUpon>201712100107185_fifth.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ChildManagerExistingData.cs" />
     <Compile Include="Models\ContactClientsViewModel.cs" />
     <Compile Include="Models\ContactViewModel.cs" />
@@ -311,8 +271,11 @@
     <Compile Include="Models\Locations.cs" />
     <Compile Include="Models\LoginData.cs" />
     <Compile Include="Models\Reports\QuarterlyReviewModel.cs" />
+    <Compile Include="Models\RevisionDataModel.cs" />
     <Compile Include="Models\RevisionHistoryViewModel.cs" />
     <Compile Include="Models\RolloverPagesModel.cs" />
+    <Compile Include="Models\RolloverUsageModel.cs" />
+    <Compile Include="Models\RolloverView.cs" />
     <Compile Include="Models\Schedules\CoterminousModel.cs" />
     <Compile Include="Models\Schedules\EditScheduleDeviceTopModel.cs" />
     <Compile Include="Models\Schedules\EditScheduleTopModel.cs" />
@@ -338,17 +301,8 @@
     <Compile Include="RemoteData\AssetReplacement.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="RemoteData\BaseHistory.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteData\BillingTypeReference.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="RemoteData\ClientContact.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteData\ClientData.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\coFreedomEntities.Context.cs">
       <AutoGen>True</AutoGen>
@@ -455,59 +409,28 @@
     <Compile Include="RemoteData\GlobalViewUser.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="RemoteData\IntegrisCall.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="RemoteData\Location.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="RemoteData\LockInvoice.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteData\MeterGroup.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteData\MeterGroupsDataView.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteData\PeriodHistoryWithNote.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteData\PeriodNote.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteData\PeriodNotesView.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    <Compile Include="RemoteData\RevisionBaseExpense.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\RevisionData.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="RemoteData\RevisionDataModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RevisionDataModel.Context.tt</DependentUpon>
+    <Compile Include="RemoteData\RevisionMeterGroup.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="RemoteData\RevisionDataModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteData\RevisionDataModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RevisionDataModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteData\RevisionDataView.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteData\RevisionDBContext.cs" />
-    <Compile Include="RemoteData\RolloverView.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
+    <Compile Include="RemoteData\RevisionNote.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\SCBillingCycle.cs">
       <DependentUpon>coFreedomEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\SCContract.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\SCContractMeterGroup.cs">
       <DependentUpon>coFreedomEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\SCEquipmentCustomProperty.cs">
@@ -533,12 +456,6 @@
     </Compile>
     <Compile Include="RemoteData\SurveyWithAvg.cs">
       <DependentUpon>CustomerService.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteData\VisionData.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteData\VisionHistory.cs">
-      <DependentUpon>RevisionDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\vw_admin_EquipmentList_MeterGroup.cs">
       <DependentUpon>coFreedomEntities.tt</DependentUpon>
@@ -691,16 +608,6 @@
       <DependentUpon>GlobalViewModel.edmx</DependentUpon>
       <LastGenOutput>GlobalViewModel.cs</LastGenOutput>
     </Content>
-    <Content Include="RemoteData\RevisionDataModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>RevisionDataModel.edmx</DependentUpon>
-      <LastGenOutput>RevisionDataModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="RemoteData\RevisionDataModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>RevisionDataModel.edmx</DependentUpon>
-      <LastGenOutput>RevisionDataModel.cs</LastGenOutput>
-    </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -748,13 +655,6 @@
     </EntityDeploy>
     <Content Include="RemoteData\CustomerService.edmx.diagram">
       <DependentUpon>CustomerService.edmx</DependentUpon>
-    </Content>
-    <EntityDeploy Include="RemoteData\RevisionDataModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>RevisionDataModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="RemoteData\RevisionDataModel.edmx.diagram">
-      <DependentUpon>RevisionDataModel.edmx</DependentUpon>
     </Content>
     <Content Include="Scripts\bootstrap.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />
@@ -823,26 +723,6 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201712092250024_InitialCreate.resx">
-      <DependentUpon>201712092250024_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201712100050193_first.resx">
-      <DependentUpon>201712100050193_first.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201712100059201_second.resx">
-      <DependentUpon>201712100059201_second.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201712100101514_third.resx">
-      <DependentUpon>201712100101514_third.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201712100104274_forth.resx">
-      <DependentUpon>201712100104274_forth.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201712100107185_fifth.resx">
-      <DependentUpon>201712100107185_fifth.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />

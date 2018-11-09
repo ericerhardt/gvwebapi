@@ -8,15 +8,16 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using GVWebapi.RemoteData;
+using GVWebapi.Models;
 using GVWebapi.Helpers;
 
 namespace GVWebapi.Controllers
 {
     public class RevisionDatasController : ApiController
     {
-        private readonly RevisionDataEntities _revisionDataEntities = new RevisionDataEntities();
+       
         private readonly CoFreedomEntities _coFreedomEntities = new CoFreedomEntities();
-        private readonly RevisionDBContext  _revisionDbContext = new RevisionDBContext();
+        private readonly GlobalViewEntities _globalView = new GlobalViewEntities();
     
         [HttpGet,Route("api/revisiondatas/clientscontract")]
         public IHttpActionResult ClientsContract()
@@ -36,70 +37,34 @@ namespace GVWebapi.Controllers
         [HttpGet,Route("api/revisiondatas/getrevisionhistory/{ContractId}")]
         public IHttpActionResult GetRevisionHistory(int contractId)
         {
-           
-            using (var _dbAudit = new RevisionDataEntities())
-            {
-                var meterGroups = (from mg in _dbAudit.MeterGroups
-                                   where mg.ERPContractID == contractId
-                                   select mg).ToList();
+            ExcelRevisionExport revision = new ExcelRevisionExport();
+            var RevisionModel = revision.GetRevisionHistory(contractId);
 
-                
-                 
-                
-                if (meterGroups.Count > 0)
-                {
-              
-                    IEnumerable<PeriodHistoryWithNote> periods = _dbAudit.PeriodHistoryWithNotes.OrderByDescending(p => p.PeriodDate).Where(p => p.ErpContractID == contractId).ToList();
-                    List<RevisionHistoryModel> RevisionModel = new List<RevisionHistoryModel>(); 
-                    foreach (var period in periods)
-                    {
-                        RevisionHistoryModel model = new RevisionHistoryModel();
-
-                        model.peroid = period.PeriodDate;
-                        model.detail = _revisionDbContext.PeriodHistoryView.Where(r => r.PeriodDate == period.PeriodDate && r.ERPContractID == contractId).ToList();
-                      
-                        RevisionModel.Add(model);
-                    }
-                    
-                    return Json(RevisionModel);
-                }
-                else
-                {
-                    return Json(HttpStatusCode.NoContent);
-                }
+             if(RevisionModel != null)
+            { 
+                return Json(RevisionModel);
             }
-                   
+            else
+            {
+                return Json(HttpStatusCode.NoContent);
+            }
+               
         }
 
         [HttpGet, Route("api/revisiondatas/getreconciliationinvoiced/{ContractId}/{StartDate}/{EndDate}")]
         public IHttpActionResult GetReconciliationInvoiced(int contractId,DateTime startDate,DateTime endDate)
         {
 
-            using (var _dbAudit = new RevisionDataEntities())
+        var periods =  _coFreedomEntities.vw_REVisionInvoices.Where(r => (r.PeriodDate >= startDate && r.PeriodDate <= endDate) && r.ContractID == contractId).ToList();
+
+            List<RevisionHistoryModel> RevisionModel = new List<RevisionHistoryModel>();
+            foreach (var period in periods)
             {
-                var meterGroups = (from mg in _dbAudit.MeterGroups
-                                   where mg.ERPContractID == contractId
-                                   select mg).ToList();
-
-
-
-
-                if (meterGroups.Count > 0)
-                {
-                     RevisionHistoryModel model = new RevisionHistoryModel();
- 
-                        model.detail = _revisionDbContext.PeriodHistoryView.Where(r => (r.PeriodDate >= startDate && r.PeriodDate <= endDate) && r.ERPContractID == contractId).ToList();
-
-                     
-
-                    return Json(model);
-                }
-                else
-                {
-                    return Json(HttpStatusCode.NoContent);
-                }
+                RevisionHistoryModel model = new RevisionHistoryModel(); 
+               // model.detail = ExcelRevisionExport.GetRevisionHistory(contractId);
+                RevisionModel.Add(model);
             }
-
+            return Json(RevisionModel);
         }
 
 
@@ -114,25 +79,25 @@ namespace GVWebapi.Controllers
          
         }
         [HttpPost, Route("api/revisiondatas/updatemetergroup/")]
-        public IHttpActionResult UpdateMeterGroup(MeterGroup model)
+        public IHttpActionResult UpdateMeterGroup(RevisionMeterGroup model)
         {
-            var meterGroup = _revisionDataEntities.MeterGroups.Find(model.MeterGroupID);
+            var meterGroup = _globalView.RevisionMeterGroups.Find(model.MeterGroupID);
             if(meterGroup != null)
             {
                 meterGroup.MeterGroupDesc = model.MeterGroupDesc;
                 meterGroup.ERPMeterGroupID = model.ERPMeterGroupID;
                 meterGroup.CPP = model.CPP;
                 meterGroup.rollovers = model.rollovers;
-                _revisionDataEntities.SaveChanges();
+                _globalView.SaveChanges();
             }
             return Ok();
         }
 
         [HttpPost, Route("api/revisiondatas/addexpense/")]
-        public IHttpActionResult AddExpense(BaseHistory model)
+        public IHttpActionResult AddExpense(RevisionBaseExpense model)
         {
 
-            BaseHistory expense = new BaseHistory();
+            RevisionBaseExpense expense = new RevisionBaseExpense();
             expense.ContractID = model.ContractID;
             expense.FprBase = model.FprBase;
             expense.PreBase = model.PreBase;
@@ -141,17 +106,17 @@ namespace GVWebapi.Controllers
             expense.UpdatedOn = DateTime.Now;
             expense.UpdatedBy = model.UpdatedBy;
             expense.Comment = model.Comment;
-            _revisionDataEntities.BaseHistories.Add(expense);
+            _globalView.RevisionBaseExpenses.Add(expense);
 
-            _revisionDataEntities.SaveChanges();
+            _globalView.SaveChanges();
            
             return Ok();
         }
         [HttpPost, Route("api/revisiondatas/updateexpense/")]
-        public IHttpActionResult UpdateExpense(BaseHistory model)
+        public IHttpActionResult UpdateExpense(RevisionBaseExpense model)
         {
 
-            var expense = _revisionDataEntities.BaseHistories.Find(model.ID);
+            var expense = _globalView.RevisionBaseExpenses.Find(model.ID);
             if (expense != null)
             {
                 expense.FprBase = model.FprBase;
@@ -161,22 +126,22 @@ namespace GVWebapi.Controllers
                 expense.UpdatedOn = DateTime.Now;
                 expense.UpdatedBy = model.UpdatedBy;
                 expense.Comment = model.Comment;
-                _revisionDataEntities.SaveChanges();
+                _globalView.SaveChanges();
             }
            
             return Ok();
         }
         [HttpPost, Route("api/revisiondatas/updaterevision/")]
-        public IHttpActionResult UpdateRevision(RevisionData model)
+        public IHttpActionResult UpdateRevision(RevisionDataModel model)
         {
 
-            var revision = _revisionDataEntities.RevisionDatas.Find(model.RevisionDataID);
+            var revision = _globalView.RevisionDatas.Find(model.RevisionID);
             if (revision != null)
             {
                 revision.Rollover = model.Rollover;
-                revision.Credits = model.Credits;
-               
-                _revisionDataEntities.SaveChanges();
+                revision.Credits = model.CreditAmount;
+
+                _globalView.SaveChanges();
             }
 
             return Ok();
@@ -185,11 +150,11 @@ namespace GVWebapi.Controllers
         public IHttpActionResult DeleteExpense(int id)
         {
 
-            var expense = _revisionDataEntities.BaseHistories.Find(id);
+            var expense = _globalView.RevisionBaseExpenses.Find(id);
             if (expense != null)
             {
-                _revisionDataEntities.BaseHistories.Remove(expense);
-                _revisionDataEntities.SaveChanges();
+                _globalView.RevisionBaseExpenses.Remove(expense);
+                _globalView.SaveChanges();
             }
 
             return Ok();
@@ -198,7 +163,7 @@ namespace GVWebapi.Controllers
         [HttpGet,Route("api/revisiondatas/getmetergroups/{contractid}")]
         public IHttpActionResult GetMeterGroups(int contractId)
         {
-            var contractMeterGroup = (from mg in _revisionDataEntities.MeterGroups
+            var contractMeterGroup = (from mg in _globalView.RevisionMeterGroups
                                       where mg.ERPContractID == contractId
                                       select mg);
             var contractdetail = (from c in _coFreedomEntities.SCContracts
@@ -225,21 +190,21 @@ namespace GVWebapi.Controllers
             var groupcount = (from gc in _coFreedomEntities.vw_invoicedMeterGroups
                               where gc.ContractID == contractId
                               select gc).Count();
-            var baseExpense = (from be in _revisionDataEntities.BaseHistories
+            var baseExpense = (from be in _globalView.RevisionBaseExpenses
                                where be.ContractID == contractId
                                select be).ToList();
             return Json(new { metergroups = contractMeterGroup, invoicedMetergroupcount = groupcount,metergroupcount = contractMeterGroup.Count(), contractstart = contractdetail.StartDate,billingcycle = BillCycle, baseExpenses = baseExpense });
         }
 
-        public IQueryable<RevisionData> GetRevisionDatas()
+        public IQueryable<vw_RevisionInvoiceHistory> GetRevisionDatas()
         {
-            return _revisionDataEntities.RevisionDatas;
+            return _coFreedomEntities.vw_RevisionInvoiceHistory;
         }
 
         [ResponseType(typeof(RevisionData))]
         public async Task<IHttpActionResult> GetRevisionData(int id)
         {
-            IEnumerable<RevisionData> revisionData = await _revisionDataEntities.RevisionDatas.Where(r => r.ERPContractID == id).ToListAsync();
+            IEnumerable<vw_RevisionInvoiceHistory> revisionData = await _coFreedomEntities.vw_RevisionInvoiceHistory.Where(r => r.ContractID == id).ToListAsync();
             if (revisionData == null)
             {
                 return NotFound();
@@ -248,75 +213,10 @@ namespace GVWebapi.Controllers
             return Ok(revisionData);
         }
 
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutRevisionData(long id, RevisionData revisionData)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != revisionData.RevisionDataID)
-            {
-                return BadRequest();
-            }
-
-            _revisionDataEntities.Entry(revisionData).State = System.Data.Entity.EntityState.Modified;
-
-            try
-            {
-                await _revisionDataEntities.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RevisionDataExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
-
-        [ResponseType(typeof(RevisionData))]
-        public async Task<IHttpActionResult> PostRevisionData(RevisionData revisionData)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            _revisionDataEntities.RevisionDatas.Add(revisionData);
-            await _revisionDataEntities.SaveChangesAsync();
-
-            return CreatedAtRoute("DefaultApi", new { id = revisionData.RevisionDataID }, revisionData);
-        }
-
-        [ResponseType(typeof(RevisionData))]
-        public async Task<IHttpActionResult> DeleteRevisionData(long id)
-        {
-            RevisionData revisionData = await _revisionDataEntities.RevisionDatas.FindAsync(id);
-            if (revisionData == null)
-            {
-                return NotFound();
-            }
-
-            _revisionDataEntities.RevisionDatas.Remove(revisionData);
-            await _revisionDataEntities.SaveChangesAsync();
-
-            return Ok(revisionData);
-        }
-
-        private bool RevisionDataExists(long id)
-        {
-            return _revisionDataEntities.RevisionDatas.Count(e => e.RevisionDataID == id) > 0;
-        }
+         
+         
         
-        private int TotelMonthDifference(DateTime dtThis, DateTime dtOther)
+        private int TotalMonthDifference(DateTime dtThis, DateTime dtOther)
         {
             //Int32 intReturn = 0;
 

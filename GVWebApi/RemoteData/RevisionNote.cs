@@ -12,11 +12,11 @@ namespace GVWebapi.RemoteData
     using System;
     using System.Collections.Generic;
     
-    public partial class IntegrisCall
+    public partial class RevisionNote
     {
-        public int ID { get; set; }
-        public string CallNumber { get; set; }
-        public Nullable<System.DateTime> CallDateTime { get; set; }
-        public string FPRID { get; set; }
+        public int RevisionNoteID { get; set; }
+        public int InvoiceID { get; set; }
+        public int ContractID { get; set; }
+        public string Notes { get; set; }
     }
 }

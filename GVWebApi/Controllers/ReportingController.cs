@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using GVWebapi.Helpers;
 using GVWebapi.Helpers.Reporting;
 using GVWebapi.RemoteData;
 using GVWebapi.Models.Reports;
@@ -15,6 +16,37 @@ namespace GVWebapi.Controllers
     public class ReportingController : ApiController
     {
         private readonly CoFreedomEntities _coFreedomEntities = new CoFreedomEntities();
+
+        [HttpGet, Route("api/volumetrendreport/{CustomerID}/{InvoiceID}")]
+        public IHttpActionResult VolumeTrendReport(int CustomerID,int InvoiceID)
+        { 
+
+            var PeriodDates = (from r in _coFreedomEntities.vw_csSCBillingContracts
+                              where r.InvoiceID == InvoiceID
+                              select new {fromDate = r.OverageFromDate, toDate = r.OverageToDate }).FirstOrDefault();
+            var CustomerNumber = (from c in _coFreedomEntities.ARCustomers
+                                  where c.CustomerID == CustomerID
+                                  select c.CustomerNumber 
+                                  ).FirstOrDefault();
+            ExcelRevisionExport er = new ExcelRevisionExport();
+            var results = er.GetVolumeTrend(CustomerNumber, PeriodDates.fromDate, PeriodDates.toDate).OrderBy(o => o.LineID);
+
+            return Json(new { volumetrend = results });
+
+        }
+        [HttpGet, Route("api/volumetrendperoids/{ContractID}")]
+        public IHttpActionResult VolumeTrendPeroids(int ContractID)
+        {
+          
+
+            var PeriodList = (from r in _coFreedomEntities.vw_csSCBillingContracts
+                              where r.ContractID == ContractID && r.VoidFlag == 0
+                              orderby r.InvoiceID descending
+                              select new { value = r.InvoiceID, text = r.OverageToDate }).ToList();
+            return Json(PeriodList);
+
+        }
+
 
         [HttpGet, Route("api/quarterlyreview/{ContractID}")]
         public IHttpActionResult QuarterlyReview(int ContractID)
@@ -39,7 +71,7 @@ namespace GVWebapi.Controllers
             {
                 var client = _coFreedomEntities.vw_CustomersOnContract.Where(c => c.CustomerID == model.CustomerID).FirstOrDefault();
 
-                ExcelReport2 rep = new ExcelReport2();
+                ExcelReport rep = new ExcelReport();
 
                 string OverideDate = model.OverrideDate == null ? model.StartDate : model.OverrideDate;
                 DateTime StartDate = DateTime.Parse(model.PeriodDate).AddMonths(-2);

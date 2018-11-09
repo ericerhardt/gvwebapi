@@ -14,23 +14,11 @@ namespace GVWebapi.RemoteData
     
     public partial class RevisionData
     {
-        public long RevisionDataID { get; set; }
-        public Nullable<int> ERPContractID { get; set; }
-        public Nullable<int> ERPMeterGroupID { get; set; }
-        public string ERPMeterGroupDesc { get; set; }
-        public Nullable<long> ContractedVolume { get; set; }
-        public Nullable<long> ActualVolume { get; set; }
-        public Nullable<decimal> CPPRate { get; set; }
-        public Nullable<long> VolumeOffset { get; set; }
-        public Nullable<System.DateTime> PeriodDate { get; set; }
+        public int RevisionID { get; set; }
+        public int InvoiceID { get; set; }
+        public int ContractID { get; set; }
+        public int MeterGroupID { get; set; }
         public Nullable<int> Rollover { get; set; }
         public Nullable<decimal> Credits { get; set; }
-        public Nullable<decimal> FBRContractBase { get; set; }
-        public Nullable<decimal> ClientContractBase { get; set; }
-        public Nullable<decimal> ClientCPP { get; set; }
-        public int datachecksum { get; set; }
-        public Nullable<int> InvoiceID { get; set; }
-        public string ID { get; set; }
-        public Nullable<System.DateTime> StartDate { get; set; }
     }
 }

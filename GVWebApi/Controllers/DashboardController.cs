@@ -8,6 +8,7 @@ using GVWebapi.RemoteData;
 using GVWebapi.Models;
 using GVWebapi.Helpers;
 using System.Data.Entity;
+ 
 
 namespace GVWebapi.Controllers
 {
@@ -16,20 +17,21 @@ namespace GVWebapi.Controllers
         private readonly CoFreedomEntities _context = new CoFreedomEntities();
         private readonly GlobalViewEntities _db = new GlobalViewEntities();
         private CustomerPortalEntities db = new CustomerPortalEntities();
-        private RevisionDataEntities rev = new RevisionDataEntities();
-        private RevisionDBContext _revisionDbContext = new RevisionDBContext();
+      
         [HttpGet]
         [Route("api/savingbycategory/{ClientID}")]
         public IHttpActionResult SavingsByCategory(int ClientID)
         {
+            ExcelRevisionExport er = new ExcelRevisionExport();
             var contract = _context.vw_csContractList.OrderBy(c => c.ContractID).Where(c => c.CustomerID == ClientID).First().ContractID;
-          var Replacements = _db.AssetReplacements.Where(d => d.CustomerID == ClientID).Sum(c => c.ReplacementValue).ToString() ?? "0";
-           var CostAvoidance =  db.CostAvoidances.Where(c => c.CustomerID == ClientID).Sum(c => c.TotalSavingsCost).ToString() ?? "0";
-           var RollOvers = rev.RolloverViews.Where(c => c.CustomerID == ClientID).Sum(r => r.Rollover * r.CPP).ToString() ??"0";
-            var Revision = visionSummary(contract).ToString() ?? "0" ;
+            var Replacements = _db.AssetReplacements.Where(d => d.CustomerID == ClientID).Sum(c => c.ReplacementValue).ToString() ?? "0";
+            var CostAvoidance =  String.IsNullOrEmpty(db.CostAvoidances.Where(c => c.CustomerID == ClientID).Sum(c => c.TotalSavingsCost).ToString()) ? "0" : db.CostAvoidances.Where(c => c.CustomerID == ClientID).Sum(c => c.TotalSavingsCost).ToString();
+            var RollOvers = er.GetRolloverHistory(contract).ToList().Sum(o=> o.TotalSavings).ToString() ?? "0";
+           // var RollOvers = RollOverData.Sum(r => r.Rollover * r.CPP).ToString() ??"0";
+            var Revision = er.bindRevionDetailSummary(contract).Sum(o=> o.Savings).ToString() ?? "0" ;
 
         
-            var ret = new[]
+            var ret = new object[]
            {
                    new { label="Replacements", color = "#4acab4", data =   Replacements },
                    new { label="REVision", color = "#ffea88" , data =  Revision},
@@ -86,108 +88,111 @@ namespace GVWebapi.Controllers
             var Volumes = _context.vw_ContractedPagesByDeviceTYpe_Cust.Where(x => x.CustomerID == customerid);
             return Volumes.Sum(x => x.Pages / 12);
         }
-        private double? visionSummary(int ContractID)
+        private decimal? visionSummary(int ContractID)
         {
-            using (var _dbAudit = new RevisionDataEntities())
-            {
-                var VisionDataList = new List<Models.VisionData>();
+            ExcelRevisionExport  re = new ExcelRevisionExport();
+            var results = re.bindRevionDetailSummary(ContractID);
 
-                var revisions = (from r in _dbAudit.RevisionDataViews
-                                 where r.ERPContractID == ContractID
-                                 orderby r.PeriodDate descending
-                                 select new
-                                 {
-                                     ERPContarctID = ContractID,
-                                     PeriodDates = r.PeriodDate.Value,
-                                     StartDate = r.StartDate.Value,
-                                     Difference = ((r.PeriodDate.Value.Year - r.StartDate.Value.Year) * 12) + (r.PeriodDate.Value.Month - r.StartDate.Value.Month) + 1,
-                                     PreFPRBaseExpense = r.ClientContractBase,
-                                     PreFPROverageExpense = r.OverageNoFPR,
-                                     FPRBaseExpense = r.FBRContractBase,
-                                     FPROverageExpense = r.OverageExpense,
-                                     Credits = r.Credits,
-                                     PeriodSavings = (r.OverageNoFPR + r.ClientContractBase) - (r.OverageExpense + r.FBRContractBase),
-                                     PctSavings = r.NetSavings.Value != 0 && r.OverageNoFPR.Value != 0 ? r.NetSavings / (r.ClientContractBase + r.OverageNoFPR) : 0
-                                 }).ToList();
-                var summary = (from s in revisions
-                               group s by new
-                               {
+            //using (var _dbAudit = new RevisionDataEntities())
+            //{
+            //    var VisionDataList = new List<Models.VisionData>();
 
-                                   clientPeriodDates = s.PeriodDates,
-                                   clientPeriodStart = s.StartDate,
-                                   diff = s.Difference,
-                                   fprCost = s.FPRBaseExpense,
-                                   clientCost = s.PreFPRBaseExpense
+            //    var revisions = (from r in _dbAudit.RevisionDataViews
+            //                     where r.ERPContractID == ContractID
+            //                     orderby r.PeriodDate descending
+            //                     select new
+            //                     {
+            //                         ERPContarctID = ContractID,
+            //                         PeriodDates = r.PeriodDate.Value,
+            //                         StartDate = r.StartDate.Value,
+            //                         Difference = ((r.PeriodDate.Value.Year - r.StartDate.Value.Year) * 12) + (r.PeriodDate.Value.Month - r.StartDate.Value.Month) + 1,
+            //                         PreFPRBaseExpense = r.ClientContractBase,
+            //                         PreFPROverageExpense = r.OverageNoFPR,
+            //                         FPRBaseExpense = r.FBRContractBase,
+            //                         FPROverageExpense = r.OverageExpense,
+            //                         Credits = r.Credits,
+            //                         PeriodSavings = (r.OverageNoFPR + r.ClientContractBase) - (r.OverageExpense + r.FBRContractBase),
+            //                         PctSavings = r.NetSavings.Value != 0 && r.OverageNoFPR.Value != 0 ? r.NetSavings / (r.ClientContractBase + r.OverageNoFPR) : 0
+            //                     }).ToList();
+            //    var summary = (from s in revisions
+            //                   group s by new
+            //                   {
 
-                               }
-                                   into v
-                               select new
-                               {
-                                   clientPeriodDates = v.Key.clientPeriodDates,
-                                   clientPeriodDate = v.Key.clientPeriodDates,
-                                   clientStartDate = v.Key.clientPeriodStart,
-                                   fprOverageCost = v.Sum(o => o.FPROverageExpense),
-                                   prefprOverageCost = v.Sum(o => o.PreFPROverageExpense),
-                                   fprCost = v.Key.fprCost * v.Key.diff,
-                                   clientOverageCost = v.Sum(o => o.PreFPROverageExpense),
-                                   clientCost = v.Key.clientCost * v.Key.diff,
-                                   credits = v.Sum(o => o.Credits),
-                                   savings = v.Sum(o => o.PeriodSavings),
-                                   pct = v.Sum(o => o.PctSavings)
-                               }).Distinct();
+            //                       clientPeriodDates = s.PeriodDates,
+            //                       clientPeriodStart = s.StartDate,
+            //                       diff = s.Difference,
+            //                       fprCost = s.FPRBaseExpense,
+            //                       clientCost = s.PreFPRBaseExpense
+
+            //                   }
+            //                       into v
+            //                   select new
+            //                   {
+            //                       clientPeriodDates = v.Key.clientPeriodDates,
+            //                       clientPeriodDate = v.Key.clientPeriodDates,
+            //                       clientStartDate = v.Key.clientPeriodStart,
+            //                       fprOverageCost = v.Sum(o => o.FPROverageExpense),
+            //                       prefprOverageCost = v.Sum(o => o.PreFPROverageExpense),
+            //                       fprCost = v.Key.fprCost * v.Key.diff,
+            //                       clientOverageCost = v.Sum(o => o.PreFPROverageExpense),
+            //                       clientCost = v.Key.clientCost * v.Key.diff,
+            //                       credits = v.Sum(o => o.Credits),
+            //                       savings = v.Sum(o => o.PeriodSavings),
+            //                       pct = v.Sum(o => o.PctSavings)
+            //                   }).Distinct();
 
 
-                foreach (var revision in summary)
-                {
-                    Int32 monthsDiff = TotelMonthDifference(revision.clientPeriodDate, revision.clientStartDate);
-                    var a = new  Models.VisionData();
-                    a.ERPContractID = ContractID;
-                    //  a.clientPeriodDates = revision.clientPeriodDates.AddMonths(-monthsDiff).ToString("MMM") + " - " + revision.clientPeriodDates.ToString("MMM yyyy");
-                    a.ClientPeriodDates = revision.clientPeriodDates.AddMonths(-monthsDiff).ToString("MMM") + " - " + revision.clientPeriodDates.ToString("MMM yyyy");
-                    a.FPROverageCost = Convert.ToDouble(revision.fprOverageCost);
-                    a.ClientOverageCost = Convert.ToDouble(revision.prefprOverageCost);
-                    a.FPRCost = Convert.ToDouble(revision.fprCost);
-                    a.ClientCost = Convert.ToDouble(revision.clientCost);
-                    a.Credits = Convert.ToDouble(revision.credits);
-                    a.Savings = Convert.ToDouble(revision.savings);
-                    a.Pct = Convert.ToDouble(revision.pct);
-                    VisionDataList.Add(a);
-                }
-                try
-                {
-                    var summary2 = (from s in VisionDataList
-                                    group s by new
-                                    {
+            //    foreach (var revision in summary)
+            //    {
+            //        Int32 monthsDiff = TotelMonthDifference(revision.clientPeriodDate, revision.clientStartDate);
+            //        var a = new  Models.VisionData();
+            //        a.ERPContractID = ContractID;
+            //        //  a.clientPeriodDates = revision.clientPeriodDates.AddMonths(-monthsDiff).ToString("MMM") + " - " + revision.clientPeriodDates.ToString("MMM yyyy");
+            //        a.ClientPeriodDates = revision.clientPeriodDates.AddMonths(-monthsDiff).ToString("MMM") + " - " + revision.clientPeriodDates.ToString("MMM yyyy");
+            //        a.FPROverageCost = Convert.ToDouble(revision.fprOverageCost);
+            //        a.ClientOverageCost = Convert.ToDouble(revision.prefprOverageCost);
+            //        a.FPRCost = Convert.ToDouble(revision.fprCost);
+            //        a.ClientCost = Convert.ToDouble(revision.clientCost);
+            //        a.Credits = Convert.ToDouble(revision.credits);
+            //        a.Savings = Convert.ToDouble(revision.savings);
+            //        a.Pct = Convert.ToDouble(revision.pct);
+            //        VisionDataList.Add(a);
+            //    }
+            //    try
+            //    {
+            //        var summary2 = (from s in VisionDataList
+            //                        group s by new
+            //                        {
 
-                                        clientPeriodDates = s.ClientPeriodDates,
-                                        clientPeriodStart = s.ClientStartDate,
-                                        fprCost = s.FPRCost,
-                                        clientCost = s.ClientCost
+            //                            clientPeriodDates = s.ClientPeriodDates,
+            //                            clientPeriodStart = s.ClientStartDate,
+            //                            fprCost = s.FPRCost,
+            //                            clientCost = s.ClientCost
 
-                                    }
-                                        into v
-                                    select new
-                                    {
-                                        
-                                        fprOverageCost = v.Sum(o => o.FPROverageCost),
-                                        prefprOverageCost = v.Sum(o => o.ClientOverageCost),
-                                        fprCost = v.Key.fprCost,
-                                        clientOverageCost = v.Sum(o => o.ClientOverageCost),
-                                        clientCost = v.Key.clientCost,
-                                        credits = v.Sum(o => o.Credits),
-                                        savings = v.Sum(o => o.Savings),
-                                        pct = v.Sum(o => o.Pct)
-                                    }).Distinct();
-                    var savings = summary2.Sum(s => s.savings);
-                    var credits = summary2.Sum(s => s.credits);
-                    return savings + credits;
-                }
-                catch (Exception e)
-                {
-                    throw (e);
-                }
-              
-            }
+            //                        }
+            //                            into v
+            //                        select new
+            //                        {
+
+            //                            fprOverageCost = v.Sum(o => o.FPROverageCost),
+            //                            prefprOverageCost = v.Sum(o => o.ClientOverageCost),
+            //                            fprCost = v.Key.fprCost,
+            //                            clientOverageCost = v.Sum(o => o.ClientOverageCost),
+            //                            clientCost = v.Key.clientCost,
+            //                            credits = v.Sum(o => o.Credits),
+            //                            savings = v.Sum(o => o.Savings),
+            //                            pct = v.Sum(o => o.Pct)
+            //                        }).Distinct();
+               var savings = results.Sum(s => s.Savings);
+               var credits = results.Sum(s => s.Credits);
+               return savings + credits;
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        throw (e);
+            //    }
+           
+           // }
         }
         private Int32 TotelMonthDifference(DateTime dtThis, DateTime dtOther)
         {

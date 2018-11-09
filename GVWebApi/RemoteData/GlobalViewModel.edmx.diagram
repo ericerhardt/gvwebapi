@@ -31,6 +31,10 @@
         <AssociationConnector Association="GlobalViewModel.FK_EasyLinkItem_EasyLInk" />
         <AssociationConnector Association="GlobalViewModel.FK_Schedule_ScheduleService" />
         <AssociationConnector Association="GlobalViewModel.FK_Schedules_ScheduleId" />
+        <EntityTypeShape EntityType="GlobalViewModel.RevisionData" Width="1.5" PointX="9.375" PointY="0.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.RevisionNote" Width="1.5" PointX="11.375" PointY="13.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.RevisionBaseExpense" Width="1.5" PointX="13.375" PointY="13.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.RevisionMeterGroup" Width="1.5" PointX="7.375" PointY="15.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

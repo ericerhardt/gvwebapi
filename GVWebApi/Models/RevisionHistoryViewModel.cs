@@ -8,6 +8,8 @@ namespace GVWebapi.RemoteData
     public class RevisionHistoryModel 
     {
     public DateTime? peroid { get; set; }
-  public IEnumerable<PeriodHistoryView> detail {get;set;}
+    public int InvoiceId { get; set; }
+    public IEnumerable<RevisionDataModel> detail {get;set;}
+    public string Notes { get; set; }
     }
 }

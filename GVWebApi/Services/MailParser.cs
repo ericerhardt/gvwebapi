@@ -243,7 +243,7 @@ namespace GVWebapi.Services
             {
 
 
-                if (oSupplyInfo.CallID != "!UNKNOWN!")
+                if (oSupplyInfo.CallID != "Unlisted Device")
                 {
 
                     var equipQuery = freedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.EquipmentID == oSupplyInfo.EquipmentID).FirstOrDefault();
@@ -305,7 +305,7 @@ namespace GVWebapi.Services
             supplymail.From = new MailAddress(ConfigurationManager.AppSettings["FromAddress"]);
             supplymail.To.Add(new MailAddress(model.Email));
             supplymail.To.Add(new MailAddress(ConfigurationManager.AppSettings["SupportAddress"]));
-
+            supplymail.ReplyToList.Add(new MailAddress(ConfigurationManager.AppSettings["SupportAddress"]));
             if (type == 1)
             {
                 var CallNumber = GetCallNumber(id);
@@ -389,7 +389,7 @@ namespace GVWebapi.Services
             supplymail.From = new MailAddress(ConfigurationManager.AppSettings["FromAddress"]);
             supplymail.To.Add(new MailAddress(model.Email));
             supplymail.To.Add(new MailAddress(ConfigurationManager.AppSettings["SupportAddress"]));
-
+            supplymail.ReplyToList.Add(new MailAddress(ConfigurationManager.AppSettings["SupportAddress"]));
             if (type == 1)
             {
                 model.CallID = "# " + GetCallNumber(id);

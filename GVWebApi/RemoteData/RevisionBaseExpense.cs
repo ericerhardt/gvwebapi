@@ -12,9 +12,16 @@ namespace GVWebapi.RemoteData
     using System;
     using System.Collections.Generic;
     
-    public partial class BillingTypeReference
+    public partial class RevisionBaseExpense
     {
-        public int BillingTypeID { get; set; }
-        public string Description { get; set; }
+        public int ID { get; set; }
+        public int ContractID { get; set; }
+        public Nullable<System.DateTime> OverrideDate { get; set; }
+        public Nullable<decimal> PreBase { get; set; }
+        public Nullable<decimal> FprBase { get; set; }
+        public string Comment { get; set; }
+        public Nullable<System.DateTime> UpdatedOn { get; set; }
+        public Nullable<System.DateTime> EndDate { get; set; }
+        public string UpdatedBy { get; set; }
     }
 }

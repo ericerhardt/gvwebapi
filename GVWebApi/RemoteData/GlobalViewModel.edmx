@@ -192,6 +192,57 @@
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="CoFreedomLocationId" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="RevisionBaseExpense">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ContractID" Type="int" Nullable="false" />
+          <Property Name="OverrideDate" Type="datetime" />
+          <Property Name="PreBase" Type="decimal" Precision="16" Scale="2" />
+          <Property Name="FprBase" Type="decimal" Precision="16" Scale="2" />
+          <Property Name="Comment" Type="varchar" MaxLength="1250" />
+          <Property Name="UpdatedOn" Type="datetime" />
+          <Property Name="EndDate" Type="datetime" />
+          <Property Name="UpdatedBy" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="RevisionData">
+          <Key>
+            <PropertyRef Name="RevisionID" />
+          </Key>
+          <Property Name="RevisionID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InvoiceID" Type="int" Nullable="false" />
+          <Property Name="ContractID" Type="int" Nullable="false" />
+          <Property Name="MeterGroupID" Type="int" Nullable="false" />
+          <Property Name="Rollover" Type="int" />
+          <Property Name="Credits" Type="decimal" Precision="16" Scale="2" />
+        </EntityType>
+        <EntityType Name="RevisionMeterGroups">
+          <Key>
+            <PropertyRef Name="MeterGroupID" />
+          </Key>
+          <Property Name="MeterGroupID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ERPMeterGroupID" Type="int" />
+          <Property Name="MeterGroupDesc" Type="varchar" MaxLength="250" />
+          <Property Name="AuditExpense" Type="float" />
+          <Property Name="AuditVolume" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="CPP" Type="decimal" Precision="18" Scale="5" Nullable="false" />
+          <Property Name="ERPContractID" Type="int" />
+          <Property Name="ERPMeterGroupDesc" Type="varchar" MaxLength="250" />
+          <Property Name="id" Type="varchar" MaxLength="350" />
+          <Property Name="invoiceID" Type="int" />
+          <Property Name="UniqueID" Type="int" />
+          <Property Name="rollovers" Type="bit" />
+        </EntityType>
+        <EntityType Name="RevisionNotes">
+          <Key>
+            <PropertyRef Name="RevisionNoteID" />
+          </Key>
+          <Property Name="RevisionNoteID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InvoiceID" Type="int" Nullable="false" />
+          <Property Name="ContractID" Type="int" Nullable="false" />
+          <Property Name="Notes" Type="varchar(max)" />
+        </EntityType>
         <EntityType Name="Schedules">
           <Key>
             <PropertyRef Name="ScheduleId" />
@@ -376,6 +427,10 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
           <EntitySet Name="FprContacts" EntityType="Self.FprContacts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GlobalViewUsers" EntityType="Self.GlobalViewUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Location" EntityType="Self.Location" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RevisionBaseExpense" EntityType="Self.RevisionBaseExpense" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RevisionData" EntityType="Self.RevisionData" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RevisionMeterGroups" EntityType="Self.RevisionMeterGroups" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RevisionNotes" EntityType="Self.RevisionNotes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Schedules" EntityType="Self.Schedules" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ScheduleService" EntityType="Self.ScheduleService" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClientContacts" EntityType="Self.ClientContacts" store:Type="Views" store:Schema="dbo">
@@ -510,6 +565,10 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
             <End Role="Schedule" EntitySet="Schedules" />
             <End Role="Schedule1" EntitySet="Schedules" />
           </AssociationSet>
+          <EntitySet Name="RevisionDatas" EntityType="GlobalViewModel.RevisionData" />
+          <EntitySet Name="RevisionNotes" EntityType="GlobalViewModel.RevisionNote" />
+          <EntitySet Name="RevisionBaseExpenses" EntityType="GlobalViewModel.RevisionBaseExpense" />
+          <EntitySet Name="RevisionMeterGroups" EntityType="GlobalViewModel.RevisionMeterGroup" />
         </EntityContainer>
         <EntityType Name="ContactClient">
           <Key>
@@ -863,6 +922,57 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="RevisionData">
+          <Key>
+            <PropertyRef Name="RevisionID" />
+          </Key>
+          <Property Name="RevisionID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InvoiceID" Type="Int32" Nullable="false" />
+          <Property Name="ContractID" Type="Int32" Nullable="false" />
+          <Property Name="MeterGroupID" Type="Int32" Nullable="false" />
+          <Property Name="Rollover" Type="Int32" />
+          <Property Name="Credits" Type="Decimal" Precision="16" Scale="2" />
+        </EntityType>
+        <EntityType Name="RevisionNote">
+          <Key>
+            <PropertyRef Name="RevisionNoteID" />
+          </Key>
+          <Property Name="RevisionNoteID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InvoiceID" Type="Int32" Nullable="false" />
+          <Property Name="ContractID" Type="Int32" Nullable="false" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="RevisionBaseExpense">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ContractID" Type="Int32" Nullable="false" />
+          <Property Name="OverrideDate" Type="DateTime" Precision="3" />
+          <Property Name="PreBase" Type="Decimal" Precision="16" Scale="2" />
+          <Property Name="FprBase" Type="Decimal" Precision="16" Scale="2" />
+          <Property Name="Comment" Type="String" MaxLength="1250" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedOn" Type="DateTime" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="RevisionMeterGroup">
+          <Key>
+            <PropertyRef Name="MeterGroupID" />
+          </Key>
+          <Property Name="MeterGroupID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ERPMeterGroupID" Type="Int32" />
+          <Property Name="MeterGroupDesc" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="AuditExpense" Type="Double" />
+          <Property Name="AuditVolume" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="CPP" Type="Decimal" Nullable="false" Precision="18" Scale="5" />
+          <Property Name="ERPContractID" Type="Int32" />
+          <Property Name="ERPMeterGroupDesc" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="id" Type="String" MaxLength="350" FixedLength="false" Unicode="false" />
+          <Property Name="invoiceID" Type="Int32" />
+          <Property Name="UniqueID" Type="Int32" />
+          <Property Name="rollovers" Type="Boolean" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1137,6 +1247,61 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
                 <ScalarProperty Name="MeterGroup" ColumnName="MeterGroup" />
                 <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
                 <ScalarProperty Name="ScheduleServiceId" ColumnName="ScheduleServiceId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RevisionDatas">
+            <EntityTypeMapping TypeName="GlobalViewModel.RevisionData">
+              <MappingFragment StoreEntitySet="RevisionData">
+                <ScalarProperty Name="Credits" ColumnName="Credits" />
+                <ScalarProperty Name="Rollover" ColumnName="Rollover" />
+                <ScalarProperty Name="MeterGroupID" ColumnName="MeterGroupID" />
+                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
+                <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+                <ScalarProperty Name="RevisionID" ColumnName="RevisionID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RevisionNotes">
+            <EntityTypeMapping TypeName="GlobalViewModel.RevisionNote">
+              <MappingFragment StoreEntitySet="RevisionNotes">
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
+                <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+                <ScalarProperty Name="RevisionNoteID" ColumnName="RevisionNoteID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RevisionBaseExpenses">
+            <EntityTypeMapping TypeName="GlobalViewModel.RevisionBaseExpense">
+              <MappingFragment StoreEntitySet="RevisionBaseExpense">
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="UpdatedOn" ColumnName="UpdatedOn" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="FprBase" ColumnName="FprBase" />
+                <ScalarProperty Name="PreBase" ColumnName="PreBase" />
+                <ScalarProperty Name="OverrideDate" ColumnName="OverrideDate" />
+                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RevisionMeterGroups">
+            <EntityTypeMapping TypeName="GlobalViewModel.RevisionMeterGroup">
+              <MappingFragment StoreEntitySet="RevisionMeterGroups">
+                <ScalarProperty Name="rollovers" ColumnName="rollovers" />
+                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+                <ScalarProperty Name="invoiceID" ColumnName="invoiceID" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="ERPMeterGroupDesc" ColumnName="ERPMeterGroupDesc" />
+                <ScalarProperty Name="ERPContractID" ColumnName="ERPContractID" />
+                <ScalarProperty Name="CPP" ColumnName="CPP" />
+                <ScalarProperty Name="AuditVolume" ColumnName="AuditVolume" />
+                <ScalarProperty Name="AuditExpense" ColumnName="AuditExpense" />
+                <ScalarProperty Name="MeterGroupDesc" ColumnName="MeterGroupDesc" />
+                <ScalarProperty Name="ERPMeterGroupID" ColumnName="ERPMeterGroupID" />
+                <ScalarProperty Name="MeterGroupID" ColumnName="MeterGroupID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
