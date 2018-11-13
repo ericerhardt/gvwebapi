@@ -73,7 +73,7 @@ namespace GVWebapi.Controllers
         {
          
         var Revision = new ExcelRevisionExport();
-        var results = Revision.bindRevionDetailSummary(contractId);
+        var results = Revision.RevisionSummary(contractId);
          
            return Json(results);
          
@@ -192,7 +192,7 @@ namespace GVWebapi.Controllers
                               select gc).Count();
             var baseExpense = (from be in _globalView.RevisionBaseExpenses
                                where be.ContractID == contractId
-                               select be).ToList();
+                               select be).OrderByDescending(o=> o.OverrideDate).ToList();
             return Json(new { metergroups = contractMeterGroup, invoicedMetergroupcount = groupcount,metergroupcount = contractMeterGroup.Count(), contractstart = contractdetail.StartDate,billingcycle = BillCycle, baseExpenses = baseExpense });
         }
 

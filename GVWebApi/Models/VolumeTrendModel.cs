@@ -30,6 +30,7 @@ namespace GVWebapi.Models
         public Nullable<decimal> PercOfMeterGroup { get; set; }
         public Nullable<decimal> LastPeriodVolume { get; set; }
         public Nullable<decimal> PeriodVolume { get; set; }
+        public Nullable<decimal> VolumeDiff { get; set; }
         public Nullable<decimal> TotalCopies { get; set; }
         public Nullable<decimal> StartMeterActual { get; set; }
         public Nullable<decimal> EndMeterActual { get; set; }

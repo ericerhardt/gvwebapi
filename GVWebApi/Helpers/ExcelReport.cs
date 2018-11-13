@@ -10510,7 +10510,7 @@ namespace GVWebapi.Helpers.Reporting
 
             Cell cell698 = new Cell() { CellReference = "C5", StyleIndex = (UInt32Value)45U, DataType = CellValues.String };
             CellValue cellValue133 = new CellValue();
-            cellValue133.Text = "Base Cost  (PRE-FPR)";
+            cellValue133.Text = "Old Cost";
 
             cell698.Append(cellValue133);
 
@@ -10528,7 +10528,7 @@ namespace GVWebapi.Helpers.Reporting
 
             Cell cell701 = new Cell() { CellReference = "F5", StyleIndex = (UInt32Value)45U, DataType = CellValues.String };
             CellValue cellValue136 = new CellValue();
-            cellValue136.Text = "FPR Base Cost";
+            cellValue136.Text = "New Cost";
 
             cell701.Append(cellValue136);
 
@@ -10571,7 +10571,7 @@ namespace GVWebapi.Helpers.Reporting
             UInt32Value RowIndex = 6 ;
             var VisionDataSummary = new List<GVWebapi.Models.VisionData>();
             DateTime overridedate = Convert.ToDateTime(_overrideDate);
-            VisionDataSummary = export.bindRevionDetailSummary(_contractID).Where(o=> o.ClientStartDate >= overridedate).ToList();
+            VisionDataSummary = export.RevisionSummary(_contractID).Where(o=> o.ClientStartDate >= overridedate).ToList();
             int _even = 0;
             foreach (GVWebapi.Models.VisionData VDL2 in VisionDataSummary)
             {

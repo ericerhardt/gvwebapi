@@ -21,13 +21,13 @@ namespace GVWebapi.Helpers
         private string PeriodFormatDate(DateTime _date,DateTime _startdate)
         {
             _customerName = "";
-            Int32 monthsDiff = TotelMonthDifference(_date, _startdate);
+            Int32 monthsDiff = TotalMonthDifference(_date, _startdate);
             String StartDate = String.Format("{0:MMMM yyyy}", _date.AddMonths(-monthsDiff));
             String EndDate = String.Format("{0:MMMM yyyy}", _date);
             return StartDate + " - " + EndDate;
           
         }
-        private Int32 TotelMonthDifference(DateTime dtThis, DateTime dtOther)
+        private Int32 TotalMonthDifference(DateTime dtThis, DateTime dtOther)
         {
             //Int32 intReturn = 0;
 
@@ -49,7 +49,7 @@ namespace GVWebapi.Helpers
             return Contract.ContractID;
         }
         
-        public List<GVWebapi.Models.VisionData> bindRevionDetailSummary(Int32 ContractID)
+        public List<GVWebapi.Models.VisionData>  RevisionSummary(Int32 ContractID)
         {
 
             GlobalViewEntities gv = new GlobalViewEntities();
@@ -60,7 +60,15 @@ namespace GVWebapi.Helpers
             List<RevisionHistoryModel> RevisionModel = new List<RevisionHistoryModel>();
             var eadata = ea.vw_RevisionInvoiceHistory.Where(r => r.ContractID == ContractID).ToList();
             var gvrevision = gv.RevisionDatas.Where(r => r.ContractID == ContractID).ToList();
-            var gvexpense = gv.RevisionBaseExpenses.Where(r => r.ContractID == ContractID).ToList();
+            var gvexpense = gv.RevisionBaseExpenses.Where(r => r.ContractID == ContractID).OrderByDescending(r=> r.OverrideDate).ToList();
+            for(var i =0; i < gvexpense.Count; i++)  
+            {
+                if (i == 0)
+                    gvexpense[i].EndDate = DateTime.Now;
+                else
+                gvexpense[i].EndDate = gvexpense[i - 1].OverrideDate.Value.AddDays(-1);
+            }
+
             var gvmetergroups = gv.RevisionMeterGroups.Where(r => r.ERPContractID == ContractID).ToList();
             var revisions = from e in eadata
                          join g in gvrevision
@@ -81,8 +89,22 @@ namespace GVWebapi.Helpers
                     ContractMeterGroupID = e.ContractMeterGroupID
                 };
 
-           
-            
+            var startDate = eadata.Min(o=> o.OverageFromDate);
+            var endDate = eadata.Max(o => o.OverageToDate);
+
+            var months = MonthsBetween(startDate.Value, endDate.Value);
+
+            var monthlyCost = new List<Tuple<decimal,decimal,DateTime>>();
+            foreach(var month in months)
+            {
+                var oldcost = gvexpense.Where(o => month.Item1 >= o.OverrideDate.Value && month.Item1 <= o.EndDate).Select(o => o.PreBase).FirstOrDefault();
+                var newcost = gvexpense.Where(o => month.Item1 >= o.OverrideDate.Value && month.Item1 <= o.EndDate).Select(o => o.FprBase).FirstOrDefault();
+
+                var Expenses = Tuple.Create(oldcost.Value, newcost.Value,month.Item1);
+                monthlyCost.Add(Expenses);
+            }
+
+
             var summary = (from r in revisions
                            group r by new
                            {
@@ -97,25 +119,29 @@ namespace GVWebapi.Helpers
                                clientPeriodDate = v.Key.clientPeriodDates.Value,
                                clientStartDate = v.Key.clientStartDate.Value,  
                                fprOverageCost = v.Sum(o => o.FPROverage),
-                               
-                               clientOverageCost = v.Sum(o => o.ClientOverage),
+                               fprBase = monthlyCost.Where( o=> o.Item3 >= v.Key.clientStartDate.Value && o.Item3 <= v.Key.clientPeriodDates.Value).Sum(o => o.Item2),
+                               clientBase = monthlyCost.Where(o => o.Item3 >= v.Key.clientStartDate.Value && o.Item3 <= v.Key.clientPeriodDates.Value).Sum(o => o.Item1),
+                                clientOverageCost = v.Sum(o => o.ClientOverage),
                                credits = v.Sum(o=> o.CreditAmount),
                            }).OrderByDescending(o => o.clientPeriodDate).ToList();
 
 
             foreach (var revision in summary)
             {
-                Int32 monthsDiff = TotelMonthDifference(revision.clientPeriodDate, revision.clientStartDate);
-                var fprBase = gvexpense.Where(o => o.ContractID == revision.contractId && o.OverrideDate <= revision.clientStartDate).Select(o => o.FprBase).FirstOrDefault();
-                var clientBase = gvexpense.Where(o => o.ContractID == revision.contractId &&  o.OverrideDate <= revision.clientStartDate).Select(o => o.PreBase).FirstOrDefault();
+                Int32 monthsDiff = TotalMonthDifference(revision.clientPeriodDate, revision.clientStartDate);
+           //     var fprBase = gvexpense.Where(o => o.ContractID == revision.contractId &&  (revision.clientPeriodDate >= o.OverrideDate && revision.clientStartDate <= o.EndDate)).Select(o => o.FprBase).ToList();
+           //     var clientBase = gvexpense.Where(o => o.ContractID == revision.contractId && (revision.clientPeriodDate >= o.OverrideDate && revision.clientStartDate <= o.EndDate)).Select(o => o.PreBase).ToList();
                 var a = new GVWebapi.Models.VisionData();
                 a.ERPContractID = ContractID;
                 a.ClientStartDate = revision.clientStartDate;
+                a.ClientPeriodDate = revision.clientPeriodDate;
                 a.ClientPeriodDates = revision.clientPeriodDate.AddMonths(-monthsDiff).ToString("MMM") + " - " + revision.clientPeriodDate.ToString("MMM yyyy");
                 a.FPROverageCost =  revision.fprOverageCost.Value;
-                a.FPRCost =  fprBase.Value  *  (monthsDiff + 1);
+               
+                a.FPRCost =  revision.fprBase;
                 a.ClientOverageCost =  revision.clientOverageCost.Value;
-                a.ClientCost =  clientBase.Value  *  (monthsDiff + 1);
+                 
+                a.ClientCost = revision.clientBase;
                 a.Credits =  revision.credits.Value * (monthsDiff + 1);
                 a.Savings =  (a.ClientCost + a.ClientOverageCost) - ((a.FPRCost + a.FPROverageCost ) - a.Credits);
                 a.Pct =  (a.Savings /(a.ClientCost + a.ClientOverageCost));
@@ -221,9 +247,42 @@ namespace GVWebapi.Helpers
             CoFreedomEntities db = new CoFreedomEntities();
             var ToDate = Convert.ToDateTime(PeriodDate).AddDays(1);
             var FromDate = Convert.ToDateTime(StartDate).AddDays(1);
-            var vtrend = db.Database.SqlQuery<VolumeTrendModel>("exec csVolumeTrend @vd_FromDate, @vd_ToDate, @vs_Customer, @vs_CustomerNumber", new SqlParameter("@vd_FromDate", FromDate), new SqlParameter("@vd_ToDate", ToDate), new SqlParameter("@vs_Customer", ""), new SqlParameter("@vs_CustomerNumber", CustomerNumber)).ToList();
+            var vtrends = db.Database.SqlQuery<VolumeTrendModel>("exec csVolumeTrend @vd_FromDate, @vd_ToDate, @vs_Customer, @vs_CustomerNumber", new SqlParameter("@vd_FromDate", FromDate), new SqlParameter("@vd_ToDate", ToDate), new SqlParameter("@vs_Customer", ""), new SqlParameter("@vs_CustomerNumber", CustomerNumber)).ToList();
+            foreach(var trend in vtrends)
+            {
+                if (trend.LastPeriodVolume > 0 && trend.PeriodVolume > 0)
+                {
+                    trend.VolumeDiff = ((trend.LastPeriodVolume - trend.PeriodVolume) / trend.LastPeriodVolume) * -100;
+                }
+                else
+                {
+                    trend.VolumeDiff = 0.0M;
+                }
+            }
+            return vtrends;
+        }
+        public static IEnumerable<Tuple<DateTime>> MonthsBetween(DateTime startDate, DateTime endDate)
+        {
+            DateTime iterator;
+            DateTime limit;
 
-            return vtrend;
+            if (endDate > startDate)
+            {
+                iterator = new DateTime(startDate.Year, startDate.Month, 1);
+                limit = endDate;
+            }
+            else
+            {
+                iterator = new DateTime(endDate.Year, endDate.Month, 1);
+                limit = startDate;
+            }
+
+            var dateTimeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
+            while (iterator <= limit)
+            {
+                yield return Tuple.Create(iterator);
+                iterator = iterator.AddMonths(1);
+            }
         }
     }
 }
