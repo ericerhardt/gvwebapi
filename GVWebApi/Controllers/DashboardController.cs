@@ -86,7 +86,7 @@ namespace GVWebapi.Controllers
         {
 
             var Volumes = _context.vw_ContractedPagesByDeviceTYpe_Cust.Where(x => x.CustomerID == customerid);
-            return Volumes.Sum(x => x.Pages / 12);
+            return Volumes.Sum(x => x.Pages);
         }
         private decimal? visionSummary(int ContractID)
         {

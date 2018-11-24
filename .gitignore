@@ -259,3 +259,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/GVWebApi/Reports/Daisy Brand, Inc.-9-2018_Quarterly.xlsx
+/GVWebApi/Reports/History Maker Homes-8-2018_Quarterly.xlsx

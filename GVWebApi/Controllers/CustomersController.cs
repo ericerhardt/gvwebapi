@@ -76,10 +76,13 @@ namespace GVWebapi.Controllers
                 string Address = $"{Location.Address}, {Location.City} {Location.State} {Location.Zip}";
                 AddressResponse result =  await  GoogleGeocodingAPI.SearchAddressAsync(Address);
 
-
-                Location.Latitude = (decimal)result.Results.First().Geometry.Location.Lat;
-                Location.Longitude = (decimal)result.Results.First().Geometry.Location.Lng;
-                _coFreedomEntities.SaveChanges();
+                if (result.Results.Count  > 0)
+                {
+                    Location.Latitude = (decimal)result.Results.First().Geometry.Location.Lat;
+                    Location.Longitude = (decimal)result.Results.First().Geometry.Location.Lng;
+                    _coFreedomEntities.SaveChanges();
+                }
+              
 
             }
 

@@ -99,9 +99,13 @@ namespace GVWebapi.Helpers
             {
                 var oldcost = gvexpense.Where(o => month.Item1 >= o.OverrideDate.Value && month.Item1 <= o.EndDate).Select(o => o.PreBase).FirstOrDefault();
                 var newcost = gvexpense.Where(o => month.Item1 >= o.OverrideDate.Value && month.Item1 <= o.EndDate).Select(o => o.FprBase).FirstOrDefault();
+                if(oldcost != null && newcost != null)
+                {
 
+                
                 var Expenses = Tuple.Create(oldcost.Value, newcost.Value,month.Item1);
                 monthlyCost.Add(Expenses);
+                }
             }
 
 

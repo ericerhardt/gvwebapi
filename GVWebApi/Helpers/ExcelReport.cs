@@ -11848,6 +11848,7 @@ namespace GVWebapi.Helpers.Reporting
                 RowIndex++;
                 sheetData3.Append(CreateHeaderLabels(RowIndex));
                 RowIndex++;
+                var StartIndex = RowIndex;
                 foreach (var detail in revisiondetail)
                 {
                     if (_even == 0)
@@ -11865,14 +11866,12 @@ namespace GVWebapi.Helpers.Reporting
                     RowIndex++;
                 }
 
-                RowIndex++;
-                if (footerIndex++ == Count)
-                {
-                    footerIndex = 1;
+               
                      
-                    sheetData3.Append(Createfooter(RowIndex, revision.Notes));
-                    RowIndex++;
-                }
+               // sheetData3.Append(Createfooter(RowIndex, revision.Notes));
+               sheetData3.Append(CreateTotalRow(StartIndex,RowIndex -1,RowIndex, revision.Notes));
+               
+                
             }
 
 
@@ -12248,6 +12247,57 @@ namespace GVWebapi.Helpers.Reporting
 
 
             return r;
+        }
+        public Row CreateTotalRow(UInt32Value StartRow, UInt32Value EndRow, UInt32Value index, StringValue Totals)
+        {
+            Row row4a = new Row() { RowIndex = (UInt32Value)index, Spans = new ListValue<StringValue>() { InnerText = "1:10" }, DyDescent = 0.25D };
+            Cell cell31a = new Cell() { CellReference = "A" + index.ToString() };
+            cell31a.StyleIndex = 174U;
+            Cell cell32a = new Cell() { CellReference = "B" + index.ToString() };
+            cell32a.StyleIndex = 174U;
+            Cell cell33a = new Cell() { CellReference = "C" + index.ToString() };
+            cell33a.StyleIndex = 174U;
+            Cell cell34a = new Cell() { CellReference = "D" + index.ToString() };
+            cell34a.StyleIndex = 174U;
+            Cell cell35a = new Cell() { CellReference = "E" + index.ToString() };
+            cell35a.StyleIndex = 174U;
+            Cell cell36a = new Cell() { CellReference = "F" + index.ToString() };
+            cell36a.StyleIndex = 174U;
+            Cell cell37a = new Cell() { CellReference = "G" + index.ToString() };
+            cell37a.StyleIndex = 174U;
+            Cell cell38a = new Cell() { CellReference = "H" + index.ToString() };
+            cell38a.StyleIndex = 174U;
+            Cell cell39a = new Cell() { CellReference = "I" + index.ToString() };
+            cell39a.StyleIndex = 174U;
+            Cell cell40a = new Cell() { CellReference = "J" + index.ToString() };
+            cell40a.StyleIndex = 174U;
+            Cell cell41a = new Cell() { CellReference = "K" + index.ToString() };
+            cell41a.StyleIndex = 174U;
+            CellValue TotalLabel2a = new CellValue();
+            TotalLabel2a.Text = "Revision Savings: ";
+            cell40a.Append(TotalLabel2a);
+             
+            CellFormula RevisionTotal = new CellFormula();
+          
+            RevisionTotal.Text = "SUM(K" + StartRow.Value.ToString() + ":K" + EndRow.Value.ToString() + ")";
+           
+            RevisionTotal.CalculateCell = true;
+            cell41a.Append(RevisionTotal);
+
+            row4a.Append(cell31a);
+            row4a.Append(cell32a);
+            row4a.Append(cell33a);
+            row4a.Append(cell34a);
+            row4a.Append(cell35a);
+            row4a.Append(cell36a);
+            row4a.Append(cell37a);
+            row4a.Append(cell38a);
+            row4a.Append(cell39a);
+            row4a.Append(cell40a);
+            row4a.Append(cell41a);
+          
+
+            return row4a;
         }
         public Row CreateHeaderLabels(UInt32Value index) 
         {
