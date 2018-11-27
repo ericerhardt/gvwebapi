@@ -211,7 +211,7 @@ namespace GVWebapi.Helpers
             CoFreedomEntities ea = new CoFreedomEntities();
             List<RolloverPagesModel> rollOverModels = new List<RolloverPagesModel>();
             var eadata = gv.RevisionDatas.Where(r => r.ContractID == ContractID).ToList();
-            var gvdata = gv.RevisionMeterGroups.Where(r => r.ERPContractID == ContractID).ToList();
+            var gvdata = gv.RevisionMeterGroups.Where(r => r.ERPContractID == ContractID && r.rollovers == false).ToList();
          
             IEnumerable<vw_REVisionInvoices> periods = ea.vw_REVisionInvoices.OrderByDescending(p => p.InvoiceID).Where(p => p.ContractID == ContractID).ToList();
             foreach (var period in periods)

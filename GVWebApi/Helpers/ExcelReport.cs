@@ -5072,6 +5072,12 @@ namespace GVWebapi.Helpers.Reporting
                          orderby r.OverageToDate descending, r.MeterGroup ascending 
                          select r).ToList();
 
+            foreach(var row in query)
+            {
+                var rollovers = db3.RevisionDatas.Where(o => o.InvoiceID == row.InvoiceID && o.MeterGroupID == row.ContractMeterGroupID).Select(o => o.Rollover).FirstOrDefault();
+                row.Rollover = (decimal)rollovers;
+            }
+
             SheetProperties sheetProperties1 = new SheetProperties() {  CodeName = "Sheet14" };
             SheetDimension sheetDimension1 = new SheetDimension() { Reference = "A1:J" + query.Count.ToString() };
 
@@ -10504,7 +10510,7 @@ namespace GVWebapi.Helpers.Reporting
             Row row107 = new Row() { RowIndex = (UInt32Value)5U, Spans = new ListValue<StringValue>() { InnerText = "1:7" }, Height = 34.5D, DyDescent = 0.25D };
             Cell cell697 = new Cell() { CellReference = "B5", StyleIndex = (UInt32Value)47U, DataType = CellValues.String };
             CellValue cellValue132 = new CellValue();
-            cellValue132.Text = "Reconciliation Peroid";
+            cellValue132.Text = "Reconciliation Period";
 
             cell697.Append(cellValue132);
 
