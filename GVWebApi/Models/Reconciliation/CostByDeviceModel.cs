@@ -4,6 +4,7 @@
     {
         public string SerialNumber { get; set; }
         public string Model { get; set; }
+        public string DeviceType { get; set; }
         public string Schedule { get; set; }
         public string Location { get; set; }
         public string User { get; set; }

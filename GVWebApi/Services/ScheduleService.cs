@@ -4,6 +4,7 @@ using System.Linq;
 using GV.Domain;
 using GV.Domain.Entities;
 using GVWebapi.Models.Schedules;
+using GVWebapi.RemoteData;
 
 namespace GVWebapi.Services
 {
@@ -21,8 +22,12 @@ namespace GVWebapi.Services
         IList<SchedulesModel> GetActiveSchedules(long deviceId);
         IList<SchedulesModel> GetAcitveSchedulesByScheduleId(long scheduleId);
         IList<SchedulesModel> GetAcitveSchedulesByCustomer(long CustomerId);
+        IList<CostCenterServicesModel> GetCostCenterSchedule(long CustomerId);
+        IList<CCServicesSummaryModel> GetCCSummary(long CustomerId);
         SchedulesModel GetSchedule(long scheduleId);
-      
+       
+
+
     }
 
     public class ScheduleService : IScheduleService
@@ -121,6 +126,49 @@ namespace GVWebapi.Services
             }
             return schedules.OrderBy(x => x.Suffix).ToList();
         }
+        public IList<CostCenterServicesModel> GetCostCenterSchedule(long CustomerId)
+        {
+            GlobalViewEntities gv = new GlobalViewEntities();
+            List<CostCenterServicesModel> costCenterServices = new List<CostCenterServicesModel>();
+            var schedules = gv.Schedules.Where(o => o.CustomerId == CustomerId && o.IsDeleted == false).OrderByDescending(o => o.EffectiveDateTime).ToList();
+            foreach(var schedule in schedules)
+            {
+                CostCenterServicesModel ccsm = new CostCenterServicesModel();
+                ccsm.ScheduleName = schedule.Name;
+                ccsm.ScheduleStartDate = schedule.EffectiveDateTime.Value.Date;
+                ccsm.CostCenterServices = gv.CostCenterServices.Where(o => o.ScheduleId == schedule.ScheduleId).OrderBy(o => o.MeterGroup).ToList();
+                costCenterServices.Add(ccsm);
+            }
+
+            return costCenterServices;
+        }
+        public IList<CCServicesSummaryModel> GetCCSummary(long CustomerId)
+        {
+            GlobalViewEntities gv = new GlobalViewEntities();
+            List<CCServicesSummaryModel> costCenterServices = new List<CCServicesSummaryModel>();
+           var summarycpp2 = gv.CostCenterServices.Where(o => o.CustomerId == CustomerId).OrderBy(x => x.EffectiveDateTime).FirstOrDefault();
+            List<CostCenterService> summarycpp = gv.CostCenterServices.Where(o => o.CustomerId == CustomerId && o.ScheduleId == summarycpp2.ScheduleId).OrderBy(x=> x.EffectiveDateTime).ToList();
+
+            costCenterServices = gv.CostCenterServices.Where(o => o.CustomerId == CustomerId)
+                     .GroupBy(o => o.MeterGroup)
+                    .Select(x => new CCServicesSummaryModel
+                    {
+                        MeterGroup = x.Key,
+                        ContractedPages = x.Sum(o => o.ContractedPages),
+                        OverageCPP = 00.0M,
+                         BaseCPP = 00.0M,
+                         Cost = x.Sum(o => o.Cost)
+                    }).ToList();
+         
+            foreach(var costCenterService in costCenterServices)
+            {
+                costCenterService.OverageCPP = summarycpp.Where(o => o.MeterGroup == costCenterService.MeterGroup).FirstOrDefault().OverageCpp;
+                costCenterService.BaseCPP = summarycpp.Where(o => o.MeterGroup == costCenterService.MeterGroup).FirstOrDefault().BaseCpp;
+            }
+
+            return costCenterServices;
+        }
+
 
         public void DeleteSchedule(long scheduleId)
         {

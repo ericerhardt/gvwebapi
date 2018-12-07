@@ -300,6 +300,31 @@ warning 6002: The table/view 'GlobalView.dbo.ClientContacts' does not have a pri
           <Property Name="ContactClientId" Type="bigint" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
+warning 6002: The table/view 'GlobalView.dbo.CostCenterServices' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="CostCenterServices">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+            <PropertyRef Name="ScheduleId" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="MeterGroup" />
+            <PropertyRef Name="ContractedPages" />
+            <PropertyRef Name="BaseCpp" />
+            <PropertyRef Name="OverageCpp" />
+            <PropertyRef Name="Cost" />
+            <PropertyRef Name="RemovedFromSchedule" />
+          </Key>
+          <Property Name="CustomerId" Type="bigint" Nullable="false" />
+          <Property Name="ScheduleId" Type="bigint" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="EffectiveDateTime" Type="datetimeoffset" Precision="7" />
+          <Property Name="MeterGroup" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="ContractedPages" Type="int" Nullable="false" />
+          <Property Name="BaseCpp" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="OverageCpp" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="Cost" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="RemovedFromSchedule" Type="bit" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
 warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="EquipmentManagerList">
           <Key>
@@ -448,6 +473,20 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
     [ClientContacts].[ContactClientId] AS [ContactClientId]
     FROM [dbo].[ClientContacts] AS [ClientContacts]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="CostCenterServices" EntityType="Self.CostCenterServices" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [CostCenterServices].[CustomerId] AS [CustomerId], 
+    [CostCenterServices].[ScheduleId] AS [ScheduleId], 
+    [CostCenterServices].[Name] AS [Name], 
+    [CostCenterServices].[EffectiveDateTime] AS [EffectiveDateTime], 
+    [CostCenterServices].[MeterGroup] AS [MeterGroup], 
+    [CostCenterServices].[ContractedPages] AS [ContractedPages], 
+    [CostCenterServices].[BaseCpp] AS [BaseCpp], 
+    [CostCenterServices].[OverageCpp] AS [OverageCpp], 
+    [CostCenterServices].[Cost] AS [Cost], 
+    [CostCenterServices].[RemovedFromSchedule] AS [RemovedFromSchedule]
+    FROM [dbo].[CostCenterServices] AS [CostCenterServices]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="EquipmentManagerList" EntityType="Self.EquipmentManagerList" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [EquipmentManagerList].[Id] AS [Id], 
@@ -569,6 +608,7 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
           <EntitySet Name="RevisionNotes" EntityType="GlobalViewModel.RevisionNote" />
           <EntitySet Name="RevisionBaseExpenses" EntityType="GlobalViewModel.RevisionBaseExpense" />
           <EntitySet Name="RevisionMeterGroups" EntityType="GlobalViewModel.RevisionMeterGroup" />
+          <EntitySet Name="CostCenterServices" EntityType="GlobalViewModel.CostCenterService" />
         </EntityContainer>
         <EntityType Name="ContactClient">
           <Key>
@@ -973,6 +1013,29 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
           <Property Name="UniqueID" Type="Int32" />
           <Property Name="rollovers" Type="Boolean" />
         </EntityType>
+        <EntityType Name="CostCenterService">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+            <PropertyRef Name="ScheduleId" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="MeterGroup" />
+            <PropertyRef Name="ContractedPages" />
+            <PropertyRef Name="BaseCpp" />
+            <PropertyRef Name="OverageCpp" />
+            <PropertyRef Name="Cost" />
+            <PropertyRef Name="RemovedFromSchedule" />
+          </Key>
+          <Property Name="CustomerId" Type="Int64" Nullable="false" />
+          <Property Name="ScheduleId" Type="Int64" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="EffectiveDateTime" Type="DateTimeOffset" Precision="7" />
+          <Property Name="MeterGroup" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ContractedPages" Type="Int32" Nullable="false" />
+          <Property Name="BaseCpp" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="OverageCpp" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="Cost" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
+          <Property Name="RemovedFromSchedule" Type="Boolean" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1302,6 +1365,22 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
                 <ScalarProperty Name="MeterGroupDesc" ColumnName="MeterGroupDesc" />
                 <ScalarProperty Name="ERPMeterGroupID" ColumnName="ERPMeterGroupID" />
                 <ScalarProperty Name="MeterGroupID" ColumnName="MeterGroupID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CostCenterServices">
+            <EntityTypeMapping TypeName="GlobalViewModel.CostCenterService">
+              <MappingFragment StoreEntitySet="CostCenterServices">
+                <ScalarProperty Name="RemovedFromSchedule" ColumnName="RemovedFromSchedule" />
+                <ScalarProperty Name="Cost" ColumnName="Cost" />
+                <ScalarProperty Name="OverageCpp" ColumnName="OverageCpp" />
+                <ScalarProperty Name="BaseCpp" ColumnName="BaseCpp" />
+                <ScalarProperty Name="ContractedPages" ColumnName="ContractedPages" />
+                <ScalarProperty Name="MeterGroup" ColumnName="MeterGroup" />
+                <ScalarProperty Name="EffectiveDateTime" ColumnName="EffectiveDateTime" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

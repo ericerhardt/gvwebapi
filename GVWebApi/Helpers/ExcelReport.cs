@@ -5075,6 +5075,7 @@ namespace GVWebapi.Helpers.Reporting
             foreach(var row in query)
             {
                 var rollovers = db3.RevisionDatas.Where(o => o.InvoiceID == row.InvoiceID && o.MeterGroupID == row.ContractMeterGroupID).Select(o => o.Rollover).FirstOrDefault();
+                if(rollovers != null)
                 row.Rollover = (decimal)rollovers;
             }
 
@@ -6139,7 +6140,7 @@ namespace GVWebapi.Helpers.Reporting
                             select cs.CustomerNumber).FirstOrDefault();
 
             var query2 = (from cu in db.vw_ModelMatrix
-                          where cu.CustomerID == 1650 && cu.EndMeterDate >= FromDate
+                          where cu.CustomerID == _customerID && cu.EndMeterDate >= FromDate
                           select new
                           {
                               Model = cu.Model,

@@ -47,5 +47,6 @@ namespace GVWebapi.RemoteData
         public virtual DbSet<RevisionNote> RevisionNotes { get; set; }
         public virtual DbSet<RevisionBaseExpense> RevisionBaseExpenses { get; set; }
         public virtual DbSet<RevisionMeterGroup> RevisionMeterGroups { get; set; }
+        public virtual DbSet<CostCenterService> CostCenterServices { get; set; }
     }
 }

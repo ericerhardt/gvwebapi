@@ -263,6 +263,7 @@
     <Compile Include="Models\PeriodHistoryView.cs" />
     <Compile Include="Models\Reconciliation\CostByDeviceModel.cs" />
     <Compile Include="Models\Reconciliation\CycleSummaryModel.cs" />
+    <Compile Include="Models\Reconciliation\DeviceSummaryModel.cs" />
     <Compile Include="Models\Reconciliation\InvoicedServiceModel.cs" />
     <Compile Include="Models\Reconciliation\ReconciliationViewModel.cs" />
     <Compile Include="Models\Reconciliation\ReconCreditSaveModel.cs" />
@@ -276,6 +277,7 @@
     <Compile Include="Models\RolloverPagesModel.cs" />
     <Compile Include="Models\RolloverUsageModel.cs" />
     <Compile Include="Models\RolloverView.cs" />
+    <Compile Include="Models\Schedules\CostCenterServicesModel.cs" />
     <Compile Include="Models\Schedules\CoterminousModel.cs" />
     <Compile Include="Models\Schedules\EditScheduleDeviceTopModel.cs" />
     <Compile Include="Models\Schedules\EditScheduleTopModel.cs" />
@@ -324,6 +326,9 @@
     </Compile>
     <Compile Include="RemoteData\CostAvoidance.cs">
       <DependentUpon>CustomerService.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\CostCenterService.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\csDeviceVolumesGrid_Result.cs">
       <DependentUpon>coFreedomEntities.tt</DependentUpon>

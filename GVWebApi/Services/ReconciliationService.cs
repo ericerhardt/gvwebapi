@@ -8,6 +8,7 @@ using GVWebapi.RemoteData;
 using GV.ExtensionMethods;
 using GV.Services;
 using GVWebapi.Models.Reconciliation;
+using System;
 
 namespace GVWebapi.Services
 {
@@ -23,14 +24,16 @@ namespace GVWebapi.Services
         private readonly ICoFreedomRepository _coFreedomRepository;
         private readonly IDeviceService _deviceService;
         private readonly ICoFreedomDeviceService _coFreedomDeviceService;
+        private readonly IScheduleService _scheduleService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public ReconciliationService(IRepository repository, ICoFreedomRepository coFreedomRepository, IDeviceService deviceService, ICoFreedomDeviceService coFreedomDeviceService, IUnitOfWork unitOfWork)
+        public ReconciliationService(IRepository repository, ICoFreedomRepository coFreedomRepository, IDeviceService deviceService, ICoFreedomDeviceService coFreedomDeviceService, IUnitOfWork unitOfWork,IScheduleService scheduleService)
         {
             _repository = repository;
             _coFreedomRepository = coFreedomRepository;
             _deviceService = deviceService;
             _coFreedomDeviceService = coFreedomDeviceService;
+            _scheduleService = scheduleService;
             _unitOfWork = unitOfWork;
         }
 
@@ -39,8 +42,9 @@ namespace GVWebapi.Services
             var cycle = _repository.Get<CyclesEntity>(cycleId);
             var model = new ReconciliationViewModel();
             SetDates(model, cycle);
-            model.CostByDevice = GetCostByDevice(model, cycle);
             model.InvoicedService = GetInvoicedServices(model, cycle);
+            model.CostByDevice = GetCostByDevice(model, cycle, model.InvoicedService);
+            
             model.CycleSummary = GetCycleSummary(cycle);
             return model;
         }
@@ -84,7 +88,10 @@ namespace GVWebapi.Services
             var query1 = $"select * from _custom_placeholder.vw_RevisionHistory where InvoiceID = {invoice.InvoiceID} and OverageToDate = '{PeriodDate:yyyy-MM-dd}'";
             var items = _coFreedomRepository.ExecuteSQL<vw_RevisionHistory>(query1);
 
+            var basecpp =  _scheduleService.GetCCSummary(cycle.CustomerId).ToList();
+
             var distinctMeterGroups = items.Select(x => x.ContractMeterGroup).Distinct().ToList();
+
 
             var invoicedServices = new List<InvoicedServiceModel>();
 
@@ -99,11 +106,12 @@ namespace GVWebapi.Services
                     _unitOfWork.Commit();
                 }
                var CPP =  allItemsInThisMeterGroup.Sum(x => x.CPP).Value;
+                var baseCPP = basecpp.Where(x => x.MeterGroup == meterGroup).FirstOrDefault();
                 var invoiceServiceModel = new InvoicedServiceModel();
                 invoiceServiceModel.MeterGroup = meterGroup;
                 invoiceServiceModel.ActualPages = allItemsInThisMeterGroup.Sum(x => x.ActualVolume).Value;
                 invoiceServiceModel.ContractedPages = allItemsInThisMeterGroup.Sum(x => x.ContractVolume).Value;
-                invoiceServiceModel.BaseServiceForCycle = invoiceServiceModel.ContractedPages * CPP;
+                invoiceServiceModel.BaseServiceForCycle = invoiceServiceModel.ContractedPages * baseCPP.BaseCPP;
                 var Overage = (invoiceServiceModel.ActualPages - invoiceServiceModel.ContractedPages);
                 invoiceServiceModel.OverageCost = Overage > 0 ? Overage * CPP : 0;
                 invoiceServiceModel.Credit = cycleRecon.Credit;
@@ -114,7 +122,7 @@ namespace GVWebapi.Services
             return invoicedServices;
         }
 
-        private IList<CostByDeviceModel> GetCostByDevice(ReconciliationViewModel model, CyclesEntity cycle)
+        private IList<CostByDeviceModel> GetCostByDevice(ReconciliationViewModel model, CyclesEntity cycle, IList<InvoicedServiceModel> services)
         {
             var PeriodDate = model.EndDate.AddMonths(1).AddDays(-1);
             var query = $"select * from _custom_placeholder.vw_REVisionInvoices where CustomerID = {cycle.CustomerId} and PeriodDate = '{PeriodDate:yyyy-MM-dd}'";
@@ -124,9 +132,19 @@ namespace GVWebapi.Services
             var query1 = $"select * from _custom_eviews.vw_monthly_device_costs where InvoiceID = {invoice.InvoiceID}";
             var items = _coFreedomRepository.ExecuteSQL<ViewMonthlyDeviceCosts>(query1);
 
+           // var query2 = $"select * from _custom_placeholder.vw_RevisionHistory where InvoiceID = {invoice.InvoiceID} and OverageToDate = '{PeriodDate:yyyy-MM-dd}'";
+           // var items2 = _coFreedomRepository.ExecuteSQL<vw_RevisionHistory>(query2);
+            Dictionary<string , DeviceCostsModel> contractedVolume = new Dictionary<string, DeviceCostsModel>();
+            foreach (var item in services)
+            {
+                DeviceCostsModel devicecost = new DeviceCostsModel();
+                devicecost.Cost = item.BaseServiceForCycle;
+                devicecost.Overage = item.OverageCost;
+                contractedVolume.Add(item.MeterGroup, devicecost);
+            }
             var costByDevices = new List<CostByDeviceModel>();
             var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevices(cycle.CustomerId);
-
+          
             var distinctEquipmentItems = items.Select(x => x.EquipmentID).Distinct().ToList();
             foreach (var equipmentID in distinctEquipmentItems)
             {
@@ -138,52 +156,145 @@ namespace GVWebapi.Services
                 var costByDeviceModel = new CostByDeviceModel();
                 costByDeviceModel.SerialNumber = globalViewDevice.SerialNumber;
                 costByDeviceModel.Model = globalViewDevice.Model;
+                costByDeviceModel.DeviceType = coFreedomDevice?.ModelCategory;
                 costByDeviceModel.Schedule = coFreedomDevice?.ScheduleNumber;
                 costByDeviceModel.Location = coFreedomDevice?.Location;
                 costByDeviceModel.User = coFreedomDevice?.AssetUser;
                 costByDeviceModel.CostCenter = coFreedomDevice?.CostCenter;
                 costByDeviceModel.BWVolume = GetBWVolume(items, equipmentID);
                 costByDeviceModel.ColorVolume = GetColorVolume(items, equipmentID);
-                costByDeviceModel.BWCopies = GetBwCopies(items, equipmentID);
-                costByDeviceModel.BWPrints = GetBwPrints(items, equipmentID);
-                costByDeviceModel.ColorPrints = GetColorPrints(items, equipmentID);
-                costByDeviceModel.ColorCopies = GetColorCopies(items, equipmentID);
+                costByDeviceModel.BWCopies = GetBwCopies(items, equipmentID, costByDeviceModel.BWVolume, contractedVolume["B/W Copies"] );
+                costByDeviceModel.BWPrints = GetBwPrints(items, equipmentID, costByDeviceModel.BWVolume, contractedVolume["B/W Laser Prints"] );
+                costByDeviceModel.ColorPrints = GetColorPrints(items, equipmentID, costByDeviceModel.ColorVolume, contractedVolume["Color Laser Prints"]);
+                costByDeviceModel.ColorCopies = GetColorCopies(items, equipmentID, costByDeviceModel.ColorVolume, contractedVolume["Color Copier (Color Pages)"]);
                 costByDevices.Add(costByDeviceModel);
             }
 
-            return costByDevices;
+            return costByDevices.OrderBy(o=> o.DeviceType).ToList();
         }
 
-        private static decimal GetColorCopies(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber)
+        private static decimal GetColorCopies(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber, decimal volume, DeviceCostsModel contractedcost)
         {
+            if (volume > 0)
+            {
+                DeviceSummaryModel model = new DeviceSummaryModel();
+                var totalvolume = items.Where(x => x.ContractMeterGroup.EqualsIgnore("Color Copier (Color Pages)")).Sum(x => x.DifferenceCopies);
+                var billedpct = Math.Round((volume / totalvolume), 4);
+                var billedAmt = contractedcost.Cost * billedpct;
+                var overageAmt = contractedcost.Overage * billedpct;
+                model.EquipmentID = equipmentNumber;
+                model.MeterGroup = "Color Copier (Color Pages)";
+                model.Cost = billedAmt;
+                model.Overage = overageAmt;
+                var results = items
+                   .Where(x => x.EquipmentID == equipmentNumber)
+                   .Where(x => x.ContractMeterGroup.EqualsIgnore("Color Copier (Color Pages)")).FirstOrDefault();
+                if (results != null)
+                {
+                    results.BilledAmount = billedAmt + overageAmt;
+                    
+                    return results.BilledAmount;
+                }
+
+            }
+            return 0.00M;
+            /*
             return items
                 .Where(x => x.EquipmentID == equipmentNumber)
                 .Where(x => x.ContractMeterGroup.EqualsIgnore("Color Copier (Color Pages)"))
                 .Sum(x => x.BilledAmount);
+                */
         }
 
-        private static decimal GetColorPrints(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber)
+        private static decimal GetColorPrints(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber, decimal volume, DeviceCostsModel contractedcost)
         {
+            if (volume > 0)
+            {
+                DeviceSummaryModel model = new DeviceSummaryModel();
+                var totalvolume = items.Where(x => x.ContractMeterGroup.EqualsIgnore("Color Laser Prints")).Sum(x => x.DifferenceCopies);
+                var billedpct = Math.Round((volume / totalvolume), 4);
+                var billedAmt = contractedcost.Cost * billedpct;
+                var overageAmt = contractedcost.Overage * billedpct;
+                model.EquipmentID = equipmentNumber;
+                model.MeterGroup = "Color Laser Prints";
+                model.Cost = billedAmt;
+                var results = items
+                   .Where(x => x.EquipmentID == equipmentNumber)
+                   .Where(x => x.ContractMeterGroup.EqualsIgnore("Color Laser Prints")).FirstOrDefault();
+                if (results != null)
+                {
+                    results.BilledAmount = billedAmt + overageAmt;
+                    return results.BilledAmount;
+                }
+
+            }
+            return 0.00M;
+            /*
             return items
                 .Where(x => x.EquipmentID == equipmentNumber)
                 .Where(x => x.ContractMeterGroup.EqualsIgnore("Color Laser Prints") )
                 .Sum(x => x.BilledAmount);
+                */
         }
 
-        private static decimal GetBwPrints(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber)
+        private static decimal GetBwPrints(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber, decimal volume, DeviceCostsModel contractedcost )
         {
+            
+            if (volume > 0  )
+            {
+                DeviceSummaryModel model = new DeviceSummaryModel();
+                var totalvolume = items.Where(x => x.ContractMeterGroup.EqualsIgnore("B/W Laser Prints")).Sum(x => x.DifferenceCopies);
+                var billedpct = Math.Round((volume / totalvolume), 4);
+                var billedAmt = contractedcost.Cost * billedpct;
+                var overageAmt = contractedcost.Overage * billedpct;
+                model.EquipmentID = equipmentNumber;
+                model.MeterGroup = "B/W Laser Prints";
+                model.Cost = billedAmt;
+                var results = items
+                   .Where(x => x.EquipmentID == equipmentNumber)
+                   .Where(x => x.ContractMeterGroup.EqualsIgnore("B/W Laser Prints")).FirstOrDefault();
+                if (results != null)
+                {
+                    results.BilledAmount = billedAmt + overageAmt;
+                    return results.BilledAmount;
+                }
+                  
+            }
+            return 0.00M;
+
+            /*
             return items
                 .Where(x => x.EquipmentID == equipmentNumber)
                 .Where(x => x.ContractMeterGroup.EqualsIgnore("B/W Laser Prints"))
                 .Sum(x => x.BilledAmount);
+                */
         }
 
-        private static decimal GetBwCopies(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber)
+        private static decimal GetBwCopies(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber,decimal volume, DeviceCostsModel contractedcost )
         {
+            
+            if (volume > 0)
+            {
+                var totalvolume = items.Where(x => x.ContractMeterGroup.EqualsIgnore("B/W Copies")).Sum(x => x.DifferenceCopies);
+                var billedpct = Math.Round((volume / totalvolume), 4);
+                var billedAmt =  contractedcost.Cost * billedpct;
+                var overageAmt = contractedcost.Overage * billedpct;
+                var results = items
+                  .Where(x => x.EquipmentID == equipmentNumber)
+                  .Where(x => x.ContractMeterGroup.EqualsIgnore("B/W Copies")).FirstOrDefault();
+                if (results != null)
+                {
+                    results.BilledAmount = billedAmt + overageAmt;
+                    return results.BilledAmount;
+                }
+            }
+            return 0.00M;
+            /*
             return items
                 .Where(x => x.EquipmentID == equipmentNumber)
                 .Where(x => x.ContractMeterGroup.EqualsIgnore("B/W Copies"))
                 .Sum(x => x.BilledAmount);
+            */
         }
 
         private static decimal GetBWVolume(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber)
