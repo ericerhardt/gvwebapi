@@ -5610,8 +5610,8 @@ namespace GVWebapi.Helpers.Reporting
           
             ExcelRevisionExport db3 = new ExcelRevisionExport();
             var overridedate = Convert.ToDateTime(_overrideDate);
-
-            var periods = db3.GetRolloverHistory(_contractID).Where(o=> o.Period >= overridedate).OrderByDescending(r => r.Period).ToList();
+            var perioddate = Convert.ToDateTime(_period);
+            var periods = db3.GetRolloverHistory(_contractID).Where(o=> o.Period >= overridedate && o.Period <= perioddate).OrderByDescending(r => r.Period).ToList();
  
                 _rolloverTotalString = periods.Sum(o => o.TotalSavings).ToString();
 
@@ -10578,7 +10578,8 @@ namespace GVWebapi.Helpers.Reporting
             UInt32Value RowIndex = 6 ;
             var VisionDataSummary = new List<GVWebapi.Models.VisionData>();
             DateTime overridedate = Convert.ToDateTime(_overrideDate);
-            VisionDataSummary = export.RevisionSummary(_contractID).Where(o=> o.ClientStartDate >= overridedate).ToList();
+            DateTime perioddate = Convert.ToDateTime(_period);
+            VisionDataSummary = export.RevisionSummary(_contractID).Where(o=> o.ClientStartDate >= overridedate && o.ClientPeriodDate <= perioddate).ToList();
             int _even = 0;
             foreach (GVWebapi.Models.VisionData VDL2 in VisionDataSummary)
             {
@@ -11334,14 +11335,11 @@ namespace GVWebapi.Helpers.Reporting
             DateTime period = Convert.ToDateTime(_period);
             CoFreedomEntities db = new CoFreedomEntities();
             GlobalViewEntities gv = new GlobalViewEntities();
-            var eadata = db.vw_RevisionInvoiceHistory.Where(o => o.ContractID == _contractID).ToList();
-            var gvdata = gv.RevisionDatas.Where(r => r.ContractID == _contractID).ToList();
-            var query = (from r in eadata
-                         join g in gvdata
-                         on new { MeterGroup = r.ContractMeterGroupID.Value, InvoiceID = r.InvoiceID } equals new { MeterGroup = g.MeterGroupID, InvoiceID = g.InvoiceID }
-                         where r.ContractID == _contractID && r.OverageToDate.Value == period
-                         orderby r.OverageToDate descending
-                         select new vw_RevisionInvoiceHistory
+            
+            var gvdata = gv.RevisionDataViews.Where(r => r.ContractID == _contractID && r.OverageToDate.Value == period).ToList().Distinct();
+            var query = (from  r in gvdata   
+                         orderby r.MeterGroup
+                         select new RevisionDataView
                          {
                             OverageFromDate = r.OverageFromDate,
                             OverageToDate = r.OverageToDate,
@@ -11349,9 +11347,9 @@ namespace GVWebapi.Helpers.Reporting
                             ContractVolume = r.ContractVolume,
                             ActualVolume = r.ActualVolume,
                             CPP = r.CPP,
-                            OverageCharge = r.OverageCharge,
+                            
                             CreditAmount = r.CreditAmount,
-                            Rollover = g.Rollover.Value
+                            Rollover = r.Rollover.Value
                          }).ToList();
  
 
@@ -11836,10 +11834,10 @@ namespace GVWebapi.Helpers.Reporting
             //    sheetData3.Append(row49);
 
             ExcelRevisionExport export = new ExcelRevisionExport();
-           
-           
+
+            DateTime perioddate = Convert.ToDateTime(_period);
             DateTime overridedate = Convert.ToDateTime(_overrideDate);
-            var RevisionHistory = export.GetRevisionHistory(_contractID).Where(o => o.peroid >= overridedate).ToList();
+            var RevisionHistory = export.GetRevisionHistory(_contractID).Where(o => o.peroid >= overridedate && o.peroid <= perioddate).ToList();
             uint RowIndex = 3;
             int footerIndex = 1;
             int Count = 0;

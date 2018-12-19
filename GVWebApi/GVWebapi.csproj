@@ -417,10 +417,16 @@
     <Compile Include="RemoteData\Location.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="RemoteData\QuarterlyRollover.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="RemoteData\RevisionBaseExpense.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\RevisionData.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\RevisionDataView.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\RevisionMeterGroup.cs">

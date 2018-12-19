@@ -92,6 +92,7 @@ namespace GVWebapi.Controllers
             }
             return Ok();
         }
+         
 
         [HttpPost, Route("api/revisiondatas/addexpense/")]
         public IHttpActionResult AddExpense(RevisionBaseExpense model)
@@ -194,6 +195,47 @@ namespace GVWebapi.Controllers
                                where be.ContractID == contractId
                                select be).OrderByDescending(o=> o.OverrideDate).ToList();
             return Json(new { metergroups = contractMeterGroup, invoicedMetergroupcount = groupcount,metergroupcount = contractMeterGroup.Count(), contractstart = contractdetail.StartDate,billingcycle = BillCycle, baseExpenses = baseExpense });
+        }
+ 
+
+        [HttpGet, Route("api/revisiondatas/getrevisiondatas/{contractid}")]
+        public IHttpActionResult AllRevisionDatas(int contractId)
+        {
+            var contractMeterGroup = (from mg in _globalView.RevisionMeterGroups
+                                      where mg.ERPContractID == contractId
+                                      select mg);
+            var contractdetail = (from c in _coFreedomEntities.SCContracts
+                                  where c.ContractID == contractId && c.Active == true
+                                  select new
+                                  {
+                                      StartDate = c.StartDate,
+                                      BaseBillingCycleID = c.BaseBillingCycleID,
+                                      BaseAccrualCycleID = c.BaseAccrualCycleID
+                                  }).FirstOrDefault();
+            var BillCycle = String.Empty;
+            if (contractdetail.BaseBillingCycleID != null)
+            {
+
+                {
+                    BillCycle = (from bc in _coFreedomEntities.SCBillingCycles
+                                 where bc.BillingCycleID == contractdetail.BaseAccrualCycleID
+                                 select bc.Description).FirstOrDefault();
+
+                }
+            }
+            else BillCycle = "Quarterly";
+
+            var groupcount = (from gc in _coFreedomEntities.vw_invoicedMeterGroups
+                              where gc.ContractID == contractId
+                              select gc).Count();
+            var baseExpense = (from be in _globalView.RevisionBaseExpenses
+                               where be.ContractID == contractId
+                               select be).OrderByDescending(o => o.OverrideDate).ToList();
+
+            var Revision = new ExcelRevisionExport();
+            var summary = Revision.RevisionSummary(contractId);
+            var history = Revision.GetRevisionHistory(contractId);
+            return Json(new { metergroups = contractMeterGroup, history = history, summary = summary, invoicedMetergroupcount = groupcount, metergroupcount = contractMeterGroup.Count(), contractstart = contractdetail.StartDate, billingcycle = BillCycle, baseExpenses = baseExpense });
         }
 
         public IQueryable<vw_RevisionInvoiceHistory> GetRevisionDatas()

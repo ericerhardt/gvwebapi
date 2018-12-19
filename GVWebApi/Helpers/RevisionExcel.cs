@@ -58,8 +58,8 @@ namespace GVWebapi.Helpers
           
             var VisionDataList = new List<GVWebapi.Models.VisionData>();
             List<RevisionHistoryModel> RevisionModel = new List<RevisionHistoryModel>();
-            var eadata = ea.vw_RevisionInvoiceHistory.Where(r => r.ContractID == ContractID).ToList();
-            var gvrevision = gv.RevisionDatas.Where(r => r.ContractID == ContractID).ToList();
+            
+            var gvrevision = gv.RevisionDataViews.Where(r => r.ContractID == ContractID).ToList();
             var gvexpense = gv.RevisionBaseExpenses.Where(r => r.ContractID == ContractID).OrderByDescending(r=> r.OverrideDate).ToList();
             for(var i =0; i < gvexpense.Count; i++)  
             {
@@ -69,28 +69,27 @@ namespace GVWebapi.Helpers
                 gvexpense[i].EndDate = gvexpense[i - 1].OverrideDate.Value.AddDays(-1);
             }
 
-            var gvmetergroups = gv.RevisionMeterGroups.Where(r => r.ERPContractID == ContractID).ToList();
-            var revisions = from e in eadata
-                         join g in gvrevision
-                         on new { e.InvoiceID, MeterGroup = e.ContractMeterGroupID.Value } equals new { g.InvoiceID, MeterGroup = g.MeterGroupID }
-                         join mg in gvmetergroups
-                         on new {eContractID = e.ContractID, MeterGroup = e.ContractMeterGroupID.Value } equals new { eContractID = mg.ERPContractID.Value, MeterGroup = mg.ERPMeterGroupID.Value }
-                            orderby e.ContractMeterGroup
-                         select
+            var gvmetergroups = gv.RevisionMeterGroups.Where(r => r.ERPContractID == ContractID && r.rollovers == true).ToList();
+            var revisions = from e in gvrevision
+                          
+                            orderby e.MeterGroup
+                            select
+                            new
+                            {
+                               // FPROverageCharge =  CalcuateOverageCharge( e.ActualVolume.Value ,e.ContractVolume.Value , e.CPP.Value, e.Rollover),
+                                //ClientOverageCharge = CalcuateOverageCharge(e.ActualVolume.Value, e.ContractVolume.Value, mg.CPP, e.Rollover),
+                                FPROverageCharge = ((e.Overage - e.Rollover) * e.CPP) - e.CreditAmount <= 0 ? 0.00M : (((e.Overage) - e.Rollover) * e.CPP) - e.CreditAmount,
+                                //ClientOverage = (((e.ActualVolume - e.Rollover) - e.ContractVolume) * mg.CPP) - e.CreditAmount <= 0 ? 0.00M : (((e.ActualVolume - e.Rollover) - e.ContractVolume) * mg.CPP) - e.CreditAmount,
+                                ClientOverageCharge = (( e.Overage) * e.CPP) - e.CreditAmount <= 0 ? 0.00M : (((e.Overage)) * e.CPP) - e.CreditAmount,
+                                CreditAmount = e.CreditAmount,
+                                OverageToDate = e.OverageToDate,
+                                OverageFromDate = e.OverageFromDate,
+                                ContractID = e.ContractID,
+                                ContractMeterGroupID = e.ContractMeterGroupID
+                            };
 
-                new 
-                {
-                    FPROverage = (((e.ActualVolume - g.Rollover) - e.ContractVolume) * e.CPP) - g.Credits <= 0 ? 0.00M : (((e.ActualVolume - g.Rollover) - e.ContractVolume) * e.CPP) - g.Credits,                 
-                    ClientOverage = (((e.ActualVolume - g.Rollover) - e.ContractVolume) * mg.CPP) - g.Credits <= 0 ? 0.00M : (((e.ActualVolume - g.Rollover) - e.ContractVolume) * mg.CPP) - g.Credits,
-                    CreditAmount = g.Credits,
-                    OverageToDate = e.OverageToDate,
-                    OverageFromDate = e.OverageFromDate,
-                    ContractID = e.ContractID,
-                    ContractMeterGroupID = e.ContractMeterGroupID
-                };
-
-            var startDate = eadata.Min(o=> o.OverageFromDate);
-            var endDate = eadata.Max(o => o.OverageToDate);
+           var startDate = gvrevision.Min(o=> o.OverageFromDate);
+            var endDate = gvrevision.Max(o => o.OverageToDate);
 
             var months = MonthsBetween(startDate.Value, endDate.Value);
 
@@ -122,10 +121,10 @@ namespace GVWebapi.Helpers
                                contractId = v.Key.contractId,
                                clientPeriodDate = v.Key.clientPeriodDates.Value,
                                clientStartDate = v.Key.clientStartDate.Value,  
-                               fprOverageCost = v.Sum(o => o.FPROverage),
+                                fprOverageCost = v.Sum(o => o.FPROverageCharge),
                                fprBase = monthlyCost.Where( o=> o.Item3 >= v.Key.clientStartDate.Value && o.Item3 <= v.Key.clientPeriodDates.Value).Sum(o => o.Item2),
                                clientBase = monthlyCost.Where(o => o.Item3 >= v.Key.clientStartDate.Value && o.Item3 <= v.Key.clientPeriodDates.Value).Sum(o => o.Item1),
-                                clientOverageCost = v.Sum(o => o.ClientOverage),
+                                clientOverageCost = v.Sum(o => o.ClientOverageCharge),
                                credits = v.Sum(o=> o.CreditAmount),
                            }).OrderByDescending(o => o.clientPeriodDate).ToList();
 
@@ -133,28 +132,40 @@ namespace GVWebapi.Helpers
             foreach (var revision in summary)
             {
                 Int32 monthsDiff = TotalMonthDifference(revision.clientPeriodDate, revision.clientStartDate);
-           //     var fprBase = gvexpense.Where(o => o.ContractID == revision.contractId &&  (revision.clientPeriodDate >= o.OverrideDate && revision.clientStartDate <= o.EndDate)).Select(o => o.FprBase).ToList();
-           //     var clientBase = gvexpense.Where(o => o.ContractID == revision.contractId && (revision.clientPeriodDate >= o.OverrideDate && revision.clientStartDate <= o.EndDate)).Select(o => o.PreBase).ToList();
+               var fprBase = gvexpense.Where(o => o.ContractID == revision.contractId &&  (revision.clientPeriodDate >= o.OverrideDate && revision.clientStartDate <= o.EndDate)).Select(o => o.FprBase).ToList();
+               var clientBase = gvexpense.Where(o => o.ContractID == revision.contractId && (revision.clientPeriodDate >= o.OverrideDate && revision.clientStartDate <= o.EndDate)).Select(o => o.PreBase).ToList();
                 var a = new GVWebapi.Models.VisionData();
                 a.ERPContractID = ContractID;
                 a.ClientStartDate = revision.clientStartDate;
                 a.ClientPeriodDate = revision.clientPeriodDate;
                 a.ClientPeriodDates = revision.clientPeriodDate.AddMonths(-monthsDiff).ToString("MMM") + " - " + revision.clientPeriodDate.ToString("MMM yyyy");
-                a.FPROverageCost =  revision.fprOverageCost.Value;
+                 a.FPROverageCost =  revision.fprOverageCost.Value;
                
                 a.FPRCost =  revision.fprBase;
                 a.ClientOverageCost =  revision.clientOverageCost.Value;
                  
                 a.ClientCost = revision.clientBase;
-                a.Credits =  revision.credits.Value * (monthsDiff + 1);
+                a.Credits =  revision.credits * (monthsDiff + 1);
                 a.Savings =  (a.ClientCost + a.ClientOverageCost) - ((a.FPRCost + a.FPROverageCost ) - a.Credits);
+                if(a.Savings != 0.00M)
                 a.Pct =  (a.Savings /(a.ClientCost + a.ClientOverageCost));
+                if (a.Pct < 0)
+                    a.Pct = 0.00M;
                 VisionDataList.Add(a);
             }
             return VisionDataList;
         }
-
-      
+         
+        public decimal CalcuateOverageCharge(decimal ActualVolume, decimal ContractVolume, decimal CPP, int? Rollovers)
+        {
+            var _rollovers = Rollovers == null ? 0 : Rollovers;
+            var overage = (ContractVolume + _rollovers) - ActualVolume;
+            if(overage > 0)
+            {
+                return overage.Value * CPP;
+            }
+            return 0.00M;
+        }
 
         public IEnumerable<RevisionHistoryModel> GetRevisionHistory(int ContractID)
         {
@@ -163,31 +174,29 @@ namespace GVWebapi.Helpers
             List<RevisionHistoryModel> query = new List<RevisionHistoryModel>();
             IEnumerable<vw_REVisionInvoices> periods = ea.vw_REVisionInvoices.OrderByDescending(p => p.InvoiceID).Where(p => p.ContractID == ContractID).ToList();
             List<RevisionHistoryModel> RevisionModel = new List<RevisionHistoryModel>();
-            var eadata = ea.vw_RevisionInvoiceHistory.Where(r =>  r.ContractID == ContractID).ToList();
-            var gvdata = gv.RevisionDatas.Where(r => r.ContractID == ContractID).ToList();
+             
+            var gvdata = gv.RevisionDataViews.Where(r => r.ContractID == ContractID).ToList().Distinct();
 
-            var query2 = from e in eadata
-                         join g in gvdata
-                         on new { e.InvoiceID, MeterGroup = e.ContractMeterGroupID.Value } equals new { g.InvoiceID, MeterGroup  = g.MeterGroupID }
-                         orderby e.MeterGroup
+            var query2 = from   g in gvdata
+                         orderby g.MeterGroup
                          select  
  
                 new RevisionDataModel
             {
-                RevisionID = g.RevisionID,
-                InvoiceID = e.InvoiceID,
-                ContractMeterGroupID = e.ContractMeterGroupID,
-                MeterGroup = e.MeterGroup,
-                ContractVolume = e.ContractVolume,
-                ActualVolume = e.ActualVolume,
-                Overage = e.ActualVolume - (e.ContractVolume + g.Rollover) ,
-                CPP = e.CPP,
-                OverageCharge = ((e.ActualVolume - (e.ContractVolume + g.Rollover)) * e.CPP ) - g.Credits <= 0 ? 0.00M : ((e.ActualVolume -(e.ContractVolume + g.Rollover)) * e.CPP) - g.Credits,
-                CreditAmount = g.Credits,
+                
+                InvoiceID = g.InvoiceID,
+                ContractMeterGroupID = g.ContractMeterGroupID,
+                MeterGroup = g.MeterGroup,
+                ContractVolume = g.ContractVolume,
+                ActualVolume = g.ActualVolume,
+                Overage =  g.ActualVolume - (g.ContractVolume + g.Rollover) ,
+                CPP = g.CPP,
+                OverageCharge = ((g.ActualVolume - (g.ContractVolume + g.Rollover)) * g.CPP ) - g.CreditAmount <= 0 ? 0.00M : ((g.ActualVolume -(g.ContractVolume + g.Rollover)) * g.CPP) - g.CreditAmount,
+                CreditAmount = g.CreditAmount,
                 Rollover = g.Rollover,
-                OverageToDate = e.OverageToDate,
-                OverageFromDate = e.OverageFromDate,
-                ContractID = e.ContractID,
+                OverageToDate = g.OverageToDate,
+                OverageFromDate = g.OverageFromDate,
+                ContractID = g.ContractID,
 
             };
             
@@ -205,13 +214,89 @@ namespace GVWebapi.Helpers
 
             return RevisionModel;
         }
+        public IEnumerable<VisionData> GetRevisionSummary(int ContractID)
+        {
+            GlobalViewEntities gv = new GlobalViewEntities();
+            CoFreedomEntities ea = new CoFreedomEntities();
+           
+            IEnumerable<vw_REVisionInvoices> periods = ea.vw_REVisionInvoices.OrderByDescending(p => p.InvoiceID).Where(p => p.ContractID == ContractID).ToList();
+            List<RevisionHistoryModel> RevisionModel = new List<RevisionHistoryModel>();
+            var VisionDataList = new List<VisionData>();
+            var gvdata = gv.RevisionDataViews.Where(r => r.ContractID == ContractID).ToList().Distinct();
+
+            var gvexpense = gv.RevisionBaseExpenses.Where(r => r.ContractID == ContractID).OrderByDescending(r => r.OverrideDate).ToList();
+            for (var i = 0; i < gvexpense.Count; i++)
+            {
+                if (i == 0)
+                    gvexpense[i].EndDate = DateTime.Now;
+                else
+                    gvexpense[i].EndDate = gvexpense[i - 1].OverrideDate.Value.AddDays(-1);
+            }
+
+            var gvmetergroups = gv.RevisionMeterGroups.Where(r => r.ERPContractID == ContractID && r.rollovers == true).ToList();
+
+            var query2 = from g in gvdata
+                         join mg in gvmetergroups
+                           on g.ContractMeterGroupID equals mg.ERPMeterGroupID
+                         where mg.rollovers == true
+                         orderby g.MeterGroup
+                         select
+
+                new RevisionDataModel
+                {
+
+                    InvoiceID = g.InvoiceID,
+                    ContractMeterGroupID = g.ContractMeterGroupID,
+                    MeterGroup = g.MeterGroup,
+                    ContractVolume = g.ContractVolume,
+                    ActualVolume = g.ActualVolume,
+                    Overage = g.ActualVolume - (g.ContractVolume + g.Rollover),
+                    CPP = g.CPP,
+                    ClientCPP = mg.CPP,
+                    OverageCharge = ((g.ActualVolume - (g.ContractVolume + g.Rollover)) * g.CPP) - g.CreditAmount <= 0 ? 0.00M : ((g.ActualVolume - (g.ContractVolume + g.Rollover)) * g.CPP) - g.CreditAmount,
+                    CreditAmount = g.CreditAmount,
+                    Rollover = g.Rollover,
+                    OverageToDate = g.OverageToDate,
+                    OverageFromDate = g.OverageFromDate,
+                    ContractID = g.ContractID,
+
+                };
+              
+            foreach (var period in periods)
+            {
+                VisionData model = new VisionData();
+                var results = query2.Where(x => x.InvoiceID == period.InvoiceID);
+                Int32 monthsDiff = TotalMonthDifference(period.PeriodDate.Value, period.StartDate.Value);
+                var fprBase = gvexpense.Where(o => o.ContractID == period.ContractID &&  (period.PeriodDate >= o.OverrideDate && period.StartDate <= o.EndDate)).Select(o => o.FprBase).ToList();
+                var clientBase = gvexpense.Where(o => o.ContractID == period.ContractID && (period.PeriodDate >= o.OverrideDate && period.StartDate <= o.EndDate)).Select(o => o.PreBase).ToList();
+
+                model.ERPContractID = ContractID;
+                model.ClientStartDate = period.StartDate.Value;
+                model.ClientPeriodDate = period.PeriodDate.Value;
+                model.ClientPeriodDates = period.StartDate.Value.ToString("MMM") + " - " + period.PeriodDate.Value.ToString("MMM yyyy");
+                model.FPROverageCost = results.Sum(x=> x.OverageCharge.Value);
+                model.FPRCost =  fprBase.FirstOrDefault().Value;
+                model.ClientOverageCost = results.Sum(x => x.Overage.Value * x.ClientCPP.Value);
+                model.ClientCost = clientBase.FirstOrDefault().Value;
+                model.Credits = results.Sum(x => x.CreditAmount.Value);
+                model.Savings = (model.ClientCost + model.ClientOverageCost) - ((model.FPRCost + model.FPROverageCost) - model.Credits);
+                if (model.Savings != 0.00M)
+                    model.Pct = (model.Savings / (model.ClientCost + model.ClientOverageCost));
+                if (model.Pct < 0)
+                    model.Pct = 0.00M;
+
+                VisionDataList.Add(model);
+            }
+
+            return VisionDataList;
+        }
         public IEnumerable<RolloverPagesModel> GetRolloverHistory(int ContractID)
         {
             GlobalViewEntities gv = new GlobalViewEntities();
             CoFreedomEntities ea = new CoFreedomEntities();
             List<RolloverPagesModel> rollOverModels = new List<RolloverPagesModel>();
-            var eadata = gv.RevisionDatas.Where(r => r.ContractID == ContractID).ToList();
-            var gvdata = gv.RevisionMeterGroups.Where(r => r.ERPContractID == ContractID && r.rollovers == false).ToList();
+        
+            
          
             IEnumerable<vw_REVisionInvoices> periods = ea.vw_REVisionInvoices.OrderByDescending(p => p.InvoiceID).Where(p => p.ContractID == ContractID).ToList();
             foreach (var period in periods)
@@ -220,27 +305,25 @@ namespace GVWebapi.Helpers
                 rollOverPage.Period = period.PeriodDate;
                 rollOverPage.InvoiceID = period.InvoiceID;
                 rollOverPage.StartDate = period.StartDate;
-                var _rollovers = from e in eadata
-                                 join g in gvdata
-                                 on new { MeterGroup = e.MeterGroupID } equals new {  MeterGroup = g.ERPMeterGroupID.Value }
-                                 where e.InvoiceID == period.InvoiceID
-                                 orderby e.MeterGroupID
+                var gvdata = gv.QuarterlyRollovers.Where(r => r.ContractID == ContractID && r.InvoiceID == period.InvoiceID).ToList();
+                var _rollovers = from g in gvdata
+                                 orderby g.ERPMeterGroupDesc
                                  select
                                  new Rollovers
                                  {
-                                    InvoiceID = e.InvoiceID,
+                                    InvoiceID = g.InvoiceID,
                                     StartDate = period.StartDate,
                                     ERPMeterGroupDesc = g.ERPMeterGroupDesc,
                                     CPP = g.CPP,
-                                    Rollover = e.Rollover,
-                                    Savings = (e.Rollover * g.CPP)
+                                    Rollover = g.Rollovers,
+                                    Savings =  g.Rollovers * g.CPP
                                  };
                   
 
                
                
                 rollOverPage.TotalSavings = _rollovers.Sum(r => r.Savings).Value;
-                rollOverPage.Data = _rollovers;
+                rollOverPage.Data = _rollovers.Distinct();
                 rollOverModels.Add(rollOverPage);
             }
 

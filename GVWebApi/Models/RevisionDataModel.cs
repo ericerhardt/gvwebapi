@@ -15,6 +15,7 @@ namespace GVWebapi.Models
         public Nullable<decimal> ActualVolume { get; set; }
         public Nullable<decimal> Overage { get; set; }
         public Nullable<decimal> CPP { get; set; }
+        public Nullable<decimal> ClientCPP { get; set; }
         public Nullable<decimal> OverageCharge { get; set; }
         public decimal? CreditAmount { get; set; }
         public int? Rollover { get; set; }

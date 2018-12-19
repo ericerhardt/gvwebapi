@@ -206,9 +206,14 @@
           <Property Name="EndDate" Type="datetime" />
           <Property Name="UpdatedBy" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'GlobalView.dbo.RevisionData' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="RevisionData">
           <Key>
             <PropertyRef Name="RevisionID" />
+            
+            
+            
           </Key>
           <Property Name="RevisionID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="InvoiceID" Type="int" Nullable="false" />
@@ -341,6 +346,48 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
           <Property Name="Status" Type="varchar" MaxLength="10" Nullable="false" />
           <Property Name="LastUpdatedBy" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'GlobalView.dbo.QuarterlyRollovers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="QuarterlyRollovers">
+          <Key>
+            <PropertyRef Name="ContractID" />
+            <PropertyRef Name="InvoiceID" />
+            <PropertyRef Name="CPP" />
+            <PropertyRef Name="ContractMeterGroupID" />
+          </Key>
+          <Property Name="ContractID" Type="int" Nullable="false" />
+          <Property Name="OverageFromDate" Type="datetime" />
+          <Property Name="OverageToDate" Type="datetime" />
+          <Property Name="InvoiceID" Type="int" Nullable="false" />
+          <Property Name="ContractMeterGroupID" Type="int" Nullable="false" />
+          <Property Name="ERPMeterGroupDesc" Type="varchar" MaxLength="250" />
+          <Property Name="Rollovers" Type="numeric" Precision="19" Scale="6" />
+          <Property Name="CPP" Type="decimal" Precision="18" Scale="5" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="RevisionDataView">
+          <Key>
+            <PropertyRef Name="ContractID" />
+            <PropertyRef Name="InvoiceID" />
+            <PropertyRef Name="MeterGroup" />
+            <PropertyRef Name="CreditAmount" />
+            <PropertyRef Name="ContractMeterGroupID" />
+          </Key>
+          <Property Name="Rollover" Type="int" />
+          <Property Name="ContractID" Type="int" Nullable="false" />
+          <Property Name="InvoiceID" Type="int" Nullable="false" />
+          <Property Name="OverageFromDate" Type="datetime" />
+          <Property Name="OverageToDate" Type="datetime" />
+          <Property Name="MeterGroup" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="ContractMeterGroupID" Type="int" Nullable="false" />
+          <Property Name="CPP" Type="numeric" Precision="16" Scale="6" />
+          <Property Name="ContractVolume" Type="numeric" Precision="18" Scale="6" />
+          <Property Name="ActualVolume" Type="numeric" Precision="18" Scale="6" />
+          <Property Name="Overage" Type="numeric" Precision="19" Scale="6" />
+          <Property Name="CreditAmount" Type="int" Nullable="false" />
+          <Property Name="OverageCharge" Type="numeric" Precision="36" Scale="12" />
+        </EntityType>
         <Association Name="FK_CyclePeriod_Cycle">
           <End Role="Cycles" Type="Self.Cycles" Multiplicity="1" />
           <End Role="CyclePeriods" Type="Self.CyclePeriods" Multiplicity="*" />
@@ -453,11 +500,20 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
           <EntitySet Name="GlobalViewUsers" EntityType="Self.GlobalViewUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Location" EntityType="Self.Location" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RevisionBaseExpense" EntityType="Self.RevisionBaseExpense" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="RevisionData" EntityType="Self.RevisionData" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RevisionMeterGroups" EntityType="Self.RevisionMeterGroups" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RevisionNotes" EntityType="Self.RevisionNotes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Schedules" EntityType="Self.Schedules" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ScheduleService" EntityType="Self.ScheduleService" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RevisionData" EntityType="Self.RevisionData" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [RevisionData].[RevisionID] AS [RevisionID], 
+    [RevisionData].[InvoiceID] AS [InvoiceID], 
+    [RevisionData].[ContractID] AS [ContractID], 
+    [RevisionData].[MeterGroupID] AS [MeterGroupID], 
+    [RevisionData].[Rollover] AS [Rollover], 
+    [RevisionData].[Credits] AS [Credits]
+    FROM [dbo].[RevisionData] AS [RevisionData]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="ClientContacts" EntityType="Self.ClientContacts" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [ClientContacts].[FirstName] AS [FirstName], 
@@ -499,6 +555,35 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
     [EquipmentManagerList].[Status] AS [Status], 
     [EquipmentManagerList].[LastUpdatedBy] AS [LastUpdatedBy]
     FROM [dbo].[EquipmentManagerList] AS [EquipmentManagerList]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="QuarterlyRollovers" EntityType="Self.QuarterlyRollovers" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [QuarterlyRollovers].[ContractID] AS [ContractID], 
+    [QuarterlyRollovers].[OverageFromDate] AS [OverageFromDate], 
+    [QuarterlyRollovers].[OverageToDate] AS [OverageToDate], 
+    [QuarterlyRollovers].[InvoiceID] AS [InvoiceID], 
+    [QuarterlyRollovers].[ContractMeterGroupID] AS [ContractMeterGroupID], 
+    [QuarterlyRollovers].[ERPMeterGroupDesc] AS [ERPMeterGroupDesc], 
+    [QuarterlyRollovers].[Rollovers] AS [Rollovers], 
+    [QuarterlyRollovers].[CPP] AS [CPP]
+    FROM [dbo].[QuarterlyRollovers] AS [QuarterlyRollovers]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="RevisionDataView" EntityType="Self.RevisionDataView" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [RevisionDataView].[Rollover] AS [Rollover], 
+    [RevisionDataView].[ContractID] AS [ContractID], 
+    [RevisionDataView].[InvoiceID] AS [InvoiceID], 
+    [RevisionDataView].[OverageFromDate] AS [OverageFromDate], 
+    [RevisionDataView].[OverageToDate] AS [OverageToDate], 
+    [RevisionDataView].[MeterGroup] AS [MeterGroup], 
+    [RevisionDataView].[ContractMeterGroupID] AS [ContractMeterGroupID], 
+    [RevisionDataView].[CPP] AS [CPP], 
+    [RevisionDataView].[ContractVolume] AS [ContractVolume], 
+    [RevisionDataView].[ActualVolume] AS [ActualVolume], 
+    [RevisionDataView].[Overage] AS [Overage], 
+    [RevisionDataView].[CreditAmount] AS [CreditAmount], 
+    [RevisionDataView].[OverageCharge] AS [OverageCharge]
+    FROM [dbo].[RevisionDataView] AS [RevisionDataView]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK_CyclePeriod_Cycle" Association="Self.FK_CyclePeriod_Cycle">
             <End Role="Cycles" EntitySet="Cycles" />
@@ -609,6 +694,8 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
           <EntitySet Name="RevisionBaseExpenses" EntityType="GlobalViewModel.RevisionBaseExpense" />
           <EntitySet Name="RevisionMeterGroups" EntityType="GlobalViewModel.RevisionMeterGroup" />
           <EntitySet Name="CostCenterServices" EntityType="GlobalViewModel.CostCenterService" />
+          <EntitySet Name="QuarterlyRollovers" EntityType="GlobalViewModel.QuarterlyRollover" />
+          <EntitySet Name="RevisionDataViews" EntityType="GlobalViewModel.RevisionDataView" />
         </EntityContainer>
         <EntityType Name="ContactClient">
           <Key>
@@ -1036,6 +1123,44 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
           <Property Name="Cost" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
           <Property Name="RemovedFromSchedule" Type="Boolean" Nullable="false" />
         </EntityType>
+        <EntityType Name="QuarterlyRollover">
+          <Key>
+            <PropertyRef Name="ContractID" />
+            <PropertyRef Name="InvoiceID" />
+            <PropertyRef Name="CPP" />
+            <PropertyRef Name="ContractMeterGroupID" />
+          </Key>
+          <Property Name="ContractID" Type="Int32" Nullable="false" />
+          <Property Name="OverageFromDate" Type="DateTime" Precision="3" />
+          <Property Name="OverageToDate" Type="DateTime" Precision="3" />
+          <Property Name="InvoiceID" Type="Int32" Nullable="false" />
+          <Property Name="ContractMeterGroupID" Type="Int32" Nullable="false" />
+          <Property Name="ERPMeterGroupDesc" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Rollovers" Type="Decimal" Precision="19" Scale="6" />
+          <Property Name="CPP" Type="Decimal" Nullable="false" Precision="18" Scale="5" />
+        </EntityType>
+        <EntityType Name="RevisionDataView">
+          <Key>
+            <PropertyRef Name="InvoiceID" />
+            <PropertyRef Name="CreditAmount" />
+            <PropertyRef Name="ContractID" />
+            <PropertyRef Name="ContractMeterGroupID" />
+            <PropertyRef Name="MeterGroup" />
+          </Key>
+          <Property Name="InvoiceID" Type="Int32" Nullable="false" />
+          <Property Name="ContractVolume" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="ActualVolume" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="Overage" Type="Decimal" Precision="19" Scale="6" />
+          <Property Name="Rollover" Type="Int32" />
+          <Property Name="CPP" Type="Decimal" Precision="16" Scale="6" />
+          <Property Name="CreditAmount" Type="Int32" Nullable="false" />
+          <Property Name="OverageToDate" Type="DateTime" Precision="3" />
+          <Property Name="ContractMeterGroupID" Type="Int32" Nullable="false" />
+          <Property Name="ContractID" Type="Int32" Nullable="false" />
+          <Property Name="OverageFromDate" Type="DateTime" Precision="3" />
+          <Property Name="MeterGroup" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="OverageCharge" Type="Decimal" Precision="36" Scale="12" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1381,6 +1506,39 @@ warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
                 <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QuarterlyRollovers">
+            <EntityTypeMapping TypeName="GlobalViewModel.QuarterlyRollover">
+              <MappingFragment StoreEntitySet="QuarterlyRollovers">
+                <ScalarProperty Name="CPP" ColumnName="CPP" />
+                <ScalarProperty Name="Rollovers" ColumnName="Rollovers" />
+                <ScalarProperty Name="ERPMeterGroupDesc" ColumnName="ERPMeterGroupDesc" />
+                <ScalarProperty Name="ContractMeterGroupID" ColumnName="ContractMeterGroupID" />
+                <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+                <ScalarProperty Name="OverageToDate" ColumnName="OverageToDate" />
+                <ScalarProperty Name="OverageFromDate" ColumnName="OverageFromDate" />
+                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RevisionDataViews">
+            <EntityTypeMapping TypeName="GlobalViewModel.RevisionDataView">
+              <MappingFragment StoreEntitySet="RevisionDataView">
+                <ScalarProperty Name="OverageCharge" ColumnName="OverageCharge" />
+                <ScalarProperty Name="MeterGroup" ColumnName="MeterGroup" />
+                <ScalarProperty Name="OverageFromDate" ColumnName="OverageFromDate" />
+                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
+                <ScalarProperty Name="ContractMeterGroupID" ColumnName="ContractMeterGroupID" />
+                <ScalarProperty Name="OverageToDate" ColumnName="OverageToDate" />
+                <ScalarProperty Name="CreditAmount" ColumnName="CreditAmount" />
+                <ScalarProperty Name="CPP" ColumnName="CPP" />
+                <ScalarProperty Name="Rollover" ColumnName="Rollover" />
+                <ScalarProperty Name="Overage" ColumnName="Overage" />
+                <ScalarProperty Name="ActualVolume" ColumnName="ActualVolume" />
+                <ScalarProperty Name="ContractVolume" ColumnName="ContractVolume" />
+                <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
