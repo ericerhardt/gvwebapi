@@ -31,6 +31,14 @@ namespace GVWebapi.Controllers
             return Ok();
         }
 
+        [HttpPost, Route("api/cyclehistory/edit")]
+        public IHttpActionResult UpdateCycle(NewCycleModel model)
+        {
+            _cycleHistoryService.UpdateCycle(model);
+            _unitOfWork.Commit();
+            return Ok();
+        }
+
         [HttpGet, Route("api/cyclehistory/getall/{customerId}")]
         public IHttpActionResult GetCurrentCycles(long customerId)
         {

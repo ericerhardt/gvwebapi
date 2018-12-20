@@ -8,6 +8,7 @@ namespace GVWebapi.Models.Reconciliation
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public Decimal  ReconcileAdj { get; set; }
         public IList<CycleSummaryModel> CycleSummary { get; set; } = new List<CycleSummaryModel>();
         public IList<InvoicedServiceModel> InvoicedService { get; set; } = new List<InvoicedServiceModel>();
         public IList<CostByDeviceModel> CostByDevice { get; set; } = new List<CostByDeviceModel>();

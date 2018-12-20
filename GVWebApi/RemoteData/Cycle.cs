@@ -31,6 +31,7 @@ namespace GVWebapi.RemoteData
         public bool InvisibleToClient { get; set; }
         public Nullable<System.DateTime> EndDate { get; set; }
         public bool IsReconciled { get; set; }
+        public decimal ReconcileAdj { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CyclePeriod> CyclePeriods { get; set; }

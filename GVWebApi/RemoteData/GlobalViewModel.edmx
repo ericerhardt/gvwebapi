@@ -73,6 +73,7 @@
           <Property Name="InvisibleToClient" Type="bit" Nullable="false" />
           <Property Name="EndDate" Type="datetime2" Precision="7" />
           <Property Name="IsReconciled" Type="bit" Nullable="false" />
+          <Property Name="ReconcileAdj" Type="decimal" Precision="18" Scale="2" Nullable="false" />
         </EntityType>
         <EntityType Name="Devices">
           <Key>
@@ -855,6 +856,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <Property Name="IsReconciled" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="CyclePeriods" Relationship="GlobalViewModel.FK_CyclePeriod_Cycle" FromRole="Cycle" ToRole="CyclePeriod" />
           <NavigationProperty Name="CycleReconciliationServices" Relationship="GlobalViewModel.FK_CycleReconciliationServices_Cycle" FromRole="Cycle" ToRole="CycleReconciliationService" />
+          <Property Name="ReconcileAdj" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="EasyLink">
           <Key>
@@ -1330,6 +1332,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <EntitySetMapping Name="Cycles">
             <EntityTypeMapping TypeName="GlobalViewModel.Cycle">
               <MappingFragment StoreEntitySet="Cycles">
+                <ScalarProperty Name="ReconcileAdj" ColumnName="ReconcileAdj" />
                 <ScalarProperty Name="IsReconciled" ColumnName="IsReconciled" />
                 <ScalarProperty Name="EndDate" ColumnName="EndDate" />
                 <ScalarProperty Name="InvisibleToClient" ColumnName="InvisibleToClient" />

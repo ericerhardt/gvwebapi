@@ -15,6 +15,7 @@ namespace GVWebapi.Services
     public interface IReconciliationService
     {
         ReconciliationViewModel GetReconciliation(long cycleId);
+        ReconciliationViewModel GetReconciliationSummary(long cycleId);
         void UpdateReconCredit(ReconCreditSaveModel model);
     }
 
@@ -44,8 +45,17 @@ namespace GVWebapi.Services
             SetDates(model, cycle);
             model.InvoicedService = GetInvoicedServices(model, cycle);
             model.CostByDevice = GetCostByDevice(model, cycle, model.InvoicedService);
-            
+            model.ReconcileAdj = cycle.ReconcileAdj;
             model.CycleSummary = GetCycleSummary(cycle);
+            return model;
+        }
+        public ReconciliationViewModel GetReconciliationSummary(long cycleId)
+        {
+            var cycle = _repository.Get<CyclesEntity>(cycleId);
+            var model = new ReconciliationViewModel();
+            SetDates(model, cycle);
+            model.InvoicedService = GetInvoicedServices(model, cycle);
+  
             return model;
         }
 
@@ -144,15 +154,20 @@ namespace GVWebapi.Services
             }
             var costByDevices = new List<CostByDeviceModel>();
             var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevices(cycle.CustomerId);
-          
+            var adj = 0.00M;
+            var bw = items.Where(x => x.MeterType.EqualsIgnore("B\\W")).Count();
+            var clr = items.Where(x => x.MeterType.EqualsIgnore("Color")).Count();
             var distinctEquipmentItems = items.Select(x => x.EquipmentID).Distinct().ToList();
+            if (cycle.ReconcileAdj > 0 && distinctEquipmentItems.Count() > 0)
+                adj = Math.Round(cycle.ReconcileAdj / (bw + clr) , 3);
+
             foreach (var equipmentID in distinctEquipmentItems)
             {
                 var globalViewDevice = _deviceService.GetDevice(equipmentID);
-                if(globalViewDevice == null) continue;
+                if (globalViewDevice == null) continue;
 
                 var coFreedomDevice = coFreedomDevices.FirstOrDefault(x => x.EquipmentID == globalViewDevice.EquipmentID);
-                
+
                 var costByDeviceModel = new CostByDeviceModel();
                 costByDeviceModel.SerialNumber = globalViewDevice.SerialNumber;
                 costByDeviceModel.Model = globalViewDevice.Model;
@@ -163,17 +178,24 @@ namespace GVWebapi.Services
                 costByDeviceModel.CostCenter = coFreedomDevice?.CostCenter;
                 costByDeviceModel.BWVolume = GetBWVolume(items, equipmentID);
                 costByDeviceModel.ColorVolume = GetColorVolume(items, equipmentID);
-                costByDeviceModel.BWCopies = GetBwCopies(items, equipmentID, costByDeviceModel.BWVolume, contractedVolume["B/W Copies"] );
-                costByDeviceModel.BWPrints = GetBwPrints(items, equipmentID, costByDeviceModel.BWVolume, contractedVolume["B/W Laser Prints"] );
-                costByDeviceModel.ColorPrints = GetColorPrints(items, equipmentID, costByDeviceModel.ColorVolume, contractedVolume["Color Laser Prints"]);
-                costByDeviceModel.ColorCopies = GetColorCopies(items, equipmentID, costByDeviceModel.ColorVolume, contractedVolume["Color Copier (Color Pages)"]);
+                if (costByDeviceModel.BWVolume > 0)
+                {
+                    costByDeviceModel.BWCopies = GetBwCopies(items, equipmentID, costByDeviceModel.BWVolume, contractedVolume["B/W Copies"], adj);
+                    costByDeviceModel.BWPrints = GetBwPrints(items, equipmentID, costByDeviceModel.BWVolume, contractedVolume["B/W Laser Prints"], adj);
+                }
+                if (costByDeviceModel.ColorVolume > 0)
+                {
+                    costByDeviceModel.ColorPrints = GetColorPrints(items, equipmentID, costByDeviceModel.ColorVolume, contractedVolume["Color Laser Prints"], adj);
+                    costByDeviceModel.ColorCopies = GetColorCopies(items, equipmentID, costByDeviceModel.ColorVolume, contractedVolume["Color Copier (Color Pages)"], adj);
+                    
+                }
                 costByDevices.Add(costByDeviceModel);
             }
 
             return costByDevices.OrderBy(o=> o.DeviceType).ToList();
         }
 
-        private static decimal GetColorCopies(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber, decimal volume, DeviceCostsModel contractedcost)
+        private static decimal GetColorCopies(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber, decimal volume, DeviceCostsModel contractedcost, decimal adj)
         {
             if (volume > 0)
             {
@@ -193,7 +215,7 @@ namespace GVWebapi.Services
                 {
                     results.BilledAmount = billedAmt + overageAmt;
                     
-                    return results.BilledAmount;
+                    return results.BilledAmount + adj;
                 }
 
             }
@@ -206,7 +228,7 @@ namespace GVWebapi.Services
                 */
         }
 
-        private static decimal GetColorPrints(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber, decimal volume, DeviceCostsModel contractedcost)
+        private static decimal GetColorPrints(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber, decimal volume, DeviceCostsModel contractedcost, decimal adj)
         {
             if (volume > 0)
             {
@@ -224,7 +246,7 @@ namespace GVWebapi.Services
                 if (results != null)
                 {
                     results.BilledAmount = billedAmt + overageAmt;
-                    return results.BilledAmount;
+                    return results.BilledAmount + adj;
                 }
 
             }
@@ -237,7 +259,7 @@ namespace GVWebapi.Services
                 */
         }
 
-        private static decimal GetBwPrints(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber, decimal volume, DeviceCostsModel contractedcost )
+        private static decimal GetBwPrints(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber, decimal volume, DeviceCostsModel contractedcost,decimal adj )
         {
             
             if (volume > 0  )
@@ -256,7 +278,7 @@ namespace GVWebapi.Services
                 if (results != null)
                 {
                     results.BilledAmount = billedAmt + overageAmt;
-                    return results.BilledAmount;
+                    return results.BilledAmount + adj;
                 }
                   
             }
@@ -270,7 +292,7 @@ namespace GVWebapi.Services
                 */
         }
 
-        private static decimal GetBwCopies(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber,decimal volume, DeviceCostsModel contractedcost )
+        private static decimal GetBwCopies(IList<ViewMonthlyDeviceCosts> items, int equipmentNumber,decimal volume, DeviceCostsModel contractedcost,decimal adj )
         {
             
             if (volume > 0)
@@ -285,7 +307,7 @@ namespace GVWebapi.Services
                 if (results != null)
                 {
                     results.BilledAmount = billedAmt + overageAmt;
-                    return results.BilledAmount;
+                    return results.BilledAmount + adj;
                 }
             }
             return 0.00M;
@@ -323,6 +345,7 @@ namespace GVWebapi.Services
                 .Where(x => x.IsDeleted == false)
                 .Select(x => x.Period)
                 .Max();
+            
         }
     }
 }

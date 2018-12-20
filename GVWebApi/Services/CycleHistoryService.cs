@@ -5,13 +5,14 @@ using FluentDateTime;
 using GV.Domain;
 using GV.Domain.Entities;
 using GVWebapi.Models.Reconciliation;
-
+using GVWebapi.RemoteData;
 namespace GVWebapi.Services
 {
     public interface ICycleHistoryService
     {
         List<DateTime> GetAvailableCycles(long customerId);
         void AddNewCycle(NewCycleModel model);
+        void UpdateCycle(NewCycleModel model);
         IList<CycleHistoryViewModel> GetActiveCycles(long customerId);
         void ToggleAvailability(ToggleSaveModel model);
         void DeleteCycle(long cycleId);
@@ -23,12 +24,14 @@ namespace GVWebapi.Services
         private readonly IRepository _repository;
         private readonly ICyclePeriodService _cyclePeriodService;
         private readonly IReconciliationService _cycleReconService;
+        private readonly GlobalViewEntities _gv;
 
-        public CycleHistoryService(IRepository repository, ICyclePeriodService cyclePeriodService,IReconciliationService cycleReconService)
+        public CycleHistoryService(IRepository repository, ICyclePeriodService cyclePeriodService,IReconciliationService cycleReconService,GlobalViewEntities gv)
         {
             _repository = repository;
             _cyclePeriodService = cyclePeriodService;
             _cycleReconService = cycleReconService;
+            _gv = gv;
         }
 
         public List<DateTime> GetAvailableCycles(long customerId)
@@ -81,6 +84,7 @@ namespace GVWebapi.Services
         public void AddNewCycle(NewCycleModel model)
         {
             var newCycle = new CyclesEntity(model.CustomerId, model.CycleDate);
+            
             newCycle.InvisibleToClient = true;          
             _repository.Add(newCycle);
             //var newPeriod = new CyclePeriodEntity(newCycle);
@@ -91,7 +95,15 @@ namespace GVWebapi.Services
             //newCycle.AddNewPeriod(newPeriod);
             _cyclePeriodService.AddPeriodToCycle(newCycle.CycleId);
         }
-
+        public void UpdateCycle(NewCycleModel model)
+        {
+            var cycle = _gv.Cycles.Find(model.CycleId);
+            if(cycle != null)
+            {
+                cycle.ReconcileAdj = model.ReconcileAdj;
+            }
+             _gv.SaveChanges();
+        }
         public IList<CycleHistoryViewModel> GetActiveCycles(long customerId)
         {
             var items = _repository.Find<CyclesEntity>()
@@ -116,7 +128,8 @@ namespace GVWebapi.Services
             {
                 item.CycleNumber = maxItem;
                 item.Periods = _cyclePeriodService.GetCyclePeriods(item.CycleHistoryId);
-                item.ReconcileTotal = _cycleReconService.GetReconciliation(item.CycleHistoryId).InvoicedService.Sum(x => x.OverageCost);
+               // item.ReconcileTotal = _cycleReconService.GetReconciliation(item.CycleHistoryId).InvoicedService.Sum(x => x.OverageCost);
+               item.ReconcileTotal = _cycleReconService.GetReconciliationSummary(item.CycleHistoryId).InvoicedService.Sum(x => x.OverageCost);
                 maxItem--;
             }
 
@@ -183,8 +196,10 @@ namespace GVWebapi.Services
 
     public class NewCycleModel
     {
+        public long CycleId { get; set; }
         public long CustomerId {get; set; }
         public DateTime CycleDate { get; set; }
+        public Decimal ReconcileAdj { get; set; }
     }
 
     public class ToggleSaveModel

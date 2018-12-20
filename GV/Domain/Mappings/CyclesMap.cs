@@ -20,6 +20,7 @@ namespace GV.Domain.Mappings
             Map(x => x.InvisibleToClient);
             Map(x => x.EndDate);
             Map(x => x.IsReconciled);
+            Map(x => x.ReconcileAdj);
 
             HasMany(x => x.CyclePeriods)
                 .Cascade.AllDeleteOrphan()
