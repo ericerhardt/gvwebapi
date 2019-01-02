@@ -32,7 +32,7 @@ namespace GV.Domain.Entities
         public virtual DateTimeOffset? ModifiedDateTime { get; set; }
         public virtual bool InvisibleToClient { get; set; }
         public virtual bool IsReconciled { get; set; }
-        public virtual Decimal  ReconcileAdj { get; set; }
+        public virtual decimal  ReconcileAdj { get; set; }
         public virtual IEnumerable<CyclePeriodEntity> CyclePeriods => _cyclePeriods;
         public virtual IEnumerable<CycleReconciliationServicesEntity> ReconServices => _reconServices;
 

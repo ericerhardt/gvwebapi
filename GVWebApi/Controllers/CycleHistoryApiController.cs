@@ -35,7 +35,7 @@ namespace GVWebapi.Controllers
         public IHttpActionResult UpdateCycle(NewCycleModel model)
         {
             _cycleHistoryService.UpdateCycle(model);
-            _unitOfWork.Commit();
+            
             return Ok();
         }
 

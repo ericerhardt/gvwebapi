@@ -21,6 +21,15 @@
           <Property Name="Comments" Type="varchar" MaxLength="1250" />
           <Property Name="ScheduleNumber" Type="varchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="ClientSettings">
+          <Key>
+            <PropertyRef Name="SettingsID" />
+          </Key>
+          <Property Name="SettingsID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClientID" Type="int" Nullable="false" />
+          <Property Name="SettingsValue" Type="varchar" MaxLength="80" />
+          <Property Name="SettingsType" Type="varchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="ContactClients">
           <Key>
             <PropertyRef Name="ContactClientId" />
@@ -73,7 +82,7 @@
           <Property Name="InvisibleToClient" Type="bit" Nullable="false" />
           <Property Name="EndDate" Type="datetime2" Precision="7" />
           <Property Name="IsReconciled" Type="bit" Nullable="false" />
-          <Property Name="ReconcileAdj" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="ReconcileAdj" Type="decimal" Precision="16" Scale="4" Nullable="false" />
         </EntityType>
         <EntityType Name="Devices">
           <Key>
@@ -487,6 +496,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
         </Association>
         <EntityContainer Name="GlobalViewModelStoreContainer">
           <EntitySet Name="AssetReplacement" EntityType="Self.AssetReplacement" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ClientSettings" EntityType="Self.ClientSettings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ContactClients" EntityType="Self.ContactClients" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CyclePeriods" EntityType="Self.CyclePeriods" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CyclePeriodSchedules" EntityType="Self.CyclePeriodSchedules" Schema="dbo" store:Type="Tables" />
@@ -697,6 +707,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <EntitySet Name="CostCenterServices" EntityType="GlobalViewModel.CostCenterService" />
           <EntitySet Name="QuarterlyRollovers" EntityType="GlobalViewModel.QuarterlyRollover" />
           <EntitySet Name="RevisionDataViews" EntityType="GlobalViewModel.RevisionDataView" />
+          <EntitySet Name="ClientSettings" EntityType="GlobalViewModel.ClientSetting" />
         </EntityContainer>
         <EntityType Name="ContactClient">
           <Key>
@@ -856,7 +867,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <Property Name="IsReconciled" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="CyclePeriods" Relationship="GlobalViewModel.FK_CyclePeriod_Cycle" FromRole="Cycle" ToRole="CyclePeriod" />
           <NavigationProperty Name="CycleReconciliationServices" Relationship="GlobalViewModel.FK_CycleReconciliationServices_Cycle" FromRole="Cycle" ToRole="CycleReconciliationService" />
-          <Property Name="ReconcileAdj" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="ReconcileAdj" Type="Decimal" Nullable="false" Precision="16" Scale="4" />
         </EntityType>
         <EntityType Name="EasyLink">
           <Key>
@@ -1162,6 +1173,15 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <Property Name="OverageFromDate" Type="DateTime" Precision="3" />
           <Property Name="MeterGroup" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
           <Property Name="OverageCharge" Type="Decimal" Precision="36" Scale="12" />
+        </EntityType>
+        <EntityType Name="ClientSetting">
+          <Key>
+            <PropertyRef Name="SettingsID" />
+          </Key>
+          <Property Name="SettingsID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClientID" Type="Int32" Nullable="false" />
+          <Property Name="SettingsValue" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="SettingsType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1542,6 +1562,16 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
                 <ScalarProperty Name="ActualVolume" ColumnName="ActualVolume" />
                 <ScalarProperty Name="ContractVolume" ColumnName="ContractVolume" />
                 <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ClientSettings">
+            <EntityTypeMapping TypeName="GlobalViewModel.ClientSetting">
+              <MappingFragment StoreEntitySet="ClientSettings">
+                <ScalarProperty Name="SettingsType" ColumnName="SettingsType" />
+                <ScalarProperty Name="SettingsValue" ColumnName="SettingsValue" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="SettingsID" ColumnName="SettingsID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

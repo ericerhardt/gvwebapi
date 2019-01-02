@@ -199,7 +199,7 @@ namespace GVWebapi.Services
         public long CycleId { get; set; }
         public long CustomerId {get; set; }
         public DateTime CycleDate { get; set; }
-        public Decimal ReconcileAdj { get; set; }
+        public decimal ReconcileAdj { get; set; }
     }
 
     public class ToggleSaveModel

@@ -215,6 +215,7 @@
     <Compile Include="Configuration\GlobalViewConfiguration.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\ClientsContractController.cs" />
+    <Compile Include="Controllers\ClientSettingsController.cs" />
     <Compile Include="Controllers\CostAvoidancesController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\CycleHistoryApiController.cs" />
@@ -304,6 +305,9 @@
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\ClientContact.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\ClientSetting.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\coFreedomEntities.Context.cs">

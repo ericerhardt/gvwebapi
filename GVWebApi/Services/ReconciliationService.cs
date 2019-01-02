@@ -154,12 +154,12 @@ namespace GVWebapi.Services
             }
             var costByDevices = new List<CostByDeviceModel>();
             var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevices(cycle.CustomerId);
-            var adj = 0.00M;
+            var adj = 0.0000M;
             var bw = items.Where(x => x.MeterType.EqualsIgnore("B\\W")).Count();
             var clr = items.Where(x => x.MeterType.EqualsIgnore("Color")).Count();
             var distinctEquipmentItems = items.Select(x => x.EquipmentID).Distinct().ToList();
             if (cycle.ReconcileAdj > 0 && distinctEquipmentItems.Count() > 0)
-                adj = Math.Round(cycle.ReconcileAdj / (bw + clr) , 3);
+                adj = Math.Round(cycle.ReconcileAdj / bw , 4);
 
             foreach (var equipmentID in distinctEquipmentItems)
             {
@@ -185,8 +185,8 @@ namespace GVWebapi.Services
                 }
                 if (costByDeviceModel.ColorVolume > 0)
                 {
-                    costByDeviceModel.ColorPrints = GetColorPrints(items, equipmentID, costByDeviceModel.ColorVolume, contractedVolume["Color Laser Prints"], adj);
-                    costByDeviceModel.ColorCopies = GetColorCopies(items, equipmentID, costByDeviceModel.ColorVolume, contractedVolume["Color Copier (Color Pages)"], adj);
+                    costByDeviceModel.ColorPrints = GetColorPrints(items, equipmentID, costByDeviceModel.ColorVolume, contractedVolume["Color Laser Prints"], 0);
+                    costByDeviceModel.ColorCopies = GetColorCopies(items, equipmentID, costByDeviceModel.ColorVolume, contractedVolume["Color Copier (Color Pages)"], 0);
                     
                 }
                 costByDevices.Add(costByDeviceModel);

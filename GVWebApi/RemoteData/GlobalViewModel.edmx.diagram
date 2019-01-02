@@ -38,6 +38,7 @@
         <EntityTypeShape EntityType="GlobalViewModel.CostCenterService" Width="1.5" PointX="13.375" PointY="5.75" />
         <EntityTypeShape EntityType="GlobalViewModel.QuarterlyRollover" Width="2.75" PointX="15.375" PointY="5.75" />
         <EntityTypeShape EntityType="GlobalViewModel.RevisionDataView" Width="3.375" PointX="15.375" PointY="13.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.ClientSetting" Width="1.5" PointX="16.375" PointY="9.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

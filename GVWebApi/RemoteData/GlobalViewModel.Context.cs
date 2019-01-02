@@ -50,5 +50,6 @@ namespace GVWebapi.RemoteData
         public virtual DbSet<CostCenterService> CostCenterServices { get; set; }
         public virtual DbSet<QuarterlyRollover> QuarterlyRollovers { get; set; }
         public virtual DbSet<RevisionDataView> RevisionDataViews { get; set; }
+        public virtual DbSet<ClientSetting> ClientSettings { get; set; }
     }
 }
