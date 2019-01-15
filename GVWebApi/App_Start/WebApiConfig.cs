@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using GVWebapi.Helpers;
+using System.Web.Http;
 using System.Web.Http.Cors;
 namespace GVWebapi
 {
@@ -9,6 +10,7 @@ namespace GVWebapi
             var enableCorsAttribute = new  EnableCorsAttribute("*","Origin, Content-Type, Accept","GET, PUT, POST, DELETE, OPTIONS");
             config.EnableCors(enableCorsAttribute);
             config.MapHttpAttributeRoutes();
+           // config.Filters.Add(new GlobalViewAuthorizeAttribute());
             config.Routes.MapHttpRoute("DefaultApi","api/{controller}/{id}",new { id = RouteParameter.Optional });
         }
     }

@@ -4075,8 +4075,9 @@ namespace GVWebapi.Helpers.Reporting
  
                      Cell cell93a = new Cell() { CellReference = "V" + _rowIndex.ToString(), StyleIndex = _firstheader == 1 ? (UInt32Value)19U : (UInt32Value)205U, DataType = CellValues.Number };
                      CellFormula AvgVolumeTotal = new CellFormula();
-                     AvgVolumeTotal.Text = _rowIndex < 6U ? "" : "SUM(V" + StartRow.Value.ToString() + ":V" + EndRow.Value.ToString() + ")";
-                     AvgVolumeTotal.CalculateCell = true;
+                    //   AvgVolumeTotal.Text = _rowIndex < 6U ? "" : "SUM(V" + StartRow.Value.ToString() + ":V" + EndRow.Value.ToString() + ")";
+                    AvgVolumeTotal.Text = _rowIndex < 6U ? "" : "SUM(V" + StartRow.Value.ToString() + ":V" + EndRow.Value.ToString() + ")";
+                    AvgVolumeTotal.CalculateCell = true;
                      cell93a.Append(AvgVolumeTotal);
                      StartRow = MeterGroup == "" ? 7 : _rowIndex + 2;
                      Cell cell94a = new Cell() { CellReference = "W" + _rowIndex.ToString(), StyleIndex = _firstheader == 1 ? (UInt32Value)19U : (UInt32Value)174U };
@@ -4430,7 +4431,7 @@ namespace GVWebapi.Helpers.Reporting
                      Cell cell117x = new Cell() { CellReference = "V" + _rowIndex.ToString(), StyleIndex = (UInt32Value)189U, DataType = CellValues.Number };
                      CellValue cellValue199 = new CellValue();
                      CellFormula cellFormula199 = new CellFormula();
-                     cellFormula199.Text = "=SUM(U" + _rowIndex.ToString() + "/ round((O" + _rowIndex.ToString() + "- M" + _rowIndex.ToString() + ")/30.42,0))";
+                     cellFormula199.Text = "=SUM(U" + _rowIndex.ToString() + "/ ((O" + _rowIndex.ToString() + "- M" + _rowIndex.ToString() + ")/30.42))";
                      cellValue199.Text = "";
                      cellFormula199.CalculateCell = true;
                      cell117x.Append(cellFormula199);
@@ -4625,7 +4626,7 @@ namespace GVWebapi.Helpers.Reporting
                          Cell cell117 = new Cell() { CellReference = "V" + _rowIndex.ToString(), StyleIndex = (UInt32Value)183U, DataType = CellValues.Number };
                          CellValue cellValue199 = new CellValue();
                          CellFormula cellFormula199 = new CellFormula();
-                         cellFormula199.Text = "=SUM(U" + _rowIndex.ToString() + "/ round((O" + _rowIndex.ToString() + "- M" + _rowIndex.ToString() + ")/30.42,0))";
+                         cellFormula199.Text = "=SUM(U" + _rowIndex.ToString() + "/ ((O" + _rowIndex.ToString() + "- M" + _rowIndex.ToString() + ")/30.42))";
                          cellValue199.Text = "";
                          cellFormula199.CalculateCell = true;
                          cell117.Append(cellFormula199);
@@ -4810,7 +4811,7 @@ namespace GVWebapi.Helpers.Reporting
                          Cell cell117 = new Cell() { CellReference = "V" + _rowIndex.ToString(), StyleIndex = (UInt32Value)189U, DataType = CellValues.Number };
                          CellValue cellValue199 = new CellValue();
                          CellFormula cellFormula199 = new CellFormula();
-                         cellFormula199.Text = "=SUM(U" + _rowIndex.ToString() + "/ round((O" + _rowIndex.ToString() + "- M" + _rowIndex.ToString() + ")/30.42,0))";
+                         cellFormula199.Text = "=SUM(U" + _rowIndex.ToString() + "/ ((O" + _rowIndex.ToString() + "- M" + _rowIndex.ToString() + ")/30.42))";
                          cellValue199.Text = "";
                          cellFormula199.CalculateCell = true;
                          cell117.Append(cellFormula199);

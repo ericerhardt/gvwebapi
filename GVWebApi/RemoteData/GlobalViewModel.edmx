@@ -216,14 +216,9 @@
           <Property Name="EndDate" Type="datetime" />
           <Property Name="UpdatedBy" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'GlobalView.dbo.RevisionData' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="RevisionData">
           <Key>
             <PropertyRef Name="RevisionID" />
-            
-            
-            
           </Key>
           <Property Name="RevisionID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="InvoiceID" Type="int" Nullable="false" />
@@ -384,6 +379,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
             <PropertyRef Name="CreditAmount" />
             <PropertyRef Name="ContractMeterGroupID" />
           </Key>
+          <Property Name="RevisionID" Type="int" />
           <Property Name="Rollover" Type="int" />
           <Property Name="ContractID" Type="int" Nullable="false" />
           <Property Name="InvoiceID" Type="int" Nullable="false" />
@@ -511,20 +507,11 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <EntitySet Name="GlobalViewUsers" EntityType="Self.GlobalViewUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Location" EntityType="Self.Location" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RevisionBaseExpense" EntityType="Self.RevisionBaseExpense" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RevisionData" EntityType="Self.RevisionData" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RevisionMeterGroups" EntityType="Self.RevisionMeterGroups" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RevisionNotes" EntityType="Self.RevisionNotes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Schedules" EntityType="Self.Schedules" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ScheduleService" EntityType="Self.ScheduleService" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="RevisionData" EntityType="Self.RevisionData" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [RevisionData].[RevisionID] AS [RevisionID], 
-    [RevisionData].[InvoiceID] AS [InvoiceID], 
-    [RevisionData].[ContractID] AS [ContractID], 
-    [RevisionData].[MeterGroupID] AS [MeterGroupID], 
-    [RevisionData].[Rollover] AS [Rollover], 
-    [RevisionData].[Credits] AS [Credits]
-    FROM [dbo].[RevisionData] AS [RevisionData]</DefiningQuery>
-          </EntitySet>
           <EntitySet Name="ClientContacts" EntityType="Self.ClientContacts" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [ClientContacts].[FirstName] AS [FirstName], 
@@ -581,6 +568,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           </EntitySet>
           <EntitySet Name="RevisionDataView" EntityType="Self.RevisionDataView" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
+    [RevisionDataView].[RevisionID] AS [RevisionID], 
     [RevisionDataView].[Rollover] AS [Rollover], 
     [RevisionDataView].[ContractID] AS [ContractID], 
     [RevisionDataView].[InvoiceID] AS [InvoiceID], 
@@ -1173,6 +1161,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <Property Name="OverageFromDate" Type="DateTime" Precision="3" />
           <Property Name="MeterGroup" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
           <Property Name="OverageCharge" Type="Decimal" Precision="36" Scale="12" />
+          <Property Name="RevisionID" Type="Int32" />
         </EntityType>
         <EntityType Name="ClientSetting">
           <Key>
@@ -1549,6 +1538,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <EntitySetMapping Name="RevisionDataViews">
             <EntityTypeMapping TypeName="GlobalViewModel.RevisionDataView">
               <MappingFragment StoreEntitySet="RevisionDataView">
+                <ScalarProperty Name="RevisionID" ColumnName="RevisionID" />
                 <ScalarProperty Name="OverageCharge" ColumnName="OverageCharge" />
                 <ScalarProperty Name="MeterGroup" ColumnName="MeterGroup" />
                 <ScalarProperty Name="OverageFromDate" ColumnName="OverageFromDate" />

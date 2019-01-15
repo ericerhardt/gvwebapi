@@ -261,3 +261,5 @@ __pycache__/
 *.pyc
 /GVWebApi/Reports/Daisy Brand, Inc.-9-2018_Quarterly.xlsx
 /GVWebApi/Reports/History Maker Homes-8-2018_Quarterly.xlsx
+/GVWebApi/App_Data
+/GVWebApi/uploads/equipment/models

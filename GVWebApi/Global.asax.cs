@@ -35,5 +35,7 @@ namespace GVWebapi
             kernel.Load(new NinjectApiLoadModule(), new GvNinjectLoadModule());
             Ioc.Initialize(kernel);
         }
+        
+
     }
 }

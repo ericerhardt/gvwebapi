@@ -16,7 +16,7 @@ namespace GVWebapi.RemoteData
     {
         public int ContractID { get; set; }
         public string ContractMeterGroup { get; set; }
-        public Nullable<int> ContractMeterGroupID { get; set; }
+        public int ContractMeterGroupID { get; set; }
         public string ID { get; set; }
     }
 }

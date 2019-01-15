@@ -183,7 +183,7 @@ namespace GVWebapi.Helpers
  
                 new RevisionDataModel
             {
-                
+                RevisionID = g.RevisionID,  
                 InvoiceID = g.InvoiceID,
                 ContractMeterGroupID = g.ContractMeterGroupID,
                 MeterGroup = g.MeterGroup,
@@ -204,7 +204,7 @@ namespace GVWebapi.Helpers
             foreach (var period in periods)
             {
                 RevisionHistoryModel model = new RevisionHistoryModel();
-
+              
                 model.peroid =  period.PeriodDate;
                 model.InvoiceId = period.InvoiceID;
                 model.detail = query2.Where(x => x.InvoiceID == period.InvoiceID);

@@ -143,6 +143,16 @@ namespace GVWebapi.Controllers
                 revision.Credits = model.CreditAmount;
 
                 _globalView.SaveChanges();
+            } else
+            {
+                RevisionData revisionData = new RevisionData();
+                revisionData.ContractID = model.ContractID;
+                revisionData.InvoiceID = model.InvoiceID;
+                revisionData.MeterGroupID = model.ContractMeterGroupID.Value;
+                revisionData.Rollover = model.Rollover;
+                revisionData.Credits = model.CreditAmount;
+                _globalView.RevisionDatas.Add(revisionData);
+                _globalView.SaveChanges();
             }
 
             return Ok();

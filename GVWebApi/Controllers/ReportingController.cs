@@ -16,6 +16,7 @@ namespace GVWebapi.Controllers
     public class ReportingController : ApiController
     {
         private readonly CoFreedomEntities _coFreedomEntities = new CoFreedomEntities();
+       
 
         [HttpGet, Route("api/volumetrendreport/{CustomerID}/{InvoiceID}")]
         public IHttpActionResult VolumeTrendReport(int CustomerID,int InvoiceID)
@@ -23,15 +24,16 @@ namespace GVWebapi.Controllers
 
             var PeriodDates = (from r in _coFreedomEntities.vw_csSCBillingContracts
                               where r.InvoiceID == InvoiceID
-                              select new {fromDate = r.OverageFromDate, toDate = r.OverageToDate }).FirstOrDefault();
+                              select new {fromDate = r.OverageFromDate, toDate = r.OverageToDate, Contract = r.ContractID }).FirstOrDefault();
             var CustomerNumber = (from c in _coFreedomEntities.ARCustomers
                                   where c.CustomerID == CustomerID
                                   select c.CustomerNumber 
                                   ).FirstOrDefault();
+          
             ExcelRevisionExport er = new ExcelRevisionExport();
             var results = er.GetVolumeTrend(CustomerNumber, PeriodDates.fromDate, PeriodDates.toDate).OrderBy(o => o.LineID);
-
-            return Json(new { volumetrend = results });
+            var groups = results.Select(x => x.MeterGroup).ToList().Distinct();
+            return Json(new { volumetrend = results, metergroups = groups });
 
         }
         [HttpGet, Route("api/volumetrendperoids/{ContractID}")]

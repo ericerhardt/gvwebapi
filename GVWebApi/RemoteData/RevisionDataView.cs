@@ -27,5 +27,6 @@ namespace GVWebapi.RemoteData
         public Nullable<System.DateTime> OverageFromDate { get; set; }
         public string MeterGroup { get; set; }
         public Nullable<decimal> OverageCharge { get; set; }
+        public Nullable<int> RevisionID { get; set; }
     }
 }

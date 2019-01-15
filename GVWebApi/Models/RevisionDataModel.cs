@@ -7,7 +7,7 @@ namespace GVWebapi.Models
 {
     public partial class RevisionDataModel
     {
-        public int RevisionID { get; set; }
+        public Nullable<int> RevisionID { get; set; }
         public int InvoiceID { get; set; }
         public string ContractMeterGroup { get; set; }
         public string MeterGroup { get; set; }
