@@ -8,15 +8,18 @@ using GVWebapi.Models;
 using GVWebapi.RemoteData;
 using System.Configuration;
 using System.Net.Mail;
+using System.Web.Http.Cors;
+
 namespace GVWebapi.Controllers
 {
     public class AuthController : ApiController
     {
         private readonly GlobalViewEntities _globalViewEntities = new GlobalViewEntities();
-
+        
         [HttpGet, Route("api/login/{UserName}/{Password}")]
         public IHttpActionResult Login(string userName, string password)
         {
+            //Move this to Config file
             try
             {
                 var loginData = new LoginData(); 

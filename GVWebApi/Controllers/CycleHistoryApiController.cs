@@ -97,6 +97,14 @@ namespace GVWebapi.Controllers
             return Ok(model);
         }
 
+        [HttpGet, Route("api/cyclehistory/period/devices/{cyclePeriodId}")]
+        public IHttpActionResult GetCyclePeriodDevices(long cyclePeriodId)
+        {
+            var model = _cyclePeriodService.RefreshCyclePeriodDevices(cyclePeriodId);
+            _unitOfWork.Commit();
+            return Ok(model);
+        }
+
         [HttpPost, Route("api/cyclehistory/period/instancesinvoiced")]
         public IHttpActionResult UpdateScheduleInstancesInvoiced(InvoiceInstanceSaveModel model)
         {

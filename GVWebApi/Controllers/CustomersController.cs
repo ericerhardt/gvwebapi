@@ -20,16 +20,42 @@ namespace GVWebapi.Controllers
             return _coFreedomEntities.v_ARCustomers;
         }
 
+        
+        [HttpGet, Route("api/customers/{id}")]
         [ResponseType(typeof(v_ARCustomers))]
         public IHttpActionResult Getv_ARCustomers(int id)
         {
-            var vArCustomers = _coFreedomEntities.v_ARCustomers.Find(id);
+            var vArCustomers = _coFreedomEntities.v_ARCustomers.Where(x => x.LocationID == id && x.Active == true)
+                    .Select(customer => new Customer
+                    {
+                                                    CustomerID = customer.CustomerID,
+                                                    CustomerNumber = customer.CustomerNumber,
+                                                    CustomerName = customer.CustomerNumber,
+                                                    Address = customer.Address,
+                                                    City = customer.City,
+                                                    State = customer.State,
+                                                    County = customer.Country,
+                                                    Zip = customer.Zip,
+                                                    Country = customer.Country,
+                                                    Longitude = customer.Longitude,
+                                                    Latitude = customer.Latitude,
+                                                    Phone1 = customer.Phone1,
+                                                    Phone2 = customer.Phone2,
+                                                    
+                                                    Email = customer.Email,
+                                                    WebSite = customer.WebSite
+                                                })
+                    .ToList();
             if (vArCustomers == null)
             {
                 return NotFound();
             }
+            foreach(var customer in vArCustomers)
+            {
+                customer.Address = customer.Address.Split(',')[0];
 
-            return Ok(vArCustomers);
+            }
+            return Json(vArCustomers);
         }
          
         [HttpGet,Route("api/locations/{customerID}")]
@@ -67,18 +93,38 @@ namespace GVWebapi.Controllers
         [System.Web.Http.HttpGet]
         public async Task<IHttpActionResult> SetCustomerLongLat(int LocationID)
         {
-            IEnumerable<ARCustomer> Locations = _coFreedomEntities.ARCustomers.Where(c => c.LocationID == LocationID).ToList();
+            var Locations = _coFreedomEntities.ARCustomers.Where(c => c.LocationID == LocationID && c.Active == true)
+                                                .Select(x => new Customer
+                                                {
+                                                    CustomerID = x.CustomerID,
+                                                    CustomerNumber = x.CustomerNumber,
+                                                    CustomerName = x.CustomerNumber,
+                                                    Address = x.Address,
+                                                    City = x.City,
+                                                    State = x.State,
+                                                    County = x.Country,
+                                                    Zip = x.Zip,
+                                                    Country = x.Country,
+                                                    Longitude = x.Longitude,
+                                                    Latitude = x.Latitude,
+                                                    Phone1 = x.Phone1,
+                                                    Phone2 = x.Phone2,
+                                                    Email = x.Email,
+                                                    WebSite = x.WebSite,
+                                                })
+                                                .ToList();
             GoogleGeocodingAPI.GoogleAPIKey = "AIzaSyDoh1lOgTIiabZX7R0PPx_iq353YRfER2c";
             
 
             foreach (var Location in Locations)
             {
-                string Address = $"{Location.Address}, {Location.City} {Location.State} {Location.Zip}";
+                 
+                string Address = $"{Location.Address.Split(',')[0]}, {Location.City} {Location.State} {Location.Zip}";
                 AddressResponse result =  await  GoogleGeocodingAPI.SearchAddressAsync(Address);
 
                 if (result.Results.Count  > 0)
                 {
-                    Location.Latitude = (decimal)result.Results.First().Geometry.Location.Lat;
+                   Location.Latitude = (decimal)result.Results.First().Geometry.Location.Lat;
                     Location.Longitude = (decimal)result.Results.First().Geometry.Location.Lng;
                     _coFreedomEntities.SaveChanges();
                 }
@@ -87,8 +133,8 @@ namespace GVWebapi.Controllers
             }
 
 
-            // Save lat/long values to DB...
-            return  Ok();
+            
+            return Json(Locations);
         }
     }
 }

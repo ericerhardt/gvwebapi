@@ -20,6 +20,7 @@ namespace GVWebapi.Services
         IList<CyclePeriodModel> GetCyclePeriodsByPeriodId(long cyclePeriodId);
         DateTime? RemovePeriod(long cyclePeriodId);
         CyclePeriodSummaryModel GetCyclePeriodSummary(long cyclePeriodId);
+        CyclePeriodSummaryModel RefreshCyclePeriodDevices(long cyclePeriodId);
         void SaveInstancesInvoiced(InvoiceInstanceSaveModel model);
         void UpdateInvoiceNumber(InvoiceNumberSaveModel model);
     }
@@ -135,6 +136,15 @@ namespace GVWebapi.Services
             model.PeriodDate = cyclePeriod.Period;
             model.Periods = GetCyclePeriodsByPeriodId(cyclePeriodId);
             model.InvoiceNumber = cyclePeriod.InvoiceNumber;
+            model.Schedules = LoadScheduleServices(cyclePeriod);
+            model.Devices = GetDevices(model.Schedules, cyclePeriod);
+            return model;
+        }
+
+        public CyclePeriodSummaryModel RefreshCyclePeriodDevices(long cyclePeriodId)
+        {
+            var cyclePeriod = _repository.Get<CyclePeriodEntity>(cyclePeriodId);
+            var model = new CyclePeriodSummaryModel(); 
             model.Schedules = LoadScheduleServices(cyclePeriod);
             model.Devices = GetDevices(model.Schedules, cyclePeriod);
             return model;

@@ -7,7 +7,7 @@ namespace GVWebapi.Models.Devices
 {
     public class DeviceModel
     {
-        public static DeviceModel For(decimal taxRate, vw_admin_EquipmentList_MeterGroup coFreedomDevice)
+        public static DeviceModel For(decimal taxRate,decimal instance, vw_admin_EquipmentList_MeterGroup coFreedomDevice)
         {
             Decimal.TryParse(coFreedomDevice.MonthlyCost, out decimal MontlyCost);
             var model = new DeviceModel();
@@ -23,6 +23,7 @@ namespace GVWebapi.Models.Devices
             model.CostCenter = coFreedomDevice.CostCenter;
             model.Status = coFreedomDevice.Active ;
             model.MonthlyCost = MontlyCost;
+            model.InvoiceInstance = instance;
             model.DeviceType = coFreedomDevice.ModelCategory;
             model.TaxRate = taxRate;
             return model;
@@ -81,6 +82,7 @@ namespace GVWebapi.Models.Devices
         public DateTime? RemovedDateTime { get; set; }
         public string DeviceType {get; set; }
         public decimal TaxRate { get; set; }
+        public decimal InvoiceInstance { get; set; }
         public decimal CalculatedTax => MonthlyCost * (TaxRate / 100);
         public decimal UnitTotal => CalculatedTax + MonthlyCost;
     }

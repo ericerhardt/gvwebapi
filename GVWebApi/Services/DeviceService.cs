@@ -45,18 +45,29 @@ namespace GVWebapi.Services
         public IList<DeviceModel> GetActiveDevices(long scheduleId)
         {
             var schedule = _repository.Get<SchedulesEntity>(scheduleId);
+            
             var devices = new List<DeviceModel>();
             var coFreedomDevices = _coFreedomDeviceService.GetCoFreedomDevices(schedule.Name, schedule.CustomerId);
             foreach(var device in coFreedomDevices)
             {
                 var taxrate = _locationsService.GetTaxRate(device.LocName);
-                devices.Add(DeviceModel.For(taxrate,device));
+                var instance = InstanceMultipler(scheduleId);
+               
+                devices.Add(DeviceModel.For(taxrate,instance,device));
             }
 
             return devices;
 
         }
-
+        private decimal InstanceMultipler(long scheduleId)
+        {
+            using(var context = new GlobalViewEntities())
+            {
+                var cycleperiod = context.CyclePeriodSchedules.Where(x => x.ScheduleId == scheduleId).OrderByDescending(x => x.CyclePeriodScheduleId).FirstOrDefault();
+                return cycleperiod.InstancesInvoiced;
+            }
+           
+        }
         //private static List<DeviceModel> MergeGlobalViewAndCoFreedom(List<DevicesEntity> globalViewEntities, IList<vw_admin_EquipmentList_MeterGroup> coFreedomDevices)
         //{
         //    var devices = new List<DeviceModel>();
@@ -87,7 +98,8 @@ namespace GVWebapi.Services
             foreach (var device in globalViewEntities)
             {
                 var taxrate = _locationsService.GetTaxRate(device.LocName);
-                devices.Add(DeviceModel.For(taxrate,device));
+                
+                devices.Add(DeviceModel.For(taxrate,1,device));
             }
 
             return devices;
@@ -233,7 +245,7 @@ namespace GVWebapi.Services
         {
             var eaDevice = _coFreedomDeviceService.GetCoFreedomDevice(EquipmentID);
             var taxrate = _locationsService.GetTaxRate(eaDevice.LocName);
-            var Device = DeviceModel.For(taxrate,eaDevice);
+            var Device = DeviceModel.For(taxrate,1,eaDevice);
             return Device; 
 
         }
