@@ -54,12 +54,12 @@ namespace GVWebapi.Services
                     email = oEmail.Replace("_#LOCATION#_", oSupply.LocName);
                     oEmail = email.Replace("_#ADDRESS#_", oSupply.Address);
                     email = oEmail.Replace("_#CITYSTATEZIP#_", oSupply.City + ", " + oSupply.State + " " + oSupply.Zip);
-                    oEmail = email.Replace("_#DEPARTMENT#_", "");
-                    email = oEmail.Replace("_#FLOORUSER#_", oSupply.Location);
+                    oEmail = email.Replace("_#DEPARTMENT#_", oSupply.Department);
+                    email = oEmail.Replace("_#USER#_", oSupply.AssetUser);
                     oEmail = email.Replace("_#ISSUE#_", oSupplyInfo.CallID);
                     email = oEmail.Replace("_#COMMENTS#_", oSupplyInfo.Description);
-                  
-                    return email;
+                    oEmail = email.Replace("_#FLOOR#_", oSupply.Floor);
+                    return oEmail;
 
                 }
                 else
@@ -91,8 +91,7 @@ namespace GVWebapi.Services
                 freedomEntities.Dispose();
             }
         }
-
-        private static string ParseIntegrisSupplyAssignment(String email, IntegrisServiceCallModel oSupplyInfo)
+       private static string ParseIntegrisSupplyAssignment(String email, IntegrisServiceCallModel oSupplyInfo)
         {
             var freedomEntities = new CoFreedomEntities();
 
@@ -130,13 +129,12 @@ namespace GVWebapi.Services
                     email = oEmail.Replace("_#LOCATION#_", oSupply.LocName);
                     oEmail = email.Replace("_#ADDRESS#_", oSupply.Address);
                     email = oEmail.Replace("_#CITYSTATEZIP#_", oSupply.City + ", " + oSupply.State + " " + oSupply.Zip);
-                    oEmail = email.Replace("_#DEPARTMENT#_", "");
-
-                    email = oEmail.Replace("_#FLOORUSER#_", oSupply.Location);
+                    oEmail = email.Replace("_#DEPARTMENT#_", oSupply.Department);
+                    email = oEmail.Replace("_#FLOOR#_", oSupply.Floor);
                     oEmail = email.Replace("_#ISSUE#_", oSupplyInfo.CallID);
                     email = oEmail.Replace("_#COMMENTS#_", oSupplyInfo.Description);
-
-                    return email;
+                    oEmail = email.Replace("_#USER#_", oSupply.AssetUser);
+                    return oEmail;
 
                 }
                 else
@@ -168,7 +166,7 @@ namespace GVWebapi.Services
                 freedomEntities.Dispose();
             }
         }
-        private static string ParseServiceAssignment(String email, ServiceCallModel oSupplyInfo)
+       private static string ParseServiceAssignment(String email, ServiceCallModel oSupplyInfo)
         {
             var freedomEntities = new CoFreedomEntities();
            
@@ -179,18 +177,14 @@ namespace GVWebapi.Services
                 if (oSupplyInfo.CallID != "Unlisted Device")
                 {
 
-                   var equipQuery = freedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.EquipmentID == oSupplyInfo.EquipmentID).FirstOrDefault();
-                   
-                 
-
-
+                    var equipQuery = freedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.EquipmentID == oSupplyInfo.EquipmentID).FirstOrDefault();
                     var sActive = (equipQuery.Active ? "Active" : "In-Active");
                     string oEmail = email.Replace("_#SERVICESUPPLY#_", "Service ");
-                           email = oEmail.Replace("_#ID#_", oSupplyInfo.CallID);
-                           oEmail = email.Replace("_#CLIENTNAME#_", equipQuery.CustomerName);
-                           email = oEmail.Replace("_#SUPPLYPROVIDER#_", equipQuery.SupplyProviderPrefFullName);
-                           oEmail = email.Replace("_#REQUESTOR#_", oSupplyInfo.Name);
-                           email = oEmail.Replace("_#DATETIME#_", DateTime.Now.ToShortDateString());
+                    email = oEmail.Replace("_#ID#_", oSupplyInfo.CallID);
+                    oEmail = email.Replace("_#CLIENTNAME#_", equipQuery.CustomerName);
+                    email = oEmail.Replace("_#SUPPLYPROVIDER#_", equipQuery.SupplyProviderPrefFullName);
+                    oEmail = email.Replace("_#REQUESTOR#_", oSupplyInfo.Name);
+                    email = oEmail.Replace("_#DATETIME#_", DateTime.Now.ToShortDateString());
                     oEmail = email.Replace("_#EMAIL#_", oSupplyInfo.Email);
                     email = oEmail.Replace("_#TELEPHONE#_", oSupplyInfo.Phone);
                     oEmail = email.Replace("_#OPERATIONAL#_", oSupplyInfo.isWorking ? "Yes" : "No");
@@ -203,13 +197,13 @@ namespace GVWebapi.Services
                     email = oEmail.Replace("_#LOCATION#_", equipQuery.LocName);
                     oEmail = email.Replace("_#ADDRESS#_", equipQuery.Address);
                     email = oEmail.Replace("_#CITYSTATEZIP#_", equipQuery.City + ", " + equipQuery.State + " " + equipQuery.Zip);
-                    oEmail = email.Replace("_#DEPARTMENT#_", "");
-                    email = oEmail.Replace("_#FLOORUSER#_", equipQuery.Location);
+                    oEmail = email.Replace("_#DEPARTMENT#_", equipQuery.Department);
+                    email = oEmail.Replace("_#USER#_", equipQuery.AssetUser);
                     oEmail = email.Replace("_#ISSUEID#_", oSupplyInfo.CallID);
                     email = oEmail.Replace("_#IPADDRESS#_", equipQuery.IPAddress);
                     oEmail = email.Replace("_#DEVICEID#_", equipQuery.EquipmentNumber);
-                    
-                    return oEmail;
+                    email = oEmail.Replace("_#FLOOR#_", equipQuery.Floor);
+                    return email;
                 }
                 else
                 {
@@ -224,10 +218,10 @@ namespace GVWebapi.Services
                     email = oEmail.Replace("_#COMMENTS#_", oSupplyInfo.Description);
                     oEmail = email.Replace("_#DEVICEID#_", oSupplyInfo.EquipmentNumber);
                     email = oEmail.Replace("_#ISSUEID#_", oSupplyInfo.CallID);
-                    email = oEmail.Replace("_#DEPARTMENT#_", "");
+                  
                    
 
-                    return oEmail;
+                    return email;
                 }
             }
             finally
@@ -256,7 +250,6 @@ namespace GVWebapi.Services
                     oEmail = email.Replace("_#EMAIL#_", oSupplyInfo.Email);
                     email = oEmail.Replace("_#TELEPHONE#_", oSupplyInfo.Phone);
                     oEmail = email.Replace("_#OPERATIONAL#_", oSupplyInfo.IsWorking ? "Yes" : "No");
-                    oEmail = email.Replace("_#CLIENTCARE#_", oSupplyInfo.PatientCare ? "Yes" : "No");
                     email = oEmail.Replace("_#COMMENTS#_", oSupplyInfo.Description);
                     oEmail = email.Replace("_#ISSUEID#_", oSupplyInfo.CallID);
                     email = oEmail.Replace("_#MODEL#_", equipQuery.Model);
@@ -266,13 +259,14 @@ namespace GVWebapi.Services
                     email = oEmail.Replace("_#LOCATION#_", equipQuery.LocName);
                     oEmail = email.Replace("_#ADDRESS#_", equipQuery.Address);
                     email = oEmail.Replace("_#CITYSTATEZIP#_", equipQuery.City + ", " + equipQuery.State + " " + equipQuery.Zip);
-                    oEmail = email.Replace("_#DEPARTMENT#_", "");
-                    email = oEmail.Replace("_#FLOORUSER#_", equipQuery.Location);
-                    oEmail = email.Replace("_#ISSUEID#_", oSupplyInfo.CallID);
+                    oEmail = email.Replace("_#DEPARTMENT#_", equipQuery.Department);
+                    email = oEmail.Replace("_#FLOOR#_", equipQuery.Floor);
+                    oEmail = email.Replace("_#USER#_", equipQuery.AssetUser);
                     email = oEmail.Replace("_#IPADDRESS#_", equipQuery.IPAddress);
                     oEmail = email.Replace("_#DEVICEID#_", equipQuery.EquipmentNumber);
                     email = oEmail.Replace("_#REQUESTOR#_", oSupplyInfo.Name);
-                    return email;
+                    oEmail = email.Replace("_#ISSUEID#_", oSupplyInfo.CallID);
+                    return oEmail;
                 }
                 else
                 {
@@ -287,10 +281,7 @@ namespace GVWebapi.Services
                     email = oEmail.Replace("_#COMMENTS#_", oSupplyInfo.Description);
                     oEmail = email.Replace("_#DEVICEID#_", oSupplyInfo.EquipmentNumber);
                     email = oEmail.Replace("_#ISSUEID#_", oSupplyInfo.CallID);
-                    email = oEmail.Replace("_#DEPARTMENT#_", "");
-
-
-                    return oEmail;
+                    return email;
                 }
             }
             finally
@@ -310,8 +301,8 @@ namespace GVWebapi.Services
             {
                 var CallNumber = GetCallNumber(id);
                 model.CallID = $"# {CallNumber}";
-                string filename = @"c:\inetpub\wwwroot\gvadmin\service\ServiceRequest.htm";
-                // string filename = @"d:\Dev\repos\ServiceRequest.htm";
+                 string filename = @"c:\inetpub\wwwroot\gvwebapi\templates\ServiceRequest.htm";
+                //  string filename = @"D:\Dev\Repos\FPR\GVWebApi\GVWebapi\templates\ServiceRequest.htm";
                 if (!File.Exists(filename)) return false;
                 StreamReader objStreamReader = default(StreamReader);
               
@@ -327,8 +318,8 @@ namespace GVWebapi.Services
             {
                 var CallNumber = GetCallNumber(id);
                 model.CallID = $"# {CallNumber}";
-                string filename = @"c:\inetpub\wwwroot\gvadmin\service\SupplyRequest.htm";
-                // string filename = @"d:\Dev\repos\SupplyRequest.htm";
+                string filename = @"c:\inetpub\wwwroot\gvwebapi\templates\SupplyRequest.htm";
+                // string filename = @"D:\Dev\Repos\FPR\GVWebApi\GVWebapi\templates\SupplyRequest.htm";
                 if (!File.Exists(filename)) return false;
                 StreamReader objStreamReader = default(StreamReader);
                 objStreamReader = File.OpenText(filename);
@@ -393,7 +384,7 @@ namespace GVWebapi.Services
             if (type == 1)
             {
                 model.CallID = "# " + GetCallNumber(id);
-                string filename = @"c:\inetpub\wwwroot\gvadmin\integris\ServiceRequest.htm";
+                string filename = @"c:\inetpub\wwwroot\gvwebapi\templates\IntegrisServiceRequest.htm";
                 //string filename = @"d:\dev\repos\IntegrisServiceRequest.htm";
                 //Get a StreamReader class that can be used to read the file 
                 StreamReader objStreamReader = default(StreamReader);
@@ -409,7 +400,7 @@ namespace GVWebapi.Services
             if (type == 2)
             {
                 model.CallID = "# " + GetCallNumber(id);
-                string filename = @"c:\inetpub\wwwroot\gvadmin\integris\SupplyRequest.htm";
+                string filename = @"c:\inetpub\wwwroot\gvwebapi\templates\IntegrisSupplyRequest.htm";
                // string filename = @"d:\Dev\repos\IntegrisSupplyRequest.htm";
                 //Get a StreamReader class that can be used to read the file 
                 StreamReader objStreamReader = default(StreamReader);
@@ -465,7 +456,7 @@ namespace GVWebapi.Services
             client.Send(supplymail);
             return true;
         }
-        public static string GetCallNumber(string callId)
+       public static string GetCallNumber(string callId)
         {
             using (var freedomEntities = new CoFreedomEntities())
             {
@@ -477,8 +468,14 @@ namespace GVWebapi.Services
 
                    var CallID = Int32.Parse(callId);
                    var oCall = freedomEntities.vw_ServiceCallandContact.Where(x => x.CallID == CallID).FirstOrDefault();
- 
-                    return oCall.CallNumber;
+                   if(oCall != null)
+                    {
+                        return oCall.CallNumber;
+                    } else
+                    {
+                        return "Call Not Added. Contact Support";
+                    }
+                   
 
                 }
                 finally

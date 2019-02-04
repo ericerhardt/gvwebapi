@@ -118,8 +118,16 @@ namespace GVWebapi.Controllers
 
             foreach (var Location in Locations)
             {
-                 
-                string Address = $"{Location.Address.Split(',')[0]}, {Location.City} {Location.State} {Location.Zip}";
+                string Address = string.Empty;
+                 if (Location.Address.Contains(","))
+                {
+                    Address = $"{Location.Address.Split(',')[0]}, {Location.City} {Location.State} {Location.Zip}";
+                } else
+                {
+                    Address = $"{Location.Address}, {Location.City} {Location.State} {Location.Zip}";
+                }
+                  
+
                 AddressResponse result =  await  GoogleGeocodingAPI.SearchAddressAsync(Address);
 
                 if (result.Results.Count  > 0)

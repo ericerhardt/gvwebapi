@@ -12,14 +12,16 @@ namespace GVWebapi.RemoteData
     using System;
     using System.Collections.Generic;
     
-    public partial class vw_REVisionInvoices
+    public partial class vw_BillingMeterVolumesByDevice
     {
         public int InvoiceID { get; set; }
-        public int ContractID { get; set; }
-        public Nullable<System.DateTime> PeriodDate { get; set; }
-        public int CustomerID { get; set; }
-        public Nullable<System.DateTime> StartDate { get; set; }
-        public string PeriodDateString { get; set; }
-        public string StartDateString { get; set; }
+        public Nullable<System.DateTime> ReadingDate { get; set; }
+        public Nullable<decimal> BWDisplay { get; set; }
+        public Nullable<decimal> BWVolume { get; set; }
+        public int EquipmentID { get; set; }
+        public string EquipmentNumber { get; set; }
+        public string InvoiceType { get; set; }
+        public Nullable<decimal> ColorDisplay { get; set; }
+        public Nullable<decimal> ColorVolume { get; set; }
     }
 }

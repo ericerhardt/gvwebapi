@@ -69,18 +69,17 @@ namespace GVWebapi.Helpers
                 gvexpense[i].EndDate = gvexpense[i - 1].OverrideDate.Value.AddDays(-1);
             }
 
-            var gvmetergroups = gv.RevisionMeterGroups.Where(r => r.ERPContractID == ContractID && r.rollovers == true).ToList();
+            var gvmetergroups = gv.RevisionMeterGroups.Where(r => r.ERPContractID == ContractID ).ToList();
             var revisions = from e in gvrevision
-                          
+                            join mg in gvmetergroups
+                            on e.ContractMeterGroupID equals mg.ERPMeterGroupID
                             orderby e.MeterGroup
                             select
                             new
                             {
-                               // FPROverageCharge =  CalcuateOverageCharge( e.ActualVolume.Value ,e.ContractVolume.Value , e.CPP.Value, e.Rollover),
-                                //ClientOverageCharge = CalcuateOverageCharge(e.ActualVolume.Value, e.ContractVolume.Value, mg.CPP, e.Rollover),
+                               
                                 FPROverageCharge = ((e.Overage - e.Rollover) * e.CPP) - e.CreditAmount <= 0 ? 0.00M : (((e.Overage) - e.Rollover) * e.CPP) - e.CreditAmount,
-                                //ClientOverage = (((e.ActualVolume - e.Rollover) - e.ContractVolume) * mg.CPP) - e.CreditAmount <= 0 ? 0.00M : (((e.ActualVolume - e.Rollover) - e.ContractVolume) * mg.CPP) - e.CreditAmount,
-                                ClientOverageCharge = (( e.Overage) * e.CPP) - e.CreditAmount <= 0 ? 0.00M : (((e.Overage)) * e.CPP) - e.CreditAmount,
+                                ClientOverageCharge = e.Overage > 0 ? ( e.Overage * mg.CPP): 0.00M,
                                 CreditAmount = e.CreditAmount,
                                 OverageToDate = e.OverageToDate,
                                 OverageFromDate = e.OverageFromDate,
@@ -139,11 +138,9 @@ namespace GVWebapi.Helpers
                 a.ClientStartDate = revision.clientStartDate;
                 a.ClientPeriodDate = revision.clientPeriodDate;
                 a.ClientPeriodDates = revision.clientPeriodDate.AddMonths(-monthsDiff).ToString("MMM") + " - " + revision.clientPeriodDate.ToString("MMM yyyy");
-                 a.FPROverageCost =  revision.fprOverageCost.Value;
-               
+                a.FPROverageCost =  revision.fprOverageCost.Value;
                 a.FPRCost =  revision.fprBase;
                 a.ClientOverageCost =  revision.clientOverageCost.Value;
-                 
                 a.ClientCost = revision.clientBase;
                 a.Credits =  revision.credits * (monthsDiff + 1);
                 a.Savings =  (a.ClientCost + a.ClientOverageCost) - ((a.FPRCost + a.FPROverageCost ) - a.Credits);

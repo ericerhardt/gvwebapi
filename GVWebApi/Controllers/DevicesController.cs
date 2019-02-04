@@ -3,14 +3,18 @@ using System.Linq;
 using System.Web.Http;
 using GVWebapi.RemoteData;
 using GVWebapi.Models;
+using GVWebapi.Helpers;
 using System.Data.Entity.Core.Objects;
 using System.Data.Common;
 using System.Data;
 using GVWebapi.Services;
+using System.Data.Entity.SqlServer;
+using System.Web.UI.WebControls;
+using System.Collections.Generic;
 
 namespace GVWebapi.Controllers
 {
-    public class DevicesController : ApiController
+    public class DevicesController : ApiController  
     {
         private readonly CoFreedomEntities _coFreedomEntities = new CoFreedomEntities();
         private readonly GlobalViewEntities _globalViewEntities = new GlobalViewEntities();
@@ -27,11 +31,18 @@ namespace GVWebapi.Controllers
         {
             var modelView = new EquipmentsModelView();
             modelView.OpenCalls = 0;
-            modelView.equipments = _coFreedomEntities.vw_GVDeviceAnalyzer.FirstOrDefault(c => c.EquipmentNumber == fprId);
-            modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.EquipmentNumber == fprId && !c.Description.Contains("Supply Order")).OrderByDescending(c => c.Date).ToList();
-            modelView.orderhistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.EquipmentNumber == fprId && c.Description.Contains("Supply Order")).OrderByDescending(c => c.Date).ToList();
+            modelView.Equipments = _coFreedomEntities.vw_GVDeviceAnalyzer.FirstOrDefault(c => c.EquipmentNumber == fprId);
+            modelView.Servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.EquipmentNumber == fprId && !c.Description.Contains("Supply Order")).OrderByDescending(c => c.Date).ToList();
+            modelView.Orderhistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.EquipmentNumber == fprId && c.Description.Contains("Supply Order")).OrderByDescending(c => c.Date).ToList();
             modelView.OpenCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.EquipmentNumber == fprId && c.v_Status == "Pending");
-            var equipment = _globalViewEntities.EquipmentManagers.FirstOrDefault(m => m.Model.Contains(modelView.equipments.Model));
+            modelView.PeriodStartList = _coFreedomEntities.vw_REVisionInvoices.Where(x => x.ContractID == modelView.Equipments.ContractID && x.StartDate >= modelView.Equipments.InstallDate ).Select( x => new DateListModel {DateValue = x.StartDate.Value, DateString =  x.StartDateString }).ToList();
+            
+            modelView.PeriodEndList = _coFreedomEntities.vw_REVisionInvoices.Where(x => x.ContractID == modelView.Equipments.ContractID && x.PeriodDate >= modelView.Equipments.InstallDate).OrderByDescending(x=> x.PeriodDate).Select(x => new DateListModel { DateValue = x.PeriodDate.Value, DateString = x.PeriodDateString }).ToList();
+            if (modelView.PeriodStartList.Count() == 0)
+            {
+                modelView.PeriodStartList = modelView.PeriodEndList;
+            }
+            var equipment = _globalViewEntities.EquipmentManagers.FirstOrDefault(m => m.Model.Contains(modelView.Equipments.Model));
 
             if (equipment != null)
             {
@@ -39,21 +50,20 @@ namespace GVWebapi.Controllers
                 modelView.RecoVolume = equipment.MFRMoVol.GetValueOrDefault();
             }
 
-            if (modelView.equipments == null)
+            if (modelView.Equipments == null)
             {
                 return NotFound();
             }
-            return Json(modelView);
+            return Json(  modelView );
         }
         [HttpGet, Route("api/mobiledevices/{FprID}")]
         public IHttpActionResult GetMobileDevice(string fprId)
         {
             var modelView = new EquipmentsModelView();
             modelView.OpenCalls = 0;
-            modelView.equipments = _coFreedomEntities.vw_GVDeviceAnalyzer.FirstOrDefault(c => c.EquipmentNumber == fprId);
-            modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.EquipmentNumber == fprId).OrderByDescending(c => c.Date).Take(3).ToList();
- 
-            var equipment = _globalViewEntities.EquipmentManagers.FirstOrDefault(m => m.Model.Contains(modelView.equipments.Model));
+            modelView.Equipments = _coFreedomEntities.vw_GVDeviceAnalyzer.FirstOrDefault(c => c.EquipmentNumber == fprId);
+            modelView.Servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.EquipmentNumber == fprId).OrderByDescending(c => c.Date).Take(3).ToList();
+            var equipment = _globalViewEntities.EquipmentManagers.FirstOrDefault(m => m.Model.Contains(modelView.Equipments.Model));
 
             if (equipment != null)
             {
@@ -61,7 +71,7 @@ namespace GVWebapi.Controllers
                 modelView.RecoVolume = equipment.MFRMoVol.GetValueOrDefault();
             }
 
-            if (modelView.equipments == null)
+            if (modelView.Equipments == null)
             {
                 return NotFound();
             }
@@ -72,7 +82,7 @@ namespace GVWebapi.Controllers
         public IHttpActionResult GetCustomerDevices(int customerId)
         {
             var modelView = new EquipmentsModelView();
-            modelView.allequipments = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.ToList().Where(d => d.CustomerID == customerId);
+            modelView.AllEquipments = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.ToList().Where(d => d.CustomerID == customerId);
             modelView.activedevices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Count(d => d.CustomerID == customerId && d.Active);
             modelView.inactivedevices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Count(d => d.CustomerID == customerId && d.Active == false);
             return Json(modelView);
@@ -82,9 +92,9 @@ namespace GVWebapi.Controllers
         public IHttpActionResult GetAllDevices(int customerId)
         {
             var modelView = new EquipmentsModelView();
-            modelView.allequipments = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(d => d.CustomerID == customerId).ToList();
-            modelView.activedevices = modelView.allequipments.Count(e => e.Active);
-            modelView.inactivedevices = modelView.allequipments.Count(e => e.Active == false);
+            modelView.AllEquipments = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(d => d.CustomerID == customerId).ToList();
+            modelView.activedevices = modelView.AllEquipments.Count(e => e.Active);
+            modelView.inactivedevices = modelView.AllEquipments.Count(e => e.Active == false);
             return Json(modelView);
         }
 
@@ -97,12 +107,12 @@ namespace GVWebapi.Controllers
             var bwdevices = _coFreedomEntities.csDeviceVolumes(fromDate, toDate, id, customerId)
                 .Where(c => c.MeterType == @"B\W")
                 .Where(c => c.ReadingDate.HasValue)
-                .Select(c => new { Month = c.ReadingDate.Value.ToString("MMM"), c.Volume }).ToList();
+                .Select(c => new { Month = c.ReadingDate.Value.ToString("MMM YY"), c.Volume }).ToList();
 
             var colordevices = _coFreedomEntities.csDeviceVolumes(fromDate, toDate, id, customerId)
                 .Where(c => c.MeterType == "Color")
                 .Where(c => c.ReadingDate.HasValue)
-                .Select(c => new { Month = c.ReadingDate.Value.ToString("MMM"), c.Volume }).ToList();
+                .Select(c => new { Month = c.ReadingDate.Value.ToString("MMM YY"), c.Volume }).ToList();
 
             var ret = new[]
            {
@@ -130,13 +140,57 @@ namespace GVWebapi.Controllers
             return Json(new { Devices = devices, MaxVolume = maxvolume });
 
         }
+        [HttpGet, Route("api/devicevolumesgridv2/{CustomerId}/{Id}/{FromDate?}/{ToDate?}")]
+        public IHttpActionResult GetDeviceVolumesGridV2(int customerId, string id, DateTime? fromDate, DateTime? toDate)
+        {
+            var _fromDate = fromDate == null ? DateTime.Now.AddMonths(-11) : fromDate;
+            var _toDate = toDate == null ? DateTime.Now : toDate;
 
+
+            var devices = _coFreedomEntities.vw_BillingMeterVolumesByDevice
+                                                    .Where(c => c.EquipmentNumber == id)
+                                                    .Where(c => c.ReadingDate >= fromDate && c.ReadingDate <= toDate).ToList();
+            
+            decimal? maxbwvolume = devices.Max(x=> x.BWVolume);
+            decimal? maxclrvolume = devices.Max(x=> x.ColorVolume);
+
+            var maxvolume = maxbwvolume > (maxclrvolume == null ? 0 : maxclrvolume) ? maxbwvolume : maxclrvolume;
+
+
+            return Json(new { Devices = devices, MaxVolume = maxvolume });
+
+        }
+
+
+
+        [HttpGet, Route("api/devicevolumesv2/{CustomerId}/{Id}/{FromDate?}/{ToDate?}")]
+        public IHttpActionResult GetDeviceVolumesV2(int customerId, string id, DateTime? fromDate, DateTime? toDate)
+        {
+            fromDate = fromDate ?? DateTime.Now.AddMonths(-11);
+            toDate = toDate ?? DateTime.Now;
+
+            List<vw_BillingMeterVolumesByDevice> devices = _coFreedomEntities.vw_BillingMeterVolumesByDevice
+                                                  .Where(c => c.EquipmentNumber == id)
+                                                  .Where(c => c.ReadingDate >= fromDate && c.ReadingDate <= toDate).ToList();
+
+            
+
+            var ret = new[]
+           {
+                   new { label= "B/W Volumes", color = "#768294", data =   devices.Select(c => new object[]{  DateTimeExtensions.GetJavascriptTimeStamp(c.ReadingDate.Value)   ,c.BWVolume.Value.ToString("#.00")  }) },
+                   new { label= "Color Volumes", color = "#1f92fe" , data =  devices.Select(c => new object[]{ DateTimeExtensions.GetJavascriptTimeStamp(c.ReadingDate.Value) ,  c.ColorVolume.Value.ToString("#.00")   }) },
+
+            };
+            return Json(ret);
+
+        }
+        
         [HttpGet, Route("api/replacementdevices/{CustomerID}")]
         public IHttpActionResult GetReplacementDevices(int customerId)
         {
             var modelView = new EquipmentsModelView();
-            modelView.allassetreplacements = _globalViewEntities.AssetReplacements.ToList().Where(d => d.CustomerID == customerId);
-            modelView.ReplacementTotals = modelView.allassetreplacements.Sum(s => s.ReplacementValue);
+            modelView.Allassetreplacements = _globalViewEntities.AssetReplacements.ToList().Where(d => d.CustomerID == customerId);
+            modelView.ReplacementTotals = modelView.Allassetreplacements.Sum(s => s.ReplacementValue);
             return Json(modelView);
         }
 
@@ -175,7 +229,7 @@ namespace GVWebapi.Controllers
                 _globalViewEntities.SaveChanges();
 
                 var modelView = new EquipmentsModelView();
-                modelView.allassetreplacements = _globalViewEntities.AssetReplacements.ToList().Where(d => d.CustomerID == replacment.CustomerID);
+                modelView.Allassetreplacements = _globalViewEntities.AssetReplacements.ToList().Where(d => d.CustomerID == replacment.CustomerID);
                 return Json(modelView);
 
             }
@@ -200,7 +254,7 @@ namespace GVWebapi.Controllers
                 _globalViewEntities.SaveChanges();
 
                 var modelView = new EquipmentsModelView();
-                modelView.allassetreplacements = _globalViewEntities.AssetReplacements.ToList().Where(d => d.CustomerID == replacment.CustomerID);
+                modelView.Allassetreplacements = _globalViewEntities.AssetReplacements.ToList().Where(d => d.CustomerID == replacment.CustomerID);
                 return Json(modelView);
 
             }
@@ -315,7 +369,7 @@ namespace GVWebapi.Controllers
                             model.Description = model.Description + " This device is not functioning";
                         }
 
-                         CallId = InsertServiceCall(model);
+                        CallId = InsertServiceCall(model);
                         var success = MailParser.EmailServiceCall(CallId, model, 1);
                         if (success)
                         {
@@ -511,7 +565,7 @@ namespace GVWebapi.Controllers
         public IHttpActionResult GetCustomerservicecalls(int customerId, DateTime startDate, DateTime endDate, string type, string status)
         {
             var modelView = new EquipmentsModelView();
-            modelView.servicehistories = null;
+            modelView.Servicehistories = null;
             modelView.ClosedCalls = 0;
             modelView.OpenCalls = 0;
             modelView.TotalDevices = 0;
@@ -521,23 +575,23 @@ namespace GVWebapi.Controllers
                 switch (status)
                 {
                     case "All":
-                        modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled")).OrderByDescending(c => c.Date).ToList();
+                        modelView.Servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled")).OrderByDescending(c => c.Date).ToList();
                         modelView.ClosedCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled"));
                         modelView.OpenCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "Pending"));
 
                         break;
                     case "Completed":
-                        modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == status)).OrderByDescending(c => c.Date).ToList();
+                        modelView.Servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == status)).OrderByDescending(c => c.Date).ToList();
                         modelView.ClosedCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled"));
                         modelView.OpenCalls = 0;
                         break;
                     case "Pending":
-                        modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == status)).OrderByDescending(c => c.Date).ToList();
+                        modelView.Servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == status)).OrderByDescending(c => c.Date).ToList();
                         modelView.OpenCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "Pending"));
                         modelView.ClosedCalls = 0;
                         break;
                     case "None":
-                        modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "None")).OrderByDescending(c => c.Date).ToList();
+                        modelView.Servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "None")).OrderByDescending(c => c.Date).ToList();
                         modelView.ClosedCalls = 0;
                         modelView.OpenCalls = 0;
                         break;
@@ -553,23 +607,23 @@ namespace GVWebapi.Controllers
                 switch (status)
                 {
                     case "All":
-                        modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled" && c.Type == type)).OrderByDescending(c => c.Date).ToList();
+                        modelView.Servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled" && c.Type == type)).OrderByDescending(c => c.Date).ToList();
                         modelView.ClosedCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled" && c.Type == type));
                         modelView.OpenCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "Pending" && c.Type == type));
 
                         break;
                     case "Completed":
-                        modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == status && c.Type == type)).OrderByDescending(c => c.Date).ToList();
+                        modelView.Servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == status && c.Type == type)).OrderByDescending(c => c.Date).ToList();
                         modelView.ClosedCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status != "Canceled" && c.Type == type));
                         modelView.OpenCalls = 0;
                         break;
                     case "Pending":
-                        modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == status && c.Type == type)).OrderByDescending(c => c.Date).ToList();
+                        modelView.Servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == status && c.Type == type)).OrderByDescending(c => c.Date).ToList();
                         modelView.OpenCalls = _coFreedomEntities.vw_CSServiceCallHistory.Count(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "Pending" && c.Type == type));
                         modelView.ClosedCalls = 0;
                         break;
                     case "None":
-                        modelView.servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "None")).OrderByDescending(c => c.Date).ToList();
+                        modelView.Servicehistories = _coFreedomEntities.vw_CSServiceCallHistory.Where(c => c.CustomerID == customerId && (c.Date <= endDate && c.Date >= startDate && c.v_Status == "None")).OrderByDescending(c => c.Date).ToList();
                         modelView.ClosedCalls = 0;
                         modelView.OpenCalls = 0;
                         break;
