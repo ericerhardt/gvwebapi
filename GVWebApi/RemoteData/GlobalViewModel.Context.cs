@@ -51,5 +51,10 @@ namespace GVWebapi.RemoteData
         public virtual DbSet<QuarterlyRollover> QuarterlyRollovers { get; set; }
         public virtual DbSet<RevisionDataView> RevisionDataViews { get; set; }
         public virtual DbSet<ClientSetting> ClientSettings { get; set; }
+        public virtual DbSet<EasylinkData> EasylinkDatas { get; set; }
+        public virtual DbSet<EasylinkImportHistory> EasylinkImportHistories { get; set; }
+        public virtual DbSet<EasyLinkMapping> EasyLinkMappings { get; set; }
+        public virtual DbSet<EasylinkByClient> EasylinkByClients { get; set; }
+        public virtual DbSet<CostAvoidance> CostAvoidances { get; set; }
     }
 }

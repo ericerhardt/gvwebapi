@@ -1,11 +1,25 @@
-﻿using System.Net;
-using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Description;
+using GVWebapi.RemoteData;
+using GVWebapi.Models;
+using System.Web;
+using System.IO;
+using System.Net.Http;
+using System.Diagnostics;
+using GVWebapi.Helpers;
+using System.Collections.Specialized;
+using Newtonsoft.Json;
+using System;
+
 using GV.Domain;
 using GV.Lookup;
 using GV.Services;
-using GVWebapi.Models;
+ 
 
 namespace GVWebapi.Controllers
 {
@@ -16,6 +30,8 @@ namespace GVWebapi.Controllers
         private readonly IEasyLinkFileDeleteService _easyLinkFileDeleteService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEasyLinkChildManagerService _easyLinkChildManagerService;
+        private readonly GlobalViewEntities _globalViewEntities = new GlobalViewEntities();
+
 
         public EasyLinkApiController(IEasyLinkFileSaveService easyLinkFileSaveService, IEasyLinkService easyLinkService, IEasyLinkFileDeleteService easyLinkFileDeleteService, IUnitOfWork unitOfWork, IEasyLinkChildManagerService easyLinkChildManagerService)
         {
@@ -24,6 +40,7 @@ namespace GVWebapi.Controllers
             _easyLinkFileDeleteService = easyLinkFileDeleteService;
             _unitOfWork = unitOfWork;
             _easyLinkChildManagerService = easyLinkChildManagerService;
+
         }
 
         [HttpPost, Route("api/easylink/uploadfile")]
@@ -49,7 +66,8 @@ namespace GVWebapi.Controllers
         [HttpGet, Route("api/easylink/getall")]
         public IHttpActionResult GetAll()
         {
-            return Ok(_easyLinkService.GetAll());
+            var results =  _globalViewEntities.EasylinkImportHistories.OrderByDescending(p =>p.PeriodDate).AsEnumerable();
+            return Json(results);
         }
 
         [HttpGet, Route("api/easylink/delete/{easyLinkId}")]

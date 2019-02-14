@@ -437,6 +437,7 @@ warning 6002: The table/view 'CoFreedom._custom_eviews.vw_admin_EquipmentList_Me
           <Property Name="LocationID" Type="int" />
           <Property Name="InstallDate" Type="datetime" />
           <Property Name="MonthlyCost" Type="varchar" MaxLength="1024" />
+          <Property Name="VendorID" Type="varchar" MaxLength="1024" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'CoFreedom._custom_eviews.vw_admin_SCBillingMeters_MeterGroup' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1253,6 +1254,8 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_BillingMeterVolumesByDevice' does
             <PropertyRef Name="EquipmentID" />
             <PropertyRef Name="EquipmentNumber" />
             <PropertyRef Name="InvoiceType" />
+            
+            
           </Key>
           <Property Name="InvoiceID" Type="int" Nullable="false" />
           <Property Name="ReadingDate" Type="datetime" />
@@ -1261,8 +1264,8 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_BillingMeterVolumesByDevice' does
           <Property Name="EquipmentID" Type="int" Nullable="false" />
           <Property Name="EquipmentNumber" Type="varchar" MaxLength="32" Nullable="false" />
           <Property Name="InvoiceType" Type="char" MaxLength="2" Nullable="false" />
-          <Property Name="ColorDisplay" Type="decimal" Precision="18" Scale="6" />
-          <Property Name="ColorVolume" Type="decimal" Precision="18" Scale="6" />
+          <Property Name="ColorDisplay" Type="decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="ColorVolume" Type="decimal" Precision="18" Scale="6" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'CoFreedom.dbo.vw_GVDeviceAnalyzer' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1282,6 +1285,8 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_GVDeviceAnalyzer' does not have a
             <PropertyRef Name="Contact" />
             <PropertyRef Name="ContactPhone" />
             <PropertyRef Name="CustomerID" />
+            
+            
           </Key>
           <Property Name="EquipmentID" Type="int" Nullable="false" />
           <Property Name="CustomerName" Type="varchar" MaxLength="128" Nullable="false" />
@@ -1320,10 +1325,10 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_GVDeviceAnalyzer' does not have a
           <Property Name="CustomerID" Type="int" Nullable="false" />
           <Property Name="BillToID" Type="int" />
           <Property Name="LocationID" Type="int" />
+          <Property Name="AvgBWVol" Type="decimal" Nullable="true" />
+          <Property Name="AvgCLRVol" Type="decimal" Nullable="true" />
           <Property Name="ContractID" Type="int" />
           <Property Name="InstallDate" Type="datetime" />
-          <Property Name="AvgBWVol" Type="decimal" Precision="38" Scale="6" />
-          <Property Name="AvgCLRVol" Type="decimal" Precision="38" Scale="6" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'CoFreedom.dbo.vw_maplocations' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1371,6 +1376,20 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
           <Property Name="CustomerID" Type="int" Nullable="false" />
           <Property Name="EndMeterDate" Type="datetime" />
           <Property Name="Volume" Type="decimal" Precision="18" Scale="6" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_QuarterlyModelMatrix">
+          <Key>
+            <PropertyRef Name="InvoiceID" />
+          </Key>
+          <Property Name="InvoiceID" Type="int" Nullable="false" />
+          <Property Name="DeviceType" Type="varchar" MaxLength="15" />
+          <Property Name="Model" Type="varchar" MaxLength="32" />
+          <Property Name="ModelCount" Type="int" />
+          <Property Name="CustomerID" Type="int" />
+          <Property Name="EndMeterDate" Type="datetime" />
+          <Property Name="Volume" Type="decimal" Precision="38" Scale="6" />
         </EntityType>
         <Association Name="FK_ARCustomers_LocationID_ARCustomers">
           <End Role="ARCustomers" Type="Self.ARCustomers" Multiplicity="0..1" />
@@ -1597,7 +1616,8 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
     [vw_admin_EquipmentList_MeterGroup].[BillToID] AS [BillToID], 
     [vw_admin_EquipmentList_MeterGroup].[LocationID] AS [LocationID], 
     [vw_admin_EquipmentList_MeterGroup].[InstallDate] AS [InstallDate], 
-    [vw_admin_EquipmentList_MeterGroup].[MonthlyCost] AS [MonthlyCost]
+    [vw_admin_EquipmentList_MeterGroup].[MonthlyCost] AS [MonthlyCost], 
+    [vw_admin_EquipmentList_MeterGroup].[VendorID] AS [VendorID]
     FROM [_custom_eviews].[vw_admin_EquipmentList_MeterGroup] AS [vw_admin_EquipmentList_MeterGroup]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="vw_admin_SCBillingMeters_MeterGroup" EntityType="Self.vw_admin_SCBillingMeters_MeterGroup" store:Type="Views" store:Schema="_custom_eviews">
@@ -2182,10 +2202,10 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
     [vw_GVDeviceAnalyzer].[CustomerID] AS [CustomerID], 
     [vw_GVDeviceAnalyzer].[BillToID] AS [BillToID], 
     [vw_GVDeviceAnalyzer].[LocationID] AS [LocationID], 
-    [vw_GVDeviceAnalyzer].[ContractID] AS [ContractID], 
-    [vw_GVDeviceAnalyzer].[InstallDate] AS [InstallDate], 
     [vw_GVDeviceAnalyzer].[AvgBWVol] AS [AvgBWVol], 
-    [vw_GVDeviceAnalyzer].[AvgCLRVol] AS [AvgCLRVol]
+    [vw_GVDeviceAnalyzer].[AvgCLRVol] AS [AvgCLRVol], 
+    [vw_GVDeviceAnalyzer].[ContractID] AS [ContractID], 
+    [vw_GVDeviceAnalyzer].[InstallDate] AS [InstallDate]
     FROM [dbo].[vw_GVDeviceAnalyzer] AS [vw_GVDeviceAnalyzer]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="vw_maplocations" EntityType="Self.vw_maplocations" store:Type="Views" store:Schema="dbo">
@@ -2216,6 +2236,17 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
     [vw_ModelMatrix].[EndMeterDate] AS [EndMeterDate], 
     [vw_ModelMatrix].[Volume] AS [Volume]
     FROM [dbo].[vw_ModelMatrix] AS [vw_ModelMatrix]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vw_QuarterlyModelMatrix" EntityType="Self.vw_QuarterlyModelMatrix" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_QuarterlyModelMatrix].[InvoiceID] AS [InvoiceID], 
+    [vw_QuarterlyModelMatrix].[DeviceType] AS [DeviceType], 
+    [vw_QuarterlyModelMatrix].[Model] AS [Model], 
+    [vw_QuarterlyModelMatrix].[ModelCount] AS [ModelCount], 
+    [vw_QuarterlyModelMatrix].[CustomerID] AS [CustomerID], 
+    [vw_QuarterlyModelMatrix].[EndMeterDate] AS [EndMeterDate], 
+    [vw_QuarterlyModelMatrix].[Volume] AS [Volume]
+    FROM [dbo].[vw_QuarterlyModelMatrix] AS [vw_QuarterlyModelMatrix]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK_ARCustomers_LocationID_ARCustomers" Association="Self.FK_ARCustomers_LocationID_ARCustomers">
             <End Role="ARCustomers" EntitySet="ARCustomers" />
@@ -2571,6 +2602,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
             <End Role="SCContractMeterGroup" EntitySet="SCContractMeterGroups" />
           </AssociationSet>
           <EntitySet Name="vw_BillingMeterVolumesByDevice" EntityType="CoFreedomModel.vw_BillingMeterVolumesByDevice" />
+          <EntitySet Name="vw_QuarterlyModelMatrix" EntityType="CoFreedomModel.vw_QuarterlyModelMatrix" />
         </EntityContainer>
         <EntityType Name="v_SCEquipmentPreview_Custom">
           <Key>
@@ -3099,6 +3131,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
           <Property Name="LocationID" Type="Int32" />
           <Property Name="InstallDate" Type="DateTime" Precision="3" />
           <Property Name="MonthlyCost" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
+          <Property Name="VendorID" MaxLength="1024" FixedLength="false" Unicode="false" Type="String" />
         </EntityType>
         <EntityType Name="vw_admin_SCBillingMeters_MeterGroup">
           <Key>
@@ -3551,9 +3584,9 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
           <Property Name="BillToID" Type="Int32" />
           <Property Name="LocationID" Type="Int32" />
           <Property Name="InstallDate" Type="DateTime" Precision="3" />
-          <Property Name="AvgBWVol" Type="Decimal" Precision="38" Scale="6" />
-          <Property Name="AvgCLRVol" Type="Decimal" Precision="38" Scale="6" />
           <Property Name="ContractID" Type="Int32" />
+          <Property Name="AvgBWVol" Type="Decimal" Nullable="true" />
+          <Property Name="AvgCLRVol" Type="Decimal" Nullable="true" />
         </EntityType>
         <EntityType Name="ARCustomer">
           <Key>
@@ -3866,8 +3899,20 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
           <Property Name="EquipmentID" Type="Int32" Nullable="false" />
           <Property Name="EquipmentNumber" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
           <Property Name="InvoiceType" Type="String" Nullable="false" MaxLength="2" FixedLength="true" Unicode="false" />
-          <Property Name="ColorDisplay" Type="Decimal" Precision="18" Scale="6" />
-          <Property Name="ColorVolume" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="ColorDisplay" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+          <Property Name="ColorVolume" Type="Decimal" Precision="18" Scale="6" Nullable="false" />
+        </EntityType>
+        <EntityType Name="vw_QuarterlyModelMatrix">
+          <Key>
+            <PropertyRef Name="InvoiceID" />
+          </Key>
+          <Property Name="InvoiceID" Type="Int32" Nullable="false" />
+          <Property Name="DeviceType" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Model" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="ModelCount" Type="Int32" />
+          <Property Name="CustomerID" Type="Int32" />
+          <Property Name="EndMeterDate" Type="DateTime" Precision="3" />
+          <Property Name="Volume" Type="Decimal" Precision="38" Scale="6" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -4379,6 +4424,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
           <EntitySetMapping Name="vw_admin_EquipmentList_MeterGroup">
             <EntityTypeMapping TypeName="CoFreedomModel.vw_admin_EquipmentList_MeterGroup">
               <MappingFragment StoreEntitySet="vw_admin_EquipmentList_MeterGroup">
+                <ScalarProperty Name="VendorID" ColumnName="VendorID" />
                 <ScalarProperty Name="MonthlyCost" ColumnName="MonthlyCost" />
                 <ScalarProperty Name="InstallDate" ColumnName="InstallDate" />
                 <ScalarProperty Name="LocationID" ColumnName="LocationID" />
@@ -4751,9 +4797,9 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
           <EntitySetMapping Name="vw_GVDeviceAnalyzer">
             <EntityTypeMapping TypeName="CoFreedomModel.vw_GVDeviceAnalyzer">
               <MappingFragment StoreEntitySet="vw_GVDeviceAnalyzer">
-                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
                 <ScalarProperty Name="AvgCLRVol" ColumnName="AvgCLRVol" />
                 <ScalarProperty Name="AvgBWVol" ColumnName="AvgBWVol" />
+                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
                 <ScalarProperty Name="InstallDate" ColumnName="InstallDate" />
                 <ScalarProperty Name="LocationID" ColumnName="LocationID" />
                 <ScalarProperty Name="BillToID" ColumnName="BillToID" />
@@ -5010,6 +5056,19 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="vw_QuarterlyModelMatrix">
+            <EntityTypeMapping TypeName="CoFreedomModel.vw_QuarterlyModelMatrix">
+              <MappingFragment StoreEntitySet="vw_QuarterlyModelMatrix">
+                <ScalarProperty Name="Volume" ColumnName="Volume" />
+                <ScalarProperty Name="EndMeterDate" ColumnName="EndMeterDate" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="ModelCount" ColumnName="ModelCount" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="DeviceType" ColumnName="DeviceType" />
+                <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -5032,7 +5091,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram DiagramId="6e06c22b0f064ffb9a205d94ee7e7a2f" Name="Diagram1" ZoomLevel="108">
+      <Diagram DiagramId="6e06c22b0f064ffb9a205d94ee7e7a2f" Name="Diagram1" ZoomLevel="77">
         <EntityTypeShape EntityType="CoFreedomModel.v_ARCustomers" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.v_SCEquipmentPreview_Custom" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_ClientsOnContract" Width="1.5" PointX="7.75" PointY="4.75" IsExpanded="true" />
@@ -5068,7 +5127,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_BaseBillingCycleID_SCBillingCycles" ManuallyRouted="false" />
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_OverageBillingCycleID_SCBillingCycles" ManuallyRouted="false" />
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_RenewalCycleID_SCBillingCycles" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="CoFreedomModel.vw_GVDeviceAnalyzer" Width="1.5" PointX="20.375" PointY="7.75" />
+        <EntityTypeShape EntityType="CoFreedomModel.vw_GVDeviceAnalyzer" Width="3.875" PointX="20.375" PointY="7.75" />
         <EntityTypeShape EntityType="CoFreedomModel.ARCustomer" Width="1.5" PointX="20.375" PointY="18.875" />
         <AssociationConnector Association="CoFreedomModel.FK_ARCustomers_LocationID_ARCustomers" />
         <AssociationConnector Association="CoFreedomModel.FK_ARCustomers_MailToID_ARCustomers" />
@@ -5082,6 +5141,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_ModelMatrix' does not have a prim
         <AssociationConnector Association="CoFreedomModel.FK_SCContractMeterGroups_OverageBillingCycleID_SCBillingCycles" />
         <AssociationConnector Association="CoFreedomModel.FK_SCContractMeterGroups_ContractID_SCContracts" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_BillingMeterVolumesByDevice" Width="2.75" PointX="0.75" PointY="10.75" />
+        <EntityTypeShape EntityType="CoFreedomModel.vw_QuarterlyModelMatrix" Width="1.5" PointX="0.75" PointY="14.75" />
       </Diagram>
     </Diagrams>
   </Designer>

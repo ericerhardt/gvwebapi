@@ -6139,27 +6139,29 @@ namespace GVWebapi.Helpers.Reporting
             var customer = (from cs in db.ARCustomers
                             where cs.CustomerID == _customerID
                             select cs.CustomerNumber).FirstOrDefault();
-
-            var query2 = (from cu in db.vw_ModelMatrix
+            int LineNum = 1;
+            var query2 = (from cu in db.vw_QuarterlyModelMatrix
                           where cu.CustomerID == _customerID && cu.EndMeterDate >= FromDate
                           select new
                           {
+                            
                               Model = cu.Model,
-                              ModelCategory = cu.ModelCategory,
-                              Volume = cu.Volume
+                              DeviceType = cu.DeviceType,
+                              ModelCount =cu. ModelCount,
+                              TotalVolume = cu.Volume
                           }).ToList();
 
-            int LineNum = 1;
+
             var query = (from row in query2
-                         group row by new { row.Model, row.ModelCategory } into g
-                         orderby g.Key.ModelCategory, g.Key.Model
+                      
+                         orderby row.DeviceType, row.Model
                          select new
                          {
                              LineNumber = LineNum++,
-                             DeviceType = g.Key.ModelCategory,
-                             Model = g.Key.Model,
-                             ModelCount = g.Count(),
-                             TotalVolume = g.Sum(row => row.Volume)
+                             DeviceType = row.DeviceType,
+                             Model = row.Model,
+                             ModelCount =row.ModelCount,
+                             TotalVolume = row.TotalVolume
                          }).ToList();
 
 
@@ -6351,7 +6353,7 @@ namespace GVWebapi.Helpers.Reporting
 
                     Cell cell52 = new Cell() { CellReference = "E" + _rowindex.ToString(), StyleIndex = (UInt32Value)73U, DataType = CellValues.Number };
                     CellValue QuantityModel = new CellValue();
-                    QuantityModel.Text = item.ModelCount.ToString("#,###");
+                    QuantityModel.Text = item.ModelCount.Value.ToString("#,###");
                     cell52.Append(QuantityModel);
 
                     Cell cell53 = new Cell() { CellReference = "F" + _rowindex.ToString(), StyleIndex = (UInt32Value)98U, DataType = CellValues.Number };

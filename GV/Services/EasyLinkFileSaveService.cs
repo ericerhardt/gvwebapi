@@ -7,7 +7,7 @@ namespace GV.Services
 {
     public interface IEasyLinkFileSaveService
     {
-        EasyLinkEntity SaveFile(EasyLinkFileSaveModel model);
+        EasyLinkImportHistoryEntity SaveFile(EasyLinkFileSaveModel model);
     }
 
     public class EasyLinkFileSaveService : IEasyLinkFileSaveService
@@ -19,19 +19,19 @@ namespace GV.Services
             _globalViewConfiguration = globalViewConfiguration;
         }
 
-        public EasyLinkEntity SaveFile(EasyLinkFileSaveModel model)
+        public EasyLinkImportHistoryEntity SaveFile(EasyLinkFileSaveModel model)
         {
             var newFileAndPath = GetFileAndPath(model.FileName);
             SaveFileAndContents(newFileAndPath, model.Contents);
             return CreateAndReturnEasyLinkEntity(newFileAndPath, model);
         }
 
-        private EasyLinkEntity CreateAndReturnEasyLinkEntity(string newFileAndPath, EasyLinkFileSaveModel model)
+        private EasyLinkImportHistoryEntity CreateAndReturnEasyLinkEntity(string newFileAndPath, EasyLinkFileSaveModel model)
         {
             var fileInfo = new FileInfo(newFileAndPath);
-            var easyLinkEntity = new EasyLinkEntity();
+            var easyLinkEntity = new EasyLinkImportHistoryEntity();
             easyLinkEntity.FileName = model.FileName.Replace("\"", string.Empty);
-            easyLinkEntity.SavedFileName = fileInfo.Name;
+            easyLinkEntity.FileName = fileInfo.Name;
             easyLinkEntity.FileLocation = fileInfo.DirectoryName;
             easyLinkEntity.CreatedDateTime = DateTimeOffset.Now;
             return easyLinkEntity;

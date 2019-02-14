@@ -12,14 +12,16 @@ namespace GVWebapi.RemoteData
     using System;
     using System.Collections.Generic;
     
-    public partial class EasylinkImportHistory
+    public partial class EasylinkByClient
     {
-        public int ImportID { get; set; }
-        public string FileName { get; set; }
+        public int EasylinkImportID { get; set; }
+        public string emailaddress { get; set; }
+        public string FaxNumber { get; set; }
+        public Nullable<int> Pages { get; set; }
         public Nullable<System.DateTime> PeriodDate { get; set; }
-        public Nullable<int> ImportRecords { get; set; }
-        public Nullable<System.DateTime> ImportedOn { get; set; }
-        public string ImportedBy { get; set; }
-        public string FileLocation { get; set; }
+        public Nullable<int> ClientId { get; set; }
+        public string ClientName { get; set; }
+        public Nullable<int> PeriodYear { get; set; }
+        public Nullable<int> PeriodMonth { get; set; }
     }
 }

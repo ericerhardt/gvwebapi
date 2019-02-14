@@ -222,8 +222,8 @@
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\DeviceApiController.cs" />
     <Compile Include="Controllers\DevicesController.cs" />
-    <Compile Include="Controllers\EasyLinkApiController.cs" />
     <Compile Include="Controllers\EasyLinkChildMatchSaveModel.cs" />
+    <Compile Include="Controllers\EasylinkController.cs" />
     <Compile Include="Controllers\EditScheduleApiController.cs" />
     <Compile Include="Controllers\EquipmentManagersController.cs" />
     <Compile Include="Controllers\FprContactController.cs" />
@@ -259,6 +259,7 @@
     <Compile Include="Models\Devices\DeviceSearchModel.cs" />
     <Compile Include="Models\Devices\FormatterReplacedModel.cs" />
     <Compile Include="Models\Devices\SetScheduleSaveModel.cs" />
+    <Compile Include="Models\Easylink\EasyLinkFileSaveModel.cs" />
     <Compile Include="Models\EquipmentLocation.cs" />
     <Compile Include="Models\EquipmentManagerViewModel.cs" />
     <Compile Include="Models\EquipmentSaveModel.cs" />
@@ -332,7 +333,7 @@
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\CostAvoidance.cs">
-      <DependentUpon>CustomerService.tt</DependentUpon>
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\CostCenterService.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
@@ -376,20 +377,26 @@
     <Compile Include="RemoteData\EasyLink.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="RemoteData\EasylinkByClient.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="RemoteData\EasyLinkChildMatch.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\EasylinkData.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\easylinkimport.cs">
       <DependentUpon>CustomerService.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\EasylinkImportHistory.cs">
-      <DependentUpon>CustomerService.tt</DependentUpon>
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\EasyLinkItem.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\EasyLinkMapping.cs">
-      <DependentUpon>CustomerService.tt</DependentUpon>
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\EasylinkReportByDate_Result.cs">
       <DependentUpon>CustomerService.tt</DependentUpon>
@@ -544,6 +551,9 @@
     <Compile Include="RemoteData\vw_PagesOnContract.cs">
       <DependentUpon>coFreedomEntities.tt</DependentUpon>
     </Compile>
+    <Compile Include="RemoteData\vw_QuarterlyModelMatrix.cs">
+      <DependentUpon>coFreedomEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="RemoteData\vw_REVisionDataImport.cs">
       <DependentUpon>coFreedomEntities.tt</DependentUpon>
     </Compile>
@@ -581,6 +591,7 @@
     <Compile Include="Services\CycleHistoryService.cs" />
     <Compile Include="Services\CyclePeriodService.cs" />
     <Compile Include="Services\DeviceService.cs" />
+    <Compile Include="Services\EasyLinkServices.cs" />
     <Compile Include="Services\EditScheduleService.cs" />
     <Compile Include="Services\LocationsService.cs" />
     <Compile Include="Services\MailParser.cs" />
@@ -658,6 +669,7 @@
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <None Include="Properties\PublishProfiles\GlobalView-FTP.pubxml" />
     <None Include="Properties\PublishProfiles\GVWebapi.pubxml" />
     <EntityDeploy Include="RemoteData\coFreedomEntities.edmx">
       <Generator>EntityModelCodeGenerator</Generator>

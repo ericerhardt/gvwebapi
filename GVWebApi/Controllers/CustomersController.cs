@@ -93,7 +93,8 @@ namespace GVWebapi.Controllers
         [System.Web.Http.HttpGet]
         public async Task<IHttpActionResult> SetCustomerLongLat(int LocationID)
         {
-            var Locations = _coFreedomEntities.ARCustomers.Where(c => c.LocationID == LocationID && c.Active == true)
+            CoFreedomEntities db = new CoFreedomEntities();
+            var Locations = db.ARCustomers.Where(c => c.LocationID == LocationID && c.Active == true)
                                                 .Select(x => new Customer
                                                 {
                                                     CustomerID = x.CustomerID,
@@ -132,16 +133,17 @@ namespace GVWebapi.Controllers
 
                 if (result.Results.Count  > 0)
                 {
-                   Location.Latitude = (decimal)result.Results.First().Geometry.Location.Lat;
-                    Location.Longitude = (decimal)result.Results.First().Geometry.Location.Lng;
-                    _coFreedomEntities.SaveChanges();
+                    var loc = db.ARCustomers.Find(Location.CustomerID);
+                    loc.Latitude = (decimal)result.Results.First().Geometry.Location.Lat;
+                    loc.Longitude = (decimal)result.Results.First().Geometry.Location.Lng;
+                    db.SaveChanges();
                 }
               
 
             }
 
+           
 
-            
             return Json(Locations);
         }
     }

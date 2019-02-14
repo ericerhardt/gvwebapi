@@ -75,7 +75,7 @@ namespace GVWebapi.Controllers
             {
                 return NotFound();
             }
-            return Json(modelView);
+            return Json(new { equipments = modelView.Equipments, servicehistories = modelView.Servicehistories });
         }
 
         [HttpGet, Route("api/customerdevices/{CustomerID}")]
@@ -178,7 +178,7 @@ namespace GVWebapi.Controllers
             var ret = new[]
            {
                    new { label= "B/W Volumes", color = "#768294", data =   devices.Select(c => new object[]{  DateTimeExtensions.GetJavascriptTimeStamp(c.ReadingDate.Value)   ,c.BWVolume.Value.ToString("#.00")  }) },
-                   new { label= "Color Volumes", color = "#1f92fe" , data =  devices.Select(c => new object[]{ DateTimeExtensions.GetJavascriptTimeStamp(c.ReadingDate.Value) ,  c.ColorVolume.Value.ToString("#.00")   }) },
+                   new { label= "Color Volumes", color = "#1f92fe" , data =  devices.Select(c => new object[]{ DateTimeExtensions.GetJavascriptTimeStamp(c.ReadingDate.Value) ,  c.ColorVolume.ToString("#.00")   }) },
 
             };
             return Json(ret);

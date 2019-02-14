@@ -12,7 +12,7 @@ namespace GV.Services
 {
     public interface IEasyLinkService
     {
-        void LoadFile(EasyLinkEntity easyLink);
+        void LoadFile(EasyLinkImportHistoryEntity easyLink);
         IList<EasyLinkViewModel> GetAll();
     }
 
@@ -29,38 +29,38 @@ namespace GV.Services
             _globalViewConfiguration = globalViewConfiguration;
         }
 
-        public void LoadFile(EasyLinkEntity easyLink)
+        public void LoadFile(EasyLinkImportHistoryEntity easyLink)
         {
-            var fullFilePath = Path.Combine(easyLink.FileLocation, easyLink.SavedFileName);
+            var fullFilePath = Path.Combine(easyLink.FileLocation, easyLink.FileName);
             var allLines = LoadFileFromDisk(fullFilePath).Skip(1).ToList();
-            easyLink.NumberOfLines = allLines.Count;
+            easyLink.ImportedRecords = allLines.Count;
 
             _repository.Add(easyLink);
             _unitOfWork.Commit();
 
-            var itemsToInsert = new List<EasyLinkItemInsertModel>();
+            var itemsToInsert = new List<EasyLinkDataInsertModel>();
 
             foreach (var lineItem in allLines)
             {
                 var array = lineItem.Split(',');
-                var model = new EasyLinkItemInsertModel();
-                model.EasyLinkId = easyLink.EasyLinkId;
+                var model = new EasyLinkDataInsertModel();
+                model.ImportID = easyLink.ImportID;
                 model.Child = Convert.ToInt32(array[0]);
-                model.Email = array[1];
-                model.Fax = array[2];
-                model.DateTime = Convert.ToDateTime($"{array[3]} {array[4]}");
+                model.EmailAddress = array[1];
+                model.FaxNumber = array[2];
+                model.TransDate = Convert.ToDateTime($"{array[3]} {array[4]}");
                 model.Description = array[5];
                 model.Duration = Convert.ToDecimal(array[6]);
                 model.Pages = Convert.ToInt32(array[7]);
                 model.Charge = Convert.ToDecimal(array[8]);
-                model.MessageNumber = array[9];
+                model.Messages = array[9];
 
                 itemsToInsert.Add(model);
             }
 
             using (var bulkCopy = new SqlBulkCopy(_globalViewConfiguration.GlobalViewConnectionString))
             {
-                bulkCopy.DestinationTableName = "EasyLinkItem";
+                bulkCopy.DestinationTableName = "EasyLinkData";
                 bulkCopy.WriteToServer(itemsToInsert.ToDataTable());
             }
         }
@@ -91,6 +91,22 @@ namespace GV.Services
             public int Pages { get; set; }
             public decimal Charge { get; set; }
             public string MessageNumber { get; set; }
+        }
+        private class EasyLinkDataInsertModel
+        {
+            //this column has to be here for bulk insert to work
+            public long EasylinkImportID { get; set; }
+            public DateTime PeriodDate { get; set; }
+            public long ImportID { get; set; }
+            public int Child { get; set; }
+            public string EmailAddress { get; set; }
+            public string FaxNumber { get; set; }
+            public DateTime TransDate { get; set; }
+            public string Description { get; set; }
+            public decimal Duration { get; set; }
+            public int Pages { get; set; }
+            public decimal Charge { get; set; }
+            public string Messages { get; set; }
         }
     }
 }

@@ -53,5 +53,6 @@ namespace GVWebapi.RemoteData
         public Nullable<int> LocationID { get; set; }
         public Nullable<System.DateTime> InstallDate { get; set; }
         public string MonthlyCost { get; set; }
+        public string VendorID { get; set; }
     }
 }

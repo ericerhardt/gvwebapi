@@ -52,8 +52,8 @@ namespace GVWebapi.RemoteData
         public Nullable<int> BillToID { get; set; }
         public Nullable<int> LocationID { get; set; }
         public Nullable<System.DateTime> InstallDate { get; set; }
+        public Nullable<int> ContractID { get; set; }
         public Nullable<decimal> AvgBWVol { get; set; }
         public Nullable<decimal> AvgCLRVol { get; set; }
-        public Nullable<int> ContractID { get; set; }
     }
 }

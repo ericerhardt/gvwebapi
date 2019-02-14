@@ -24,10 +24,10 @@ namespace GVWebapi.Controllers
         {
             ExcelRevisionExport er = new ExcelRevisionExport();
             var contract = _context.vw_csContractList.OrderBy(c => c.ContractID).Where(c => c.CustomerID == ClientID).First().ContractID;
-            var Replacements = _db.AssetReplacements.Where(d => d.CustomerID == ClientID).Sum(c => c.ReplacementValue).ToString() ?? "0";
-            var CostAvoidance =  String.IsNullOrEmpty(db.CostAvoidances.Where(c => c.CustomerID == ClientID).Sum(c => c.TotalSavingsCost).ToString()) ? "0" : db.CostAvoidances.Where(c => c.CustomerID == ClientID).Sum(c => c.TotalSavingsCost).ToString();
-            var RollOvers = er.GetRolloverHistory(contract).ToList().Sum(o=> o.TotalSavings).ToString() ?? "0";
-           // var RollOvers = RollOverData.Sum(r => r.Rollover * r.CPP).ToString() ??"0";
+            var Replacements = _db.AssetReplacements.Where(d => d.CustomerID == ClientID).Sum(c => c.ReplacementValue).Value.ToString() ?? "0";
+            var CostAvoidance =  String.IsNullOrEmpty(db.CostAvoidances.Where(c => c.CustomerID == ClientID).Sum(c => c.TotalSavingsCost).ToString()) ? "0" : db.CostAvoidances.Where(c => c.CustomerID == ClientID).Sum(c => c.TotalSavingsCost).Value.ToString();
+            var Rollovers =   _db.QuarterlyRollovers.Where(r => r.ContractID == contract && r.Rollovers > 0).Sum(x => x.Rollovers * x.CPP) ?? 0;
+           
             var Revision = er.RevisionSummary(contract).Sum(o=> o.Savings).ToString() ?? "0" ;
 
         
@@ -36,7 +36,7 @@ namespace GVWebapi.Controllers
                    new { label="Replacements", color = "#4acab4", data =   Replacements },
                    new { label="REVision", color = "#ffea88" , data =  Revision},
                    new { label="Cost Avoidance", color = "#ff8153" , data =  CostAvoidance},
-                   new { label="Rollovers", color = "#878bb6" , data =  RollOvers}
+                   new { label="Rollovers", color = "#878bb6" , data =  Rollovers}
             };
             return Json(ret);
         }
@@ -44,9 +44,17 @@ namespace GVWebapi.Controllers
         [HttpGet, Route("api/vitals/{id}")]
         public IHttpActionResult GetVitals(int id)
         {
+            ExcelRevisionExport er = new ExcelRevisionExport();
+            var contract = _context.vw_csContractList.OrderBy(c => c.ContractID).Where(c => c.CustomerID == id).First().ContractID;
+            var Replacements = _db.AssetReplacements.Where(d => d.CustomerID == id).Sum(c => c.ReplacementValue) ?? 0;
+            var CostAvoidance = _db.CostAvoidances.Where(c => c.CustomerID == id).Sum(c => c.TotalSavingsCost) ?? 0;
+            var Rollovers =   _db.QuarterlyRollovers.Where(r => r.ContractID == contract && r.Rollovers > 0).Sum(x=> x.Rollovers * x.CPP);
+         
+            var Revision = er.RevisionSummary(contract).Sum(o => o.Savings);
+
             var ContractID = _context.SCContracts.FirstOrDefault(x => x.CustomerID == id).ContractID;
             var deviceCount =  _context.vw_admin_SCEquipments_22.Count(x => x.CustomerID == id && x.Active == true);
-            var recovered = visionSummary(ContractID);
+            var recovered = Replacements + CostAvoidance + Rollovers + Revision;
             var contractPages = ContractedPages(id);
             var loggedinUsers = _db.GlobalViewUsers.Count(x => x.idClient == id);
             return Json(new { devices = deviceCount,visitors = loggedinUsers, recovered, pages = contractPages });

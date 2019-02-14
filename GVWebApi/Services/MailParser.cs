@@ -13,9 +13,6 @@ namespace GVWebapi.Services
 {
     public class MailParser
     {
- 
- 
- 
        private static string ParseSupplyAssignment(String email,ServiceCallModel oSupplyInfo)
         {
             var freedomEntities = new CoFreedomEntities();
@@ -30,6 +27,7 @@ namespace GVWebapi.Services
                     
                     var oSupply = freedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.EquipmentID == oSupplyInfo.EquipmentID).FirstOrDefault();
                     var sActive = (oSupply.Active ? "Active" : "In-Active");
+                    var EquipmentNumber = oSupply.VendorID != string.Empty ? $"{oSupply.EquipmentNumber} ({oSupply.VendorID})" : oSupply.EquipmentNumber;
                     string oEmail = email.Replace("_#SERVICESUPPLY#_", "Supply ");
                     email = oEmail.Replace("_#ID#_", oSupplyInfo.CallID);
                     oEmail = email.Replace("_#CLIENTNAME#_", oSupply.CustomerName);
@@ -105,6 +103,7 @@ namespace GVWebapi.Services
 
                     var oSupply = freedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.EquipmentID == oSupplyInfo.EquipmentID).FirstOrDefault();
                     var sActive = (oSupply.Active ? "Active" : "In-Active");
+                    var EquipmentNumber = oSupply.VendorID != string.Empty ? $"{oSupply.EquipmentNumber} ({oSupply.VendorID})" : oSupply.EquipmentNumber;
                     string oEmail = email.Replace("_#SERVICESUPPLY#_", "Supply ");
                     email = oEmail.Replace("_#ID#_", oSupplyInfo.CallID);
                     oEmail = email.Replace("_#CLIENTNAME#_", oSupply.CustomerName);
@@ -120,7 +119,7 @@ namespace GVWebapi.Services
                     oEmail = email.Replace("_#YEL#_", oSupplyInfo.Yellow.ToString());
                     email = oEmail.Replace("_#MAG#_", oSupplyInfo.Magenta.ToString());
                     oEmail = email.Replace("_#ID#_", oSupplyInfo.CallID);
-                    email = oEmail.Replace("_#DEVICEID#_", oSupply.EquipmentNumber);
+                    email = oEmail.Replace("_#DEVICEID#_", EquipmentNumber);
                     oEmail = email.Replace("_#ISSUEID#_", oSupplyInfo.CallID);
                     email = oEmail.Replace("_#MODEL#_", oSupply.Model);
                     oEmail = email.Replace("_#SERIAL#_", oSupply.SerialNumber);
@@ -179,6 +178,7 @@ namespace GVWebapi.Services
 
                     var equipQuery = freedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.EquipmentID == oSupplyInfo.EquipmentID).FirstOrDefault();
                     var sActive = (equipQuery.Active ? "Active" : "In-Active");
+                    var EquipmentNumber = equipQuery.VendorID != string.Empty ? $"{equipQuery.EquipmentNumber} ({equipQuery.VendorID})" : equipQuery.EquipmentNumber;
                     string oEmail = email.Replace("_#SERVICESUPPLY#_", "Service ");
                     email = oEmail.Replace("_#ID#_", oSupplyInfo.CallID);
                     oEmail = email.Replace("_#CLIENTNAME#_", equipQuery.CustomerName);
@@ -201,7 +201,7 @@ namespace GVWebapi.Services
                     email = oEmail.Replace("_#USER#_", equipQuery.AssetUser);
                     oEmail = email.Replace("_#ISSUEID#_", oSupplyInfo.CallID);
                     email = oEmail.Replace("_#IPADDRESS#_", equipQuery.IPAddress);
-                    oEmail = email.Replace("_#DEVICEID#_", equipQuery.EquipmentNumber);
+                    oEmail = email.Replace("_#DEVICEID#_", EquipmentNumber);
                     email = oEmail.Replace("_#FLOOR#_", equipQuery.Floor);
                     return email;
                 }
@@ -241,7 +241,7 @@ namespace GVWebapi.Services
                 {
 
                     var equipQuery = freedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.EquipmentID == oSupplyInfo.EquipmentID).FirstOrDefault();
-
+                    var EquipmentNumber = equipQuery.VendorID != string.Empty ? $"{equipQuery.EquipmentNumber} ({equipQuery.VendorID})" : equipQuery.EquipmentNumber;
                     var sActive = (equipQuery.Active ? "Active" : "In-Active");
                     string oEmail = email.Replace("_#SERVICESUPPLY#_", "Service ");
                     email = oEmail.Replace("_#ID#_", oSupplyInfo.CallID);
@@ -263,7 +263,7 @@ namespace GVWebapi.Services
                     email = oEmail.Replace("_#FLOOR#_", equipQuery.Floor);
                     oEmail = email.Replace("_#USER#_", equipQuery.AssetUser);
                     email = oEmail.Replace("_#IPADDRESS#_", equipQuery.IPAddress);
-                    oEmail = email.Replace("_#DEVICEID#_", equipQuery.EquipmentNumber);
+                    oEmail = email.Replace("_#DEVICEID#_",  EquipmentNumber);
                     email = oEmail.Replace("_#REQUESTOR#_", oSupplyInfo.Name);
                     oEmail = email.Replace("_#ISSUEID#_", oSupplyInfo.CallID);
                     return oEmail;

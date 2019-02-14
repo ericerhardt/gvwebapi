@@ -12,14 +12,14 @@ namespace GVWebapi.RemoteData
     using System;
     using System.Collections.Generic;
     
-    public partial class EasylinkImportHistory
+    public partial class vw_QuarterlyModelMatrix
     {
-        public int ImportID { get; set; }
-        public string FileName { get; set; }
-        public Nullable<System.DateTime> PeriodDate { get; set; }
-        public Nullable<int> ImportRecords { get; set; }
-        public Nullable<System.DateTime> ImportedOn { get; set; }
-        public string ImportedBy { get; set; }
-        public string FileLocation { get; set; }
+        public int InvoiceID { get; set; }
+        public string DeviceType { get; set; }
+        public string Model { get; set; }
+        public Nullable<int> ModelCount { get; set; }
+        public Nullable<int> CustomerID { get; set; }
+        public Nullable<System.DateTime> EndMeterDate { get; set; }
+        public Nullable<decimal> Volume { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace GVWebapi.RemoteData
         public int EquipmentID { get; set; }
         public string EquipmentNumber { get; set; }
         public string InvoiceType { get; set; }
-        public Nullable<decimal> ColorDisplay { get; set; }
-        public Nullable<decimal> ColorVolume { get; set; }
+        public decimal ColorDisplay { get; set; }
+        public decimal ColorVolume { get; set; }
     }
 }
