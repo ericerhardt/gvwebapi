@@ -78,7 +78,7 @@ namespace GVWebapi.Controllers
                 string OverideDate = model.OverrideDate == null ? model.StartDate : model.OverrideDate;
                 DateTime StartDate = DateTime.Parse(model.PeriodDate).AddMonths(-2);
                 DateTime QTR = Convert.ToDateTime(model.PeriodDate);
-
+                model.InvoiceID = _coFreedomEntities.vw_REVisionInvoices.Where(x => x.CustomerID == model.CustomerID && x.PeriodDate == QTR).Select(x => x.InvoiceID).FirstOrDefault();
                 String filename = client.CustomerName + "-" + QTR.Month + "-" + QTR.Year + "_Quarterly.xlsx";
                 string outfile = System.Web.Hosting.HostingEnvironment.MapPath("~/Reports/" + filename) ;
 

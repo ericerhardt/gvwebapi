@@ -23,8 +23,18 @@ namespace GVWebapi.Controllers
         public IHttpActionResult SavingsByCategory(int ClientID)
         {
             ExcelRevisionExport er = new ExcelRevisionExport();
+            var ReplacementValue = 0.00M;
             var contract = _context.vw_csContractList.OrderBy(c => c.ContractID).Where(c => c.CustomerID == ClientID).First().ContractID;
-            var Replacements = _db.AssetReplacements.Where(d => d.CustomerID == ClientID).Sum(c => c.ReplacementValue).Value.ToString() ?? "0";
+            var Replacements = _db.AssetReplacements.Where(d => d.CustomerID == ClientID && d.ReplacementValue != null).ToList();
+            if(Replacements != null)
+            {
+                 ReplacementValue = Replacements.Sum(c => c.ReplacementValue).Value;
+            }
+             else
+            {
+                  ReplacementValue = Replacements.Sum(c => c.ReplacementValue).Value;
+            }
+            
             var CostAvoidance =  String.IsNullOrEmpty(db.CostAvoidances.Where(c => c.CustomerID == ClientID).Sum(c => c.TotalSavingsCost).ToString()) ? "0" : db.CostAvoidances.Where(c => c.CustomerID == ClientID).Sum(c => c.TotalSavingsCost).Value.ToString();
             var Rollovers =   _db.QuarterlyRollovers.Where(r => r.ContractID == contract && r.Rollovers > 0).Sum(x => x.Rollovers * x.CPP) ?? 0;
            
@@ -33,7 +43,7 @@ namespace GVWebapi.Controllers
         
             var ret = new object[]
            {
-                   new { label="Replacements", color = "#4acab4", data =   Replacements },
+                   new { label="Replacements", color = "#4acab4", data =   ReplacementValue },
                    new { label="REVision", color = "#ffea88" , data =  Revision},
                    new { label="Cost Avoidance", color = "#ff8153" , data =  CostAvoidance},
                    new { label="Rollovers", color = "#878bb6" , data =  Rollovers}

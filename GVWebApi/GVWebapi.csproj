@@ -222,7 +222,8 @@
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\DeviceApiController.cs" />
     <Compile Include="Controllers\DevicesController.cs" />
-    <Compile Include="Controllers\EasyLinkChildMatchSaveModel.cs" />
+    <Compile Include="Models\Easylink\EasyLinkChildManagerModel.cs" />
+    <Compile Include="Models\Easylink\EasyLinkChildMatchSaveModel.cs" />
     <Compile Include="Controllers\EasylinkController.cs" />
     <Compile Include="Controllers\EditScheduleApiController.cs" />
     <Compile Include="Controllers\EquipmentManagersController.cs" />
@@ -247,7 +248,7 @@
     <Compile Include="Helpers\InMemoryMultipartFormDataStreamProvider.cs" />
     <Compile Include="Helpers\RevisionExcel.cs" />
     <Compile Include="Helpers\SqlExtensions.cs" />
-    <Compile Include="Models\ChildManagerExistingData.cs" />
+    <Compile Include="Models\Easylink\ChildManagerExistingData.cs" />
     <Compile Include="Models\ContactClientsViewModel.cs" />
     <Compile Include="Models\ContactViewModel.cs" />
     <Compile Include="Models\Customers.cs" />
@@ -259,7 +260,9 @@
     <Compile Include="Models\Devices\DeviceSearchModel.cs" />
     <Compile Include="Models\Devices\FormatterReplacedModel.cs" />
     <Compile Include="Models\Devices\SetScheduleSaveModel.cs" />
+    <Compile Include="Models\Easylink\EasyLinkChildSwitchModel.cs" />
     <Compile Include="Models\Easylink\EasyLinkFileSaveModel.cs" />
+    <Compile Include="Models\Easylink\EasyLinkUnMappedChildModel.cs" />
     <Compile Include="Models\EquipmentLocation.cs" />
     <Compile Include="Models\EquipmentManagerViewModel.cs" />
     <Compile Include="Models\EquipmentSaveModel.cs" />
@@ -399,7 +402,7 @@
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\EasylinkReportByDate_Result.cs">
-      <DependentUpon>CustomerService.tt</DependentUpon>
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\EquipmentManager.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
@@ -588,6 +591,7 @@
       <DependentUpon>coFreedomEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="Services\CoFreedomDeviceService.cs" />
+    <Compile Include="Services\CustomMultipartFormDataStreamProvider.cs" />
     <Compile Include="Services\CycleHistoryService.cs" />
     <Compile Include="Services\CyclePeriodService.cs" />
     <Compile Include="Services\DeviceService.cs" />

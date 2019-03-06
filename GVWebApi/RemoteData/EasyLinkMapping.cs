@@ -18,6 +18,7 @@ namespace GVWebapi.RemoteData
         public Nullable<int> ChildId { get; set; }
         public Nullable<int> ClientId { get; set; }
         public string ClientName { get; set; }
+        public Nullable<bool> IsEasyLinkOnly { get; set; }
     
         public virtual EasyLinkMapping EasyLinkMapping1 { get; set; }
         public virtual EasyLinkMapping EasyLinkMapping2 { get; set; }

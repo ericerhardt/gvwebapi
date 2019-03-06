@@ -144,7 +144,7 @@ namespace GVWebapi.Helpers
                 a.ClientCost = revision.clientBase;
                 a.Credits =  revision.credits * (monthsDiff + 1);
                 a.Savings =  (a.ClientCost + a.ClientOverageCost) - ((a.FPRCost + a.FPROverageCost ) - a.Credits);
-                if(a.Savings != 0.00M)
+                if(a.Savings != 0.00M && a.ClientCost > 0)
                 a.Pct =  (a.Savings /(a.ClientCost + a.ClientOverageCost));
                 if (a.Pct < 0)
                     a.Pct = 0.00M;

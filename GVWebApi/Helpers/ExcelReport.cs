@@ -6135,13 +6135,14 @@ namespace GVWebapi.Helpers.Reporting
             //                   orderby cf.InvoiceID descending
             //                   select cf).FirstOrDefault();
              var ToDate = Convert.ToDateTime(period).AddDays(1);
+            var PeriodDate = Convert.ToDateTime(period).AddMonths(-1).AddDays(1);
              var FromDate = Convert.ToDateTime(_startDate);
             var customer = (from cs in db.ARCustomers
                             where cs.CustomerID == _customerID
                             select cs.CustomerNumber).FirstOrDefault();
             int LineNum = 1;
             var query2 = (from cu in db.vw_QuarterlyModelMatrix
-                          where cu.CustomerID == _customerID && cu.EndMeterDate >= FromDate
+                          where cu.InvoiceID == _invoiceID
                           select new
                           {
                             
@@ -10029,7 +10030,7 @@ namespace GVWebapi.Helpers.Reporting
 
             SheetData sheetData6 = new SheetData();
 
-            CustomerPortalEntities db = new CustomerPortalEntities();
+            GlobalViewEntities db = new GlobalViewEntities();
             var FromDate = Convert.ToDateTime(_period).AddMonths(-2);
             var ToDate =  Convert.ToDateTime(_period);
 

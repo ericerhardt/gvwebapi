@@ -1,8 +1,8 @@
-﻿namespace GVWebapi.Controllers
+﻿namespace GVWebapi.Models.Easylink
 {
     public class EasyLinkChildMatchSaveModel
     {
-        public long CustomerId { get; set; }
+        public int CustomerId { get; set; }
         public int ChildId { get; set; }
         public bool IsEasyLinkOnly { get; set; }
     }

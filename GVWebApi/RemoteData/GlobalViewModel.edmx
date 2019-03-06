@@ -194,6 +194,7 @@
           <Property Name="ChildId" Type="int" />
           <Property Name="ClientId" Type="int" />
           <Property Name="ClientName" Type="varchar" MaxLength="254" />
+          <Property Name="IsEasyLinkOnly" Type="bit" />
         </EntityType>
         <EntityType Name="EquipmentManager">
           <Key>
@@ -572,6 +573,11 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="EasylinkReportByDate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="clientId" Type="int" Mode="In" />
+          <Parameter Name="startDate" Type="varchar" Mode="In" />
+          <Parameter Name="endDate" Type="varchar" Mode="In" />
+        </Function>
         <EntityContainer Name="GlobalViewModelStoreContainer">
           <EntitySet Name="AssetReplacement" EntityType="Self.AssetReplacement" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClientSettings" EntityType="Self.ClientSettings" Schema="dbo" store:Type="Tables" />
@@ -808,6 +814,11 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
             <End Role="EasyLinkMapping1" EntitySet="EasyLinkMappings" />
           </AssociationSet>
           <EntitySet Name="CostAvoidances" EntityType="GlobalViewModel.CostAvoidance" />
+          <FunctionImport Name="EasylinkReportByDate" ReturnType="Collection(GlobalViewModel.EasylinkReportByDate_Result)">
+            <Parameter Name="clientId" Mode="In" Type="Int32" />
+            <Parameter Name="startDate" Mode="In" Type="String" />
+            <Parameter Name="endDate" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="ContactClient">
           <Key>
@@ -1324,6 +1335,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <Property Name="ClientName" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="EasyLinkMapping1" Relationship="GlobalViewModel.FK_EasyLinkMapping_EasyLinkMapping" FromRole="EasyLinkMapping" ToRole="EasyLinkMapping1" />
           <NavigationProperty Name="EasyLinkMapping2" Relationship="GlobalViewModel.FK_EasyLinkMapping_EasyLinkMapping" FromRole="EasyLinkMapping1" ToRole="EasyLinkMapping" />
+          <Property Name="IsEasyLinkOnly" Type="Boolean" />
         </EntityType>
         <EntityType Name="EasylinkByClient">
           <Key>
@@ -1366,6 +1378,11 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <Property Name="Months" Type="Int32" />
           <Property Name="Comments" Type="String" MaxLength="1050" FixedLength="false" Unicode="false" />
         </EntityType>
+        <ComplexType Name="EasylinkReportByDate_Result">
+          <Property Type="String" Name="emailaddress" Nullable="true" MaxLength="254" />
+          <Property Type="Int32" Name="Pages" Nullable="true" />
+          <Property Type="String" Name="FaxNumber" Nullable="true" MaxLength="150" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1794,6 +1811,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <EntitySetMapping Name="EasyLinkMappings">
             <EntityTypeMapping TypeName="GlobalViewModel.EasyLinkMapping">
               <MappingFragment StoreEntitySet="EasyLinkMapping">
+                <ScalarProperty Name="IsEasyLinkOnly" ColumnName="IsEasyLinkOnly" />
                 <ScalarProperty Name="ClientName" ColumnName="ClientName" />
                 <ScalarProperty Name="ClientId" ColumnName="ClientId" />
                 <ScalarProperty Name="ChildId" ColumnName="ChildId" />
@@ -1832,6 +1850,15 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="EasylinkReportByDate" FunctionName="GlobalViewModel.Store.EasylinkReportByDate">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="GlobalViewModel.EasylinkReportByDate_Result">
+                <ScalarProperty Name="emailaddress" ColumnName="emailaddress" />
+                <ScalarProperty Name="Pages" ColumnName="Pages" />
+                <ScalarProperty Name="FaxNumber" ColumnName="FaxNumber" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

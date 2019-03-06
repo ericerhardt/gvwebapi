@@ -10,5 +10,12 @@
 
         public string FileName { get; }
         public byte[] Contents { get; }
+
+    }
+    public class EasyLinkUploadModel
+    {
+        public string UserName { get; set; }
+        public string PeriodDate { get; set; }
+        public EasyLinkFileSaveModel EasyLinkFile { get; set; }
     }
 }

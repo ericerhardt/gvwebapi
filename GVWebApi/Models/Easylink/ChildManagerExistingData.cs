@@ -1,8 +1,8 @@
-﻿namespace GVWebapi.Models
+﻿namespace GVWebapi.Models.Easylink
 {
     public class ChildManagerExistingData
     {
-        public long CustomerId { get; set; }
+        public int CustomerId { get; set; }
         public int ChildId { get; set; }
     }
 }

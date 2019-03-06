@@ -10,7 +10,7 @@ namespace GVWebapi.Controllers
 {
     public class CostAvoidancesController : ApiController
     {
-        private readonly CustomerPortalEntities _customerPortalEntities = new CustomerPortalEntities();
+        private readonly GlobalViewEntities _customerPortalEntities = new GlobalViewEntities();
 
         public IQueryable<CostAvoidance> GetCostAvoidances()
         {
@@ -79,8 +79,6 @@ namespace GVWebapi.Controllers
 
             if (CostAvoidanceExists(costAvoidance.CostAvoidanceID))
             {
-                 
-
 
                 _customerPortalEntities.Entry(costAvoidance).State = System.Data.Entity.EntityState.Modified;
  

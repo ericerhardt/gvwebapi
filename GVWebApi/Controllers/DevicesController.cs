@@ -140,6 +140,7 @@ namespace GVWebapi.Controllers
             return Json(new { Devices = devices, MaxVolume = maxvolume });
 
         }
+
         [HttpGet, Route("api/devicevolumesgridv2/{CustomerId}/{Id}/{FromDate?}/{ToDate?}")]
         public IHttpActionResult GetDeviceVolumesGridV2(int customerId, string id, DateTime? fromDate, DateTime? toDate)
         {
@@ -160,8 +161,6 @@ namespace GVWebapi.Controllers
             return Json(new { Devices = devices, MaxVolume = maxvolume });
 
         }
-
-
 
         [HttpGet, Route("api/devicevolumesv2/{CustomerId}/{Id}/{FromDate?}/{ToDate?}")]
         public IHttpActionResult GetDeviceVolumesV2(int customerId, string id, DateTime? fromDate, DateTime? toDate)
@@ -274,6 +273,7 @@ namespace GVWebapi.Controllers
             }
             return Ok("Device not Deleted.");
         }
+
         [HttpGet, Route("api/getdevicesonschedule/{scheduleId}")]
         public IHttpActionResult GetDevicesOnSchedule(long scheduleId)
         {
@@ -283,6 +283,7 @@ namespace GVWebapi.Controllers
             _globalViewEntities.SaveChanges();
             return Json(devices);
         }
+
         [HttpGet, Route("api/getdevicesremoved/{customerId}")]
         public IHttpActionResult GetDevicesRemoved(int customerId)
         {
@@ -290,6 +291,7 @@ namespace GVWebapi.Controllers
             var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.CustomerID == customerId && x.NumberOfContractsActive == null).ToList();
             return Json(devices);
         }
+
         [HttpGet, Route("api/getdevicesunallocated/{customerId}")]
         public IHttpActionResult GetDevicesUnallocated(int customerId)
         {
@@ -298,6 +300,7 @@ namespace GVWebapi.Controllers
             var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => (x.CustomerID == customerId && x.NumberOfContractsActive > 0) && !schedules.Contains(x.ScheduleNumber)).ToList();
             return Json(new { devices, schedules = scheduleList });
         }
+
         [HttpPost, Route("api/updateproperty/{id}/{property}/{value?}")]
         public IHttpActionResult UpdateProperty(int? id, int? property, string value)
         {
@@ -320,6 +323,7 @@ namespace GVWebapi.Controllers
             }
             return Ok("Device not Updated.");
         }
+
         [HttpPost, Route("api/placeservicecall/")]
         public IHttpActionResult PlaceServiceCall(ServiceCallModel model)
         {
@@ -348,6 +352,7 @@ namespace GVWebapi.Controllers
 
             return Json(new { status = "error", results = BadRequest() });
         }
+
         [HttpPost, Route("api/webservicecall/")]
         public IHttpActionResult WebServiceCall(ServiceCallModel model)
         {
@@ -394,6 +399,7 @@ namespace GVWebapi.Controllers
 
             return Redirect("https://www.fprus.com/service_call_error");
         }
+
         [HttpPost, Route("api/integrisservicecall/")]
         public IHttpActionResult IntegrisServiceCall(IntegrisServiceCallModel imodel)
         {
@@ -477,6 +483,7 @@ namespace GVWebapi.Controllers
             return Json(new { status = "error", results = BadRequest() });
 
         }
+
         [HttpPost, Route("api/websupplycall/")]
         public IHttpActionResult WebSupplyCall(ServiceCallModel model)
         {
@@ -510,6 +517,7 @@ namespace GVWebapi.Controllers
             return Redirect("https://www.fprus.com/service_call_error");
 
         }
+
         [HttpPost, Route("api/integrissupplycall/")]
         public IHttpActionResult IntegrisSupplyCall(IntegrisServiceCallModel imodel)
         {
@@ -561,6 +569,7 @@ namespace GVWebapi.Controllers
             return Redirect("https://www.fprus.com/service_call_error");
 
         }
+
         [HttpGet, Route("api/servicecalls/{CustomerID}/{StartDate}/{EndDate}/{Type}/{Status}")]
         public IHttpActionResult GetCustomerservicecalls(int customerId, DateTime startDate, DateTime endDate, string type, string status)
         {

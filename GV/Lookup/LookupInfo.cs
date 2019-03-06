@@ -5,7 +5,7 @@ namespace GV.Lookup
 {
     public class LookupInfo : IComparable
     {
-        public LookupInfo(long id, string display)
+        public LookupInfo(int id, string display)
         {
             Display = display;
             Id = id;
