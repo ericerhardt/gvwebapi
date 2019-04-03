@@ -29,6 +29,9 @@ namespace GVWebapi.Controllers
         [HttpGet, Route("api/devices/{FprID}")]
         public IHttpActionResult GetDevice(string fprId)
         {
+            //if you update the coFreedom Entity from the database you must manually edit 
+            //the AvgBWVol and AvgCLRVol to decimal in the edm file and model
+
             var modelView = new EquipmentsModelView();
             modelView.OpenCalls = 0;
             modelView.Equipments = _coFreedomEntities.vw_GVDeviceAnalyzer.FirstOrDefault(c => c.EquipmentNumber == fprId);
@@ -278,7 +281,7 @@ namespace GVWebapi.Controllers
         public IHttpActionResult GetDevicesOnSchedule(long scheduleId)
         {
             var schedule = _globalViewEntities.Schedules.Find(scheduleId);
-            var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.ScheduleNumber == schedule.Name && x.CustomerID == schedule.CustomerId && x.NumberOfContractsActive > 0).ToList();
+            var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.ScheduleNumber == schedule.Name && x.CustomerID == schedule.CustomerId ).ToList();
             schedule.MonthlyHwCost = devices.Select(i => Decimal.Parse(i.MonthlyCost)).Sum();
             _globalViewEntities.SaveChanges();
             return Json(devices);

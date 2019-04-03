@@ -14,6 +14,13 @@ namespace GVWebapi.RemoteData
     
     public partial class vw_GVDeviceAnalyzer
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public vw_GVDeviceAnalyzer()
+        {
+            this.AvgBWVol = 0.00m;
+            this.AvgCLRVol = 0.00m;
+        }
+    
         public int EquipmentID { get; set; }
         public string CustomerName { get; set; }
         public string EquipmentNumber { get; set; }
@@ -51,9 +58,9 @@ namespace GVWebapi.RemoteData
         public int CustomerID { get; set; }
         public Nullable<int> BillToID { get; set; }
         public Nullable<int> LocationID { get; set; }
-        public Nullable<System.DateTime> InstallDate { get; set; }
-        public Nullable<int> ContractID { get; set; }
         public Nullable<decimal> AvgBWVol { get; set; }
         public Nullable<decimal> AvgCLRVol { get; set; }
+        public Nullable<int> ContractID { get; set; }
+        public Nullable<System.DateTime> InstallDate { get; set; }
     }
 }

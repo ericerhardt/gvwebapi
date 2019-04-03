@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -7,6 +8,7 @@ namespace GVWebapi.Models
 {
     public class ServiceCallModel
     {
+        [Key]
         public int EquipmentID { get; set; }
         public string EquipmentNumber { get; set; }
         public string Name { get; set; }
@@ -21,6 +23,7 @@ namespace GVWebapi.Models
         public int Yellow { get; set; }
         public bool isWorking { get; set; }
         public string CallID { get; set; }
-
+        public string CallNumber { get; set; }
+        public Nullable<int> CallType { get; set; }
     }
 }

@@ -6145,21 +6145,19 @@ namespace GVWebapi.Helpers.Reporting
                           where cu.InvoiceID == _invoiceID
                           select new
                           {
-                            
+                              ModelCategory = cu.ModelCategory,
                               Model = cu.Model,
-                              DeviceType = cu.DeviceType,
-                              ModelCount =cu. ModelCount,
+                              ModelCount =cu.ModelCount,
                               TotalVolume = cu.Volume
                           }).ToList();
 
 
             var query = (from row in query2
-                      
-                         orderby row.DeviceType, row.Model
+                         orderby row.ModelCategory, row.Model
                          select new
                          {
                              LineNumber = LineNum++,
-                             DeviceType = row.DeviceType,
+                             DeviceType = row.ModelCategory,
                              Model = row.Model,
                              ModelCount =row.ModelCount,
                              TotalVolume = row.TotalVolume
@@ -6528,7 +6526,7 @@ namespace GVWebapi.Helpers.Reporting
             columns1.Append(column9);
             columns1.Append(column10);
             DateTime overrideDate = Convert.ToDateTime(_overrideDate);
-            CustomerPortalEntities db = new CustomerPortalEntities();
+           GlobalViewEntities db = new GlobalViewEntities();
             var ToDate = Convert.ToDateTime(_period).AddDays(1);
             var FromDate = Convert.ToDateTime(_startDate).AddDays(1); 
             var query = (from r in db.CostAvoidances

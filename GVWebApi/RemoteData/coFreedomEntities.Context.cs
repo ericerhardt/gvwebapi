@@ -58,7 +58,6 @@ namespace GVWebapi.RemoteData
         public virtual DbSet<SCBillingCycle> SCBillingCycles { get; set; }
         public virtual DbSet<SCContract> SCContracts { get; set; }
         public virtual DbSet<SCEquipmentCustomProperty> SCEquipmentCustomProperties { get; set; }
-        public virtual DbSet<vw_GVDeviceAnalyzer> vw_GVDeviceAnalyzer { get; set; }
         public virtual DbSet<ARCustomer> ARCustomers { get; set; }
         public virtual DbSet<vw_maplocations> vw_maplocations { get; set; }
         public virtual DbSet<vw_AssetCountbyDeviceType_Cust> vw_AssetCountbyDeviceType_Cust { get; set; }
@@ -66,6 +65,7 @@ namespace GVWebapi.RemoteData
         public virtual DbSet<SCContractMeterGroup> SCContractMeterGroups { get; set; }
         public virtual DbSet<vw_BillingMeterVolumesByDevice> vw_BillingMeterVolumesByDevice { get; set; }
         public virtual DbSet<vw_QuarterlyModelMatrix> vw_QuarterlyModelMatrix { get; set; }
+        public virtual DbSet<vw_GVDeviceAnalyzer> vw_GVDeviceAnalyzer { get; set; }
     
         public virtual ObjectResult<csDeviceVolumes_Result> csDeviceVolumes(Nullable<System.DateTime> vd_FromDate, Nullable<System.DateTime> vd_ToDate, string vs_DeviceID, Nullable<int> vs_CustomerID)
         {

@@ -99,7 +99,7 @@ namespace GVWebapi.Services
                 return freedomEntities
                     .vw_admin_EquipmentList_MeterGroup
                     .Where(x => x.CustomerID == customerId)
-                    .Where(x => x.ScheduleNumber.ToLower().Trim() == scheduleName.ToLower().Trim() && x.NumberOfContractsActive != null)
+                    .Where(x => x.ScheduleNumber.ToLower().Trim() == scheduleName.ToLower().Trim())
                     .ToList();
             }
         }

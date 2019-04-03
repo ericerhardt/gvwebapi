@@ -11,7 +11,7 @@ using System.IO;
 
 namespace GVWebapi.Services
 {
-    public class MailParser
+    public class BulkMailParser
     {
        private static string ParseSupplyAssignment(String email,ServiceCallModel oSupplyInfo)
         {
@@ -289,12 +289,55 @@ namespace GVWebapi.Services
                 freedomEntities.Dispose();
             }
         }
-       public static bool EmailServiceCall(string id,ServiceCallModel model,int type)
+        private static string ParseClientAssignment(String email, List<ServiceCallModel> oSupplyInfos)
+        {
+            var freedomEntities = new CoFreedomEntities();
+
+            try
+            {
+                var ID = oSupplyInfos[0].EquipmentID;
+
+                var equipQuery = freedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.EquipmentID == ID).FirstOrDefault();
+                    var sActive = (equipQuery.Active ? "Active" : "Inactive");
+                    var EquipmentNumber = equipQuery.VendorID != string.Empty ? $"{equipQuery.EquipmentNumber} ({equipQuery.VendorID})" : equipQuery.EquipmentNumber;
+                    string oEmail = email.Replace("_#SERVICESUPPLY#_", "Service ");
+                           email = oEmail.Replace("_#CLIENTNAME#_", equipQuery.CustomerName);
+                           oEmail = email.Replace("_#REQUESTOR#_", oSupplyInfos[0].Name);
+                           email = oEmail.Replace("_#DATETIME#_", DateTime.Now.ToShortDateString());
+                           oEmail = email.Replace("_#EMAIL#_", oSupplyInfos[0].Email);
+                           email = oEmail.Replace("_#TELEPHONE#_", oSupplyInfos[0].Phone);
+                var CallList = string.Empty;
+                foreach (var oSupplyInfo in oSupplyInfos)
+                {
+                    if (oSupplyInfo.CallType == 1)
+                    {
+                        CallList += "<tr><td>" + oSupplyInfo.CallID + "</td><td>" + oSupplyInfo.EquipmentNumber + "</td><td>" + oSupplyInfo.Description + "</td></tr>";
+                    }
+                    if (oSupplyInfo.CallType == 2)
+                    {
+                        var description = $"{oSupplyInfo.Description} Supplies Black:{oSupplyInfo.Black} Magenta: {oSupplyInfo.Magenta} Cyan: { oSupplyInfo.Cyan} Yellow: {oSupplyInfo.Yellow}";
+                        CallList += "<tr><td>" + oSupplyInfo.CallID + "</td><td>" + oSupplyInfo.EquipmentNumber + "</td><td>" + description + "</td></tr>";
+                    }
+                     
+
+                }
+                oEmail = email.Replace("_#CALLLIST#_", CallList);
+
+                return oEmail;
+                 
+            }
+            finally
+            {
+                freedomEntities.Dispose();
+            }
+        }
+
+
+        public static bool EmailSupportServiceCall(string id,ServiceCallModel model,int type)
         {
             var body = string.Empty;
             MailMessage supplymail = new MailMessage();
             supplymail.From = new MailAddress(ConfigurationManager.AppSettings["FromAddress"]);
-            supplymail.To.Add(new MailAddress(model.Email));
             supplymail.To.Add(new MailAddress(ConfigurationManager.AppSettings["SupportAddress"]));
             supplymail.ReplyToList.Add(new MailAddress(ConfigurationManager.AppSettings["SupportAddress"]));
             if (type == 1)
@@ -373,7 +416,39 @@ namespace GVWebapi.Services
             client.Send(supplymail);
             return true;
         }
-       public static bool EmailIntegrisServiceCall(string id, IntegrisServiceCallModel model, int type)
+        public static bool EmailClientServiceCall(List<ServiceCallModel> models)
+        {
+            var body = string.Empty;
+            MailMessage supplymail = new MailMessage();
+            supplymail.From = new MailAddress(ConfigurationManager.AppSettings["FromAddress"]);
+            supplymail.To.Add(new MailAddress(models[0].Email));
+            supplymail.ReplyToList.Add(new MailAddress(ConfigurationManager.AppSettings["SupportAddress"]));
+            
+               
+                string filename = @"c:\inetpub\wwwroot\gvwebapi\templates\ClientServiceRequest.htm";
+                //  string filename = @"D:\Dev\Repos\FPR\GVWebApi\GVWebapi\templates\ClientServiceRequest.htm";
+                if (!File.Exists(filename)) return false;
+                StreamReader objStreamReader = default(StreamReader);
+
+                objStreamReader = File.OpenText(filename);
+
+                //Now, read the entire file into a string 
+                string contents = objStreamReader.ReadToEnd();
+                body = ParseClientAssignment(contents, models);
+                supplymail.Subject = "Freedom Profit Recovery Service Call Summary" +
+                                    DateTime.Now.ToShortDateString() + " @ " + DateTime.Now.ToShortTimeString();
+            
+
+
+            supplymail.Body = body;
+            supplymail.IsBodyHtml = true;
+
+            var client = new SmtpClient();
+            client.EnableSsl = true;
+            client.Send(supplymail);
+            return true;
+        }
+        public static bool EmailIntegrisServiceCall(string id, IntegrisServiceCallModel model, int type)
         {
             var body = string.Empty;
             MailMessage supplymail = new MailMessage();

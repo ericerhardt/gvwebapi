@@ -222,6 +222,8 @@
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\DeviceApiController.cs" />
     <Compile Include="Controllers\DevicesController.cs" />
+    <Compile Include="Controllers\ServiceCallController.cs" />
+    <Compile Include="Models\BulkCallModel.cs" />
     <Compile Include="Models\Easylink\EasyLinkChildManagerModel.cs" />
     <Compile Include="Models\Easylink\EasyLinkChildMatchSaveModel.cs" />
     <Compile Include="Controllers\EasylinkController.cs" />
@@ -598,6 +600,7 @@
     <Compile Include="Services\EasyLinkServices.cs" />
     <Compile Include="Services\EditScheduleService.cs" />
     <Compile Include="Services\LocationsService.cs" />
+    <Compile Include="Services\BulkMailParser.cs" />
     <Compile Include="Services\MailParser.cs" />
     <Compile Include="Services\ReconciliationService.cs" />
     <Compile Include="Services\ScheduleService.cs" />
@@ -725,6 +728,7 @@
     <Content Include="Scripts\umd\popper.min.js" />
     <Content Include="templates\IntegrisServiceRequest.htm" />
     <Content Include="templates\IntegrisSupplyRequest.htm" />
+    <Content Include="templates\ClientServiceRequest.htm" />
     <Content Include="templates\ServiceRequest.htm" />
     <Content Include="templates\SupplyRequest.htm" />
     <Content Include="Web.config">

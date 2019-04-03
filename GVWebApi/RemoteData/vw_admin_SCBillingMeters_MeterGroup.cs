@@ -33,5 +33,6 @@ namespace GVWebapi.RemoteData
         public Nullable<decimal> DifferenceCopies { get; set; }
         public int EquipmentID { get; set; }
         public string InvoiceType { get; set; }
+        public int CustomerID { get; set; }
     }
 }

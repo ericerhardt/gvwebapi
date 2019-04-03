@@ -15,11 +15,9 @@ namespace GVWebapi.RemoteData
     public partial class vw_QuarterlyModelMatrix
     {
         public int InvoiceID { get; set; }
-        public string DeviceType { get; set; }
         public string Model { get; set; }
         public Nullable<int> ModelCount { get; set; }
-        public Nullable<int> CustomerID { get; set; }
-        public Nullable<System.DateTime> EndMeterDate { get; set; }
         public Nullable<decimal> Volume { get; set; }
+        public string ModelCategory { get; set; }
     }
 }

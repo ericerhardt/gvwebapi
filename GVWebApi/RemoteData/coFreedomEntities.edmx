@@ -453,6 +453,7 @@ warning 6002: The table/view 'CoFreedom._custom_eviews.vw_admin_SCBillingMeters_
             <PropertyRef Name="InvoiceNumber" />
             <PropertyRef Name="EquipmentID" />
             <PropertyRef Name="InvoiceType" />
+            <PropertyRef Name="CustomerID" />
           </Key>
           <Property Name="InvoiceID" Type="int" Nullable="false" />
           <Property Name="CustomerName" Type="varchar" MaxLength="128" Nullable="false" />
@@ -473,6 +474,7 @@ warning 6002: The table/view 'CoFreedom._custom_eviews.vw_admin_SCBillingMeters_
           <Property Name="DifferenceCopies" Type="decimal" Precision="18" Scale="6" />
           <Property Name="EquipmentID" Type="int" Nullable="false" />
           <Property Name="InvoiceType" Type="char" MaxLength="2" Nullable="false" />
+          <Property Name="CustomerID" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'CoFreedom._custom_eviews.vw_admin_SCEquipments_22' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1285,8 +1287,6 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_GVDeviceAnalyzer' does not have a
             <PropertyRef Name="Contact" />
             <PropertyRef Name="ContactPhone" />
             <PropertyRef Name="CustomerID" />
-            
-            
           </Key>
           <Property Name="EquipmentID" Type="int" Nullable="false" />
           <Property Name="CustomerName" Type="varchar" MaxLength="128" Nullable="false" />
@@ -1325,8 +1325,8 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_GVDeviceAnalyzer' does not have a
           <Property Name="CustomerID" Type="int" Nullable="false" />
           <Property Name="BillToID" Type="int" />
           <Property Name="LocationID" Type="int" />
-          <Property Name="AvgBWVol" Type="decimal" Nullable="true" />
-          <Property Name="AvgCLRVol" Type="decimal" Nullable="true" />
+          <Property Name="AvgBWVol" Type="decimal" Nullable="true" Precision="16" Scale="2" />
+          <Property Name="AvgCLRVol" Type="decimal" Nullable="true" Precision="16" Scale="2" />
           <Property Name="ContractID" Type="int" />
           <Property Name="InstallDate" Type="datetime" />
         </EntityType>
@@ -1382,13 +1382,12 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
         <EntityType Name="vw_QuarterlyModelMatrix">
           <Key>
             <PropertyRef Name="InvoiceID" />
+            <PropertyRef Name="ModelCategory" />
           </Key>
           <Property Name="InvoiceID" Type="int" Nullable="false" />
-          <Property Name="DeviceType" Type="varchar" MaxLength="15" />
           <Property Name="Model" Type="varchar" MaxLength="32" />
+          <Property Name="ModelCategory" Type="varchar" MaxLength="15" Nullable="false" />
           <Property Name="ModelCount" Type="int" />
-          <Property Name="CustomerID" Type="int" />
-          <Property Name="EndMeterDate" Type="datetime" />
           <Property Name="Volume" Type="decimal" Precision="38" Scale="6" />
         </EntityType>
         <Association Name="FK_ARCustomers_LocationID_ARCustomers">
@@ -1640,7 +1639,8 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
     [vw_admin_SCBillingMeters_MeterGroup].[EndMeterActual] AS [EndMeterActual], 
     [vw_admin_SCBillingMeters_MeterGroup].[DifferenceCopies] AS [DifferenceCopies], 
     [vw_admin_SCBillingMeters_MeterGroup].[EquipmentID] AS [EquipmentID], 
-    [vw_admin_SCBillingMeters_MeterGroup].[InvoiceType] AS [InvoiceType]
+    [vw_admin_SCBillingMeters_MeterGroup].[InvoiceType] AS [InvoiceType], 
+    [vw_admin_SCBillingMeters_MeterGroup].[CustomerID] AS [CustomerID]
     FROM [_custom_eviews].[vw_admin_SCBillingMeters_MeterGroup] AS [vw_admin_SCBillingMeters_MeterGroup]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="vw_admin_SCEquipments_22" EntityType="Self.vw_admin_SCEquipments_22" store:Type="Views" store:Schema="_custom_eviews">
@@ -2240,11 +2240,9 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
           <EntitySet Name="vw_QuarterlyModelMatrix" EntityType="Self.vw_QuarterlyModelMatrix" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [vw_QuarterlyModelMatrix].[InvoiceID] AS [InvoiceID], 
-    [vw_QuarterlyModelMatrix].[DeviceType] AS [DeviceType], 
     [vw_QuarterlyModelMatrix].[Model] AS [Model], 
+    [vw_QuarterlyModelMatrix].[ModelCategory] AS [ModelCategory], 
     [vw_QuarterlyModelMatrix].[ModelCount] AS [ModelCount], 
-    [vw_QuarterlyModelMatrix].[CustomerID] AS [CustomerID], 
-    [vw_QuarterlyModelMatrix].[EndMeterDate] AS [EndMeterDate], 
     [vw_QuarterlyModelMatrix].[Volume] AS [Volume]
     FROM [dbo].[vw_QuarterlyModelMatrix] AS [vw_QuarterlyModelMatrix]</DefiningQuery>
           </EntitySet>
@@ -2532,7 +2530,6 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
             <Parameter Name="vs_DeviceID" Mode="In" Type="String" />
             <Parameter Name="vs_CustomerID" Mode="In" Type="Int32" />
           </FunctionImport>
-          <EntitySet Name="vw_GVDeviceAnalyzer" EntityType="CoFreedomModel.vw_GVDeviceAnalyzer" />
           <EntitySet Name="ARCustomers" EntityType="CoFreedomModel.ARCustomer" />
           <AssociationSet Name="FK_ARCustomers_LocationID_ARCustomers" Association="CoFreedomModel.FK_ARCustomers_LocationID_ARCustomers">
             <End Role="ARCustomer" EntitySet="ARCustomers" />
@@ -2603,6 +2600,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
           </AssociationSet>
           <EntitySet Name="vw_BillingMeterVolumesByDevice" EntityType="CoFreedomModel.vw_BillingMeterVolumesByDevice" />
           <EntitySet Name="vw_QuarterlyModelMatrix" EntityType="CoFreedomModel.vw_QuarterlyModelMatrix" />
+          <EntitySet Name="vw_GVDeviceAnalyzer" EntityType="CoFreedomModel.vw_GVDeviceAnalyzer" />
         </EntityContainer>
         <EntityType Name="v_SCEquipmentPreview_Custom">
           <Key>
@@ -3145,6 +3143,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
             <PropertyRef Name="InvoiceNumber" />
             <PropertyRef Name="EquipmentID" />
             <PropertyRef Name="InvoiceType" />
+            <PropertyRef Name="CustomerID" />
           </Key>
           <Property Name="InvoiceID" Type="Int32" Nullable="false" />
           <Property Name="CustomerName" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
@@ -3165,6 +3164,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
           <Property Name="DifferenceCopies" Type="Decimal" Precision="18" Scale="6" />
           <Property Name="EquipmentID" Type="Int32" Nullable="false" />
           <Property Name="InvoiceType" Type="String" Nullable="false" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="vw_admin_SCEquipments_22">
           <Key>
@@ -3529,65 +3529,6 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
           <Property Type="Decimal" Name="ColorDisplay" Nullable="true" Precision="18" Scale="6" />
           <Property Type="Decimal" Name="ColorVolume" Nullable="true" Precision="19" Scale="6" />
         </ComplexType>
-        <EntityType Name="vw_GVDeviceAnalyzer">
-          <Key>
-            <PropertyRef Name="EquipmentID" />
-            <PropertyRef Name="CustomerName" />
-            <PropertyRef Name="EquipmentNumber" />
-            <PropertyRef Name="SerialNumber" />
-            <PropertyRef Name="ModelCategory" />
-            <PropertyRef Name="Active" />
-            <PropertyRef Name="Address" />
-            <PropertyRef Name="City" />
-            <PropertyRef Name="State" />
-            <PropertyRef Name="Zip" />
-            <PropertyRef Name="Technician" />
-            <PropertyRef Name="Contact" />
-            <PropertyRef Name="ContactPhone" />
-            <PropertyRef Name="CustomerID" />
-          </Key>
-          <Property Name="EquipmentID" Type="Int32" Nullable="false" />
-          <Property Name="CustomerName" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
-          <Property Name="EquipmentNumber" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
-          <Property Name="SerialNumber" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
-          <Property Name="Model" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
-          <Property Name="ModelCategory" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="false" />
-          <Property Name="Active" Type="Boolean" Nullable="false" />
-          <Property Name="MostRecentDefaultMeterReadingDate" Type="DateTime" Precision="3" />
-          <Property Name="MostRecentDefaultMeterReadingDisplay" Type="Decimal" Precision="18" Scale="6" />
-          <Property Name="AvgMonthlyVolume" Type="Decimal" Precision="18" Scale="6" />
-          <Property Name="LocName" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
-          <Property Name="Building" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
-          <Property Name="AssetUser" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
-          <Property Name="Floor" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
-          <Property Name="Department" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
-          <Property Name="CostCenter" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
-          <Property Name="Address" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
-          <Property Name="OwnershipType" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
-          <Property Name="ScheduleNumber" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
-          <Property Name="City" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
-          <Property Name="State" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="Zip" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="Technician" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="OnSiteWarehouse" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
-          <Property Name="SupplyProviderPrefFullName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Contact" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ContactPhone" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ContactNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
-          <Property Name="NumberOfContractsActive" Type="Int32" />
-          <Property Name="IPAddress" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
-          <Property Name="SupplyProvider" Type="Boolean" />
-          <Property Name="Location" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
-          <Property Name="DeviceReplacementExpires" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
-          <Property Name="Service_Replacement" Type="Boolean" />
-          <Property Name="CustomerID" Type="Int32" Nullable="false" />
-          <Property Name="BillToID" Type="Int32" />
-          <Property Name="LocationID" Type="Int32" />
-          <Property Name="InstallDate" Type="DateTime" Precision="3" />
-          <Property Name="ContractID" Type="Int32" />
-          <Property Name="AvgBWVol" Type="Decimal" Nullable="true" />
-          <Property Name="AvgCLRVol" Type="Decimal" Nullable="true" />
-        </EntityType>
         <EntityType Name="ARCustomer">
           <Key>
             <PropertyRef Name="CustomerID" />
@@ -3905,14 +3846,72 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
         <EntityType Name="vw_QuarterlyModelMatrix">
           <Key>
             <PropertyRef Name="InvoiceID" />
+            <PropertyRef Name="ModelCategory" />
           </Key>
           <Property Name="InvoiceID" Type="Int32" Nullable="false" />
-          <Property Name="DeviceType" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
           <Property Name="Model" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
           <Property Name="ModelCount" Type="Int32" />
-          <Property Name="CustomerID" Type="Int32" />
-          <Property Name="EndMeterDate" Type="DateTime" Precision="3" />
           <Property Name="Volume" Type="Decimal" Precision="38" Scale="6" />
+          <Property Name="ModelCategory" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="vw_GVDeviceAnalyzer">
+          <Key>
+            <PropertyRef Name="EquipmentID" />
+            <PropertyRef Name="CustomerName" />
+            <PropertyRef Name="EquipmentNumber" />
+            <PropertyRef Name="SerialNumber" />
+            <PropertyRef Name="ModelCategory" />
+            <PropertyRef Name="Active" />
+            <PropertyRef Name="Address" />
+            <PropertyRef Name="City" />
+            <PropertyRef Name="State" />
+            <PropertyRef Name="Zip" />
+            <PropertyRef Name="Technician" />
+            <PropertyRef Name="Contact" />
+            <PropertyRef Name="ContactPhone" />
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="EquipmentID" Type="Int32" Nullable="false" />
+          <Property Name="CustomerName" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="EquipmentNumber" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="SerialNumber" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Model" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="ModelCategory" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+          <Property Name="MostRecentDefaultMeterReadingDate" Type="DateTime" Precision="3" />
+          <Property Name="MostRecentDefaultMeterReadingDisplay" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="AvgMonthlyVolume" Type="Decimal" Precision="18" Scale="6" />
+          <Property Name="LocName" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="Building" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
+          <Property Name="AssetUser" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
+          <Property Name="Floor" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
+          <Property Name="Department" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
+          <Property Name="CostCenter" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="OwnershipType" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
+          <Property Name="ScheduleNumber" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
+          <Property Name="City" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Name="State" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="Zip" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="Technician" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="OnSiteWarehouse" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="SupplyProviderPrefFullName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Contact" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContactPhone" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContactNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="NumberOfContractsActive" Type="Int32" />
+          <Property Name="IPAddress" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
+          <Property Name="SupplyProvider" Type="Boolean" />
+          <Property Name="Location" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
+          <Property Name="DeviceReplacementExpires" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
+          <Property Name="Service_Replacement" Type="Boolean" />
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="BillToID" Type="Int32" />
+          <Property Name="LocationID" Type="Int32" />
+          <Property Name="AvgBWVol" Type="Decimal" Nullable="true" Scale="2" Precision="16" DefaultValue="0.00" />
+          <Property Name="AvgCLRVol" Type="Decimal" Nullable="true" Precision="16" Scale="2" DefaultValue="0.00" />
+          <Property Name="ContractID" Type="Int32" />
+          <Property Name="InstallDate" Type="DateTime" Precision="3" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -4470,6 +4469,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
           <EntitySetMapping Name="vw_admin_SCBillingMeters_MeterGroup">
             <EntityTypeMapping TypeName="CoFreedomModel.vw_admin_SCBillingMeters_MeterGroup">
               <MappingFragment StoreEntitySet="vw_admin_SCBillingMeters_MeterGroup">
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
                 <ScalarProperty Name="InvoiceType" ColumnName="InvoiceType" />
                 <ScalarProperty Name="EquipmentID" ColumnName="EquipmentID" />
                 <ScalarProperty Name="DifferenceCopies" ColumnName="DifferenceCopies" />
@@ -4794,53 +4794,6 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <EntitySetMapping Name="vw_GVDeviceAnalyzer">
-            <EntityTypeMapping TypeName="CoFreedomModel.vw_GVDeviceAnalyzer">
-              <MappingFragment StoreEntitySet="vw_GVDeviceAnalyzer">
-                <ScalarProperty Name="AvgCLRVol" ColumnName="AvgCLRVol" />
-                <ScalarProperty Name="AvgBWVol" ColumnName="AvgBWVol" />
-                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
-                <ScalarProperty Name="InstallDate" ColumnName="InstallDate" />
-                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
-                <ScalarProperty Name="BillToID" ColumnName="BillToID" />
-                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
-                <ScalarProperty Name="Service_Replacement" ColumnName="Service_Replacement" />
-                <ScalarProperty Name="DeviceReplacementExpires" ColumnName="DeviceReplacementExpires" />
-                <ScalarProperty Name="Location" ColumnName="Location" />
-                <ScalarProperty Name="SupplyProvider" ColumnName="SupplyProvider" />
-                <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
-                <ScalarProperty Name="NumberOfContractsActive" ColumnName="NumberOfContractsActive" />
-                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
-                <ScalarProperty Name="ContactPhone" ColumnName="ContactPhone" />
-                <ScalarProperty Name="Contact" ColumnName="Contact" />
-                <ScalarProperty Name="SupplyProviderPrefFullName" ColumnName="SupplyProviderPrefFullName" />
-                <ScalarProperty Name="OnSiteWarehouse" ColumnName="OnSiteWarehouse" />
-                <ScalarProperty Name="Technician" ColumnName="Technician" />
-                <ScalarProperty Name="Zip" ColumnName="Zip" />
-                <ScalarProperty Name="State" ColumnName="State" />
-                <ScalarProperty Name="City" ColumnName="City" />
-                <ScalarProperty Name="ScheduleNumber" ColumnName="ScheduleNumber" />
-                <ScalarProperty Name="OwnershipType" ColumnName="OwnershipType" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="CostCenter" ColumnName="CostCenter" />
-                <ScalarProperty Name="Department" ColumnName="Department" />
-                <ScalarProperty Name="Floor" ColumnName="Floor" />
-                <ScalarProperty Name="AssetUser" ColumnName="AssetUser" />
-                <ScalarProperty Name="Building" ColumnName="Building" />
-                <ScalarProperty Name="LocName" ColumnName="LocName" />
-                <ScalarProperty Name="AvgMonthlyVolume" ColumnName="AvgMonthlyVolume" />
-                <ScalarProperty Name="MostRecentDefaultMeterReadingDisplay" ColumnName="MostRecentDefaultMeterReadingDisplay" />
-                <ScalarProperty Name="MostRecentDefaultMeterReadingDate" ColumnName="MostRecentDefaultMeterReadingDate" />
-                <ScalarProperty Name="Active" ColumnName="Active" />
-                <ScalarProperty Name="ModelCategory" ColumnName="ModelCategory" />
-                <ScalarProperty Name="Model" ColumnName="Model" />
-                <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
-                <ScalarProperty Name="EquipmentNumber" ColumnName="EquipmentNumber" />
-                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
-                <ScalarProperty Name="EquipmentID" ColumnName="EquipmentID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="ARCustomers">
             <EntityTypeMapping TypeName="CoFreedomModel.ARCustomer">
               <MappingFragment StoreEntitySet="ARCustomers">
@@ -5059,13 +5012,58 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
           <EntitySetMapping Name="vw_QuarterlyModelMatrix">
             <EntityTypeMapping TypeName="CoFreedomModel.vw_QuarterlyModelMatrix">
               <MappingFragment StoreEntitySet="vw_QuarterlyModelMatrix">
+                <ScalarProperty Name="ModelCategory" ColumnName="ModelCategory" />
                 <ScalarProperty Name="Volume" ColumnName="Volume" />
-                <ScalarProperty Name="EndMeterDate" ColumnName="EndMeterDate" />
-                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
                 <ScalarProperty Name="ModelCount" ColumnName="ModelCount" />
                 <ScalarProperty Name="Model" ColumnName="Model" />
-                <ScalarProperty Name="DeviceType" ColumnName="DeviceType" />
                 <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_GVDeviceAnalyzer">
+            <EntityTypeMapping TypeName="CoFreedomModel.vw_GVDeviceAnalyzer">
+              <MappingFragment StoreEntitySet="vw_GVDeviceAnalyzer">
+                <ScalarProperty Name="InstallDate" ColumnName="InstallDate" />
+                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
+                <ScalarProperty Name="AvgCLRVol" ColumnName="AvgCLRVol" />
+                <ScalarProperty Name="AvgBWVol" ColumnName="AvgBWVol" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="BillToID" ColumnName="BillToID" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="Service_Replacement" ColumnName="Service_Replacement" />
+                <ScalarProperty Name="DeviceReplacementExpires" ColumnName="DeviceReplacementExpires" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="SupplyProvider" ColumnName="SupplyProvider" />
+                <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
+                <ScalarProperty Name="NumberOfContractsActive" ColumnName="NumberOfContractsActive" />
+                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+                <ScalarProperty Name="ContactPhone" ColumnName="ContactPhone" />
+                <ScalarProperty Name="Contact" ColumnName="Contact" />
+                <ScalarProperty Name="SupplyProviderPrefFullName" ColumnName="SupplyProviderPrefFullName" />
+                <ScalarProperty Name="OnSiteWarehouse" ColumnName="OnSiteWarehouse" />
+                <ScalarProperty Name="Technician" ColumnName="Technician" />
+                <ScalarProperty Name="Zip" ColumnName="Zip" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="ScheduleNumber" ColumnName="ScheduleNumber" />
+                <ScalarProperty Name="OwnershipType" ColumnName="OwnershipType" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="CostCenter" ColumnName="CostCenter" />
+                <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="Floor" ColumnName="Floor" />
+                <ScalarProperty Name="AssetUser" ColumnName="AssetUser" />
+                <ScalarProperty Name="Building" ColumnName="Building" />
+                <ScalarProperty Name="LocName" ColumnName="LocName" />
+                <ScalarProperty Name="AvgMonthlyVolume" ColumnName="AvgMonthlyVolume" />
+                <ScalarProperty Name="MostRecentDefaultMeterReadingDisplay" ColumnName="MostRecentDefaultMeterReadingDisplay" />
+                <ScalarProperty Name="MostRecentDefaultMeterReadingDate" ColumnName="MostRecentDefaultMeterReadingDate" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="ModelCategory" ColumnName="ModelCategory" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+                <ScalarProperty Name="EquipmentNumber" ColumnName="EquipmentNumber" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="EquipmentID" ColumnName="EquipmentID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -5091,7 +5089,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram DiagramId="6e06c22b0f064ffb9a205d94ee7e7a2f" Name="Diagram1" ZoomLevel="77">
+      <Diagram DiagramId="6e06c22b0f064ffb9a205d94ee7e7a2f" Name="Diagram1" ZoomLevel="73">
         <EntityTypeShape EntityType="CoFreedomModel.v_ARCustomers" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.v_SCEquipmentPreview_Custom" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_ClientsOnContract" Width="1.5" PointX="7.75" PointY="4.75" IsExpanded="true" />
@@ -5127,7 +5125,6 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_BaseBillingCycleID_SCBillingCycles" ManuallyRouted="false" />
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_OverageBillingCycleID_SCBillingCycles" ManuallyRouted="false" />
         <AssociationConnector Association="CoFreedomModel.FK_SCContracts_RenewalCycleID_SCBillingCycles" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="CoFreedomModel.vw_GVDeviceAnalyzer" Width="3.875" PointX="20.375" PointY="7.75" />
         <EntityTypeShape EntityType="CoFreedomModel.ARCustomer" Width="1.5" PointX="20.375" PointY="18.875" />
         <AssociationConnector Association="CoFreedomModel.FK_ARCustomers_LocationID_ARCustomers" />
         <AssociationConnector Association="CoFreedomModel.FK_ARCustomers_MailToID_ARCustomers" />
@@ -5141,7 +5138,8 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
         <AssociationConnector Association="CoFreedomModel.FK_SCContractMeterGroups_OverageBillingCycleID_SCBillingCycles" />
         <AssociationConnector Association="CoFreedomModel.FK_SCContractMeterGroups_ContractID_SCContracts" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_BillingMeterVolumesByDevice" Width="2.75" PointX="0.75" PointY="10.75" />
-        <EntityTypeShape EntityType="CoFreedomModel.vw_QuarterlyModelMatrix" Width="1.5" PointX="0.75" PointY="14.75" />
+        <EntityTypeShape EntityType="CoFreedomModel.vw_QuarterlyModelMatrix" Width="2.625" PointX="0.75" PointY="14.75" />
+        <EntityTypeShape EntityType="CoFreedomModel.vw_GVDeviceAnalyzer" Width="1.5" PointX="21.375" PointY="8.75" />
       </Diagram>
     </Diagrams>
   </Designer>
