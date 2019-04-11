@@ -51,6 +51,7 @@ namespace GVWebapi.RemoteData
         public string ContactNumber { get; set; }
         public Nullable<int> NumberOfContractsActive { get; set; }
         public string IPAddress { get; set; }
+        public string VendorID { get; set; }
         public Nullable<bool> SupplyProvider { get; set; }
         public string Location { get; set; }
         public string DeviceReplacementExpires { get; set; }

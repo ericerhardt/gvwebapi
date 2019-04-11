@@ -1318,6 +1318,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_GVDeviceAnalyzer' does not have a
           <Property Name="ContactNumber" Type="varchar" MaxLength="15" />
           <Property Name="NumberOfContractsActive" Type="int" />
           <Property Name="IPAddress" Type="varchar" MaxLength="1024" />
+		   <Property Name="VendorID" Type="varchar" MaxLength="1024" />
           <Property Name="SupplyProvider" Type="bit" />
           <Property Name="Location" Type="varchar" MaxLength="128" />
           <Property Name="DeviceReplacementExpires" Type="varchar" MaxLength="1024" />
@@ -2195,6 +2196,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
     [vw_GVDeviceAnalyzer].[ContactNumber] AS [ContactNumber], 
     [vw_GVDeviceAnalyzer].[NumberOfContractsActive] AS [NumberOfContractsActive], 
     [vw_GVDeviceAnalyzer].[IPAddress] AS [IPAddress], 
+	[vw_GVDeviceAnalyzer].[VendorID] AS [VendorID], 
     [vw_GVDeviceAnalyzer].[SupplyProvider] AS [SupplyProvider], 
     [vw_GVDeviceAnalyzer].[Location] AS [Location], 
     [vw_GVDeviceAnalyzer].[DeviceReplacementExpires] AS [DeviceReplacementExpires], 
@@ -3901,6 +3903,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
           <Property Name="ContactNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
           <Property Name="NumberOfContractsActive" Type="Int32" />
           <Property Name="IPAddress" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
+		   <Property Name="VendorID" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
           <Property Name="SupplyProvider" Type="Boolean" />
           <Property Name="Location" Type="String" MaxLength="128" FixedLength="false" Unicode="false" />
           <Property Name="DeviceReplacementExpires" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
@@ -5035,6 +5038,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
                 <ScalarProperty Name="Location" ColumnName="Location" />
                 <ScalarProperty Name="SupplyProvider" ColumnName="SupplyProvider" />
                 <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
+				 <ScalarProperty Name="VendorID" ColumnName="VendorID" />
                 <ScalarProperty Name="NumberOfContractsActive" ColumnName="NumberOfContractsActive" />
                 <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
                 <ScalarProperty Name="ContactPhone" ColumnName="ContactPhone" />

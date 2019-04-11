@@ -11,7 +11,7 @@ namespace GVWebapi.Controllers
     public class CostAvoidancesController : ApiController
     {
         private readonly GlobalViewEntities _customerPortalEntities = new GlobalViewEntities();
-
+        private readonly CoFreedomEntities _coFreedom = new CoFreedomEntities();
         public IQueryable<CostAvoidance> GetCostAvoidances()
         {
             return _customerPortalEntities.CostAvoidances;
@@ -79,8 +79,16 @@ namespace GVWebapi.Controllers
 
             if (CostAvoidanceExists(costAvoidance.CostAvoidanceID))
             {
-
-                _customerPortalEntities.Entry(costAvoidance).State = System.Data.Entity.EntityState.Modified;
+                if (!string.IsNullOrEmpty(costAvoidance.Location))
+                {
+                    _customerPortalEntities.Entry(costAvoidance).State = System.Data.Entity.EntityState.Modified;
+                } else
+                {
+                    var cust = _coFreedom.v_ARCustomers.FirstOrDefault(e => e.CustomerID == costAvoidance.CustomerID);
+                    costAvoidance.Location = cust.CustomerName;
+                    _customerPortalEntities.Entry(costAvoidance).State = System.Data.Entity.EntityState.Modified;
+                }
+                
  
             } else{
 

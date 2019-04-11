@@ -24,6 +24,9 @@ namespace GVWebapi.Models
         public bool isWorking { get; set; }
         public string CallID { get; set; }
         public string CallNumber { get; set; }
+        public string User { get; set; }
+        public string Address { get; set; }
+        public string Floor { get; set; }
         public Nullable<int> CallType { get; set; }
     }
 }

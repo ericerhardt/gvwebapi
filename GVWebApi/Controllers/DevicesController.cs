@@ -11,6 +11,7 @@ using GVWebapi.Services;
 using System.Data.Entity.SqlServer;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
+using GVWebapi.Models.Devices;
 
 namespace GVWebapi.Controllers
 {
@@ -304,21 +305,21 @@ namespace GVWebapi.Controllers
             return Json(new { devices, schedules = scheduleList });
         }
 
-        [HttpPost, Route("api/updateproperty/{id}/{property}/{value?}")]
-        public IHttpActionResult UpdateProperty(int? id, int? property, string value)
+        [HttpPost, Route("api/updateproperty")]
+        public IHttpActionResult UpdateProperty(EquipmentPropertiesModel model)
         {
-            if (id != null && property != null)
+            if (model.Id != null && model.Property != null)
             {
-                var device = _coFreedomEntities.SCEquipmentCustomProperties.FirstOrDefault(p => p.EquipmentID == id && p.ShAttributeID == property);
+                var device = _coFreedomEntities.SCEquipmentCustomProperties.FirstOrDefault(p => p.EquipmentID == model.Id && p.ShAttributeID == model.Property);
                 if (device == null) return NotFound();
 
-                if (value == "Not Set")
+                if (model.Value == "Not Set")
                 {
                     device.TextVal = null;
                 }
                 else
                 {
-                    device.TextVal = value;
+                    device.TextVal = model.Value;
                 }
 
                 _coFreedomEntities.SaveChanges();

@@ -49,7 +49,11 @@ namespace GVWebapi.Controllers
                         oServiceInfo.EquipmentNumber = call.DeviceId;
                         oServiceInfo.isWorking = call.IsWorking == "true" ? true : false;
                         oServiceInfo.Description = call.Issue;
-                        var Id = InsertServiceCall(oServiceInfo);
+                        oServiceInfo.Address = Equipment.Address;
+                        oServiceInfo.User = Equipment.AssetUser;
+                        oServiceInfo.Floor = Equipment.Floor;
+
+                        var Id = "69874";//InsertServiceCall(oServiceInfo);
                        
                         oServiceInfo.CallNumber = Id;
                         oServiceInfo.CallType = 1;
@@ -70,6 +74,9 @@ namespace GVWebapi.Controllers
                         oSupplyInfo.Black = call.Blk;
                         oSupplyInfo.Yellow = call.Yellow;
                         oSupplyInfo.Description = call.Comment;
+                        oSupplyInfo.Address = Equipment.Address;
+                        oSupplyInfo.User = Equipment.AssetUser;
+                        oSupplyInfo.Floor = Equipment.Floor;
                         var Id = InsertSupplyCall(oSupplyInfo);
                         oSupplyInfo.CallNumber = Id;
                         oSupplyInfo.CallType = 2;

@@ -305,18 +305,18 @@ namespace GVWebapi.Services
                            oEmail = email.Replace("_#REQUESTOR#_", oSupplyInfos[0].Name);
                            email = oEmail.Replace("_#DATETIME#_", DateTime.Now.ToShortDateString());
                            oEmail = email.Replace("_#EMAIL#_", oSupplyInfos[0].Email);
-                           email = oEmail.Replace("_#TELEPHONE#_", oSupplyInfos[0].Phone);
+                           email = oEmail.Replace("_#TELEPHONE#_", FormatPhoneNumber(oSupplyInfos[0].Phone));
                 var CallList = string.Empty;
                 foreach (var oSupplyInfo in oSupplyInfos)
                 {
                     if (oSupplyInfo.CallType == 1)
                     {
-                        CallList += "<tr><td>" + oSupplyInfo.CallID + "</td><td>" + oSupplyInfo.EquipmentNumber + "</td><td>" + oSupplyInfo.Description + "</td></tr>";
+                        CallList += "<tr><td>" + oSupplyInfo.CallID + "</td><td>" + oSupplyInfo.EquipmentNumber + "</td><td>" + oSupplyInfo.Address + "</td><td>" + oSupplyInfo.Floor + "</td><td>" + oSupplyInfo.User + "</td><td>" + oSupplyInfo.Description + "</td></tr>";
                     }
                     if (oSupplyInfo.CallType == 2)
                     {
                         var description = $"{oSupplyInfo.Description} Supplies Black:{oSupplyInfo.Black} Magenta: {oSupplyInfo.Magenta} Cyan: { oSupplyInfo.Cyan} Yellow: {oSupplyInfo.Yellow}";
-                        CallList += "<tr><td>" + oSupplyInfo.CallID + "</td><td>" + oSupplyInfo.EquipmentNumber + "</td><td>" + description + "</td></tr>";
+                        CallList += "<tr><td>" + oSupplyInfo.CallID + "</td><td>" + oSupplyInfo.EquipmentNumber + "</td><td>"+ oSupplyInfo.Address + "</td><td>" + oSupplyInfo.Floor + "</td><td>" + oSupplyInfo.User + "</td><td>" + description + "</td></tr>";
                     }
                      
 
@@ -331,7 +331,31 @@ namespace GVWebapi.Services
                 freedomEntities.Dispose();
             }
         }
+        private static string FormatPhoneNumber(string phoneNumber)
+        {
+            string originalValue = phoneNumber;
 
+            phoneNumber = new System.Text.RegularExpressions.Regex(@"\D")
+                .Replace(phoneNumber, string.Empty);
+
+          var  value = originalValue.TrimStart('1');
+
+            if (phoneNumber.Length == 7)
+
+                return Convert.ToInt64(value).ToString("###-####");
+            if (phoneNumber.Length == 9)
+
+                return Convert.ToInt64(originalValue).ToString("###-###-####");
+            if (phoneNumber.Length == 10)
+
+                return Convert.ToInt64(value).ToString("###-###-####");
+
+            if (phoneNumber.Length > 10)
+                return Convert.ToInt64(phoneNumber)
+                    .ToString("###-###-#### " + new String('#', (phoneNumber.Length - 10)));
+
+            return phoneNumber;
+        }
 
         public static bool EmailSupportServiceCall(string id,ServiceCallModel model,int type)
         {
@@ -425,7 +449,7 @@ namespace GVWebapi.Services
             supplymail.ReplyToList.Add(new MailAddress(ConfigurationManager.AppSettings["SupportAddress"]));
             
                
-                string filename = @"c:\inetpub\wwwroot\gvwebapi\templates\ClientServiceRequest.htm";
+                 string filename = @"c:\inetpub\wwwroot\gvwebapi\templates\ClientServiceRequest.htm";
                 //  string filename = @"D:\Dev\Repos\FPR\GVWebApi\GVWebapi\templates\ClientServiceRequest.htm";
                 if (!File.Exists(filename)) return false;
                 StreamReader objStreamReader = default(StreamReader);
@@ -435,7 +459,7 @@ namespace GVWebapi.Services
                 //Now, read the entire file into a string 
                 string contents = objStreamReader.ReadToEnd();
                 body = ParseClientAssignment(contents, models);
-                supplymail.Subject = "Freedom Profit Recovery Service Call Summary" +
+                supplymail.Subject = "FPR Support Request Summary " +
                                     DateTime.Now.ToShortDateString() + " @ " + DateTime.Now.ToShortTimeString();
             
 

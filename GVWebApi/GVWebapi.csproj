@@ -224,6 +224,7 @@
     <Compile Include="Controllers\DevicesController.cs" />
     <Compile Include="Controllers\ServiceCallController.cs" />
     <Compile Include="Models\BulkCallModel.cs" />
+    <Compile Include="Models\Devices\EquipmentPropertiesModel.cs" />
     <Compile Include="Models\Easylink\EasyLinkChildManagerModel.cs" />
     <Compile Include="Models\Easylink\EasyLinkChildMatchSaveModel.cs" />
     <Compile Include="Controllers\EasylinkController.cs" />
