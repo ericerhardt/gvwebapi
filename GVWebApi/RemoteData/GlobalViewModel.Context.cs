@@ -58,6 +58,8 @@ namespace GVWebapi.RemoteData
         public virtual DbSet<EasyLinkMapping> EasyLinkMappings { get; set; }
         public virtual DbSet<EasylinkByClient> EasylinkByClients { get; set; }
         public virtual DbSet<CostAvoidance> CostAvoidances { get; set; }
+        public virtual DbSet<EasyLinkPagesByClient> EasyLinkPagesByClients { get; set; }
+        public virtual DbSet<EasylinkPagesByUser> EasylinkPagesByUsers { get; set; }
     
         public virtual ObjectResult<EasylinkReportByDate_Result> EasylinkReportByDate(Nullable<int> clientId, string startDate, string endDate)
         {
@@ -74,6 +76,28 @@ namespace GVWebapi.RemoteData
                 new ObjectParameter("endDate", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<EasylinkReportByDate_Result>("EasylinkReportByDate", clientIdParameter, startDateParameter, endDateParameter);
+        }
+    
+        public virtual ObjectResult<EasyLinkByClientTotals_Result> EasyLinkByClientTotals(Nullable<int> clientID)
+        {
+            var clientIDParameter = clientID.HasValue ?
+                new ObjectParameter("ClientID", clientID) :
+                new ObjectParameter("ClientID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<EasyLinkByClientTotals_Result>("EasyLinkByClientTotals", clientIDParameter);
+        }
+    
+        public virtual ObjectResult<EasyLinkByClientDetail_Result> EasyLinkByClientDetail(Nullable<int> clientID, string period)
+        {
+            var clientIDParameter = clientID.HasValue ?
+                new ObjectParameter("ClientID", clientID) :
+                new ObjectParameter("ClientID", typeof(int));
+    
+            var periodParameter = period != null ?
+                new ObjectParameter("Period", period) :
+                new ObjectParameter("Period", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<EasyLinkByClientDetail_Result>("EasyLinkByClientDetail", clientIDParameter, periodParameter);
         }
     }
 }

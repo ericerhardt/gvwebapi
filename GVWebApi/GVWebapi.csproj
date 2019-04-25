@@ -386,6 +386,12 @@
     <Compile Include="RemoteData\EasylinkByClient.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="RemoteData\EasyLinkByClientDetail_Result.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\EasyLinkByClientTotals_Result.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="RemoteData\EasyLinkChildMatch.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
@@ -402,6 +408,12 @@
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\EasyLinkMapping.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\EasyLinkPagesByClient.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\EasylinkPagesByUser.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\EasylinkReportByDate_Result.cs">

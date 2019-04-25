@@ -28,5 +28,6 @@ namespace GVWebapi.RemoteData
         public Nullable<System.DateTime> logindatetime { get; set; }
         public Nullable<System.DateTime> logoutdatetime { get; set; }
         public string userimage { get; set; }
+        public string Phone { get; set; }
     }
 }

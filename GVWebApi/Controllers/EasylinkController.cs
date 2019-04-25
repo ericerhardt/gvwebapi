@@ -34,8 +34,19 @@ namespace GVWebapi.Controllers
             var results = db.EasylinkImportHistories.OrderByDescending(p => p.PeriodDate).AsEnumerable();
             return Json(results);
         }
+        [HttpGet, Route("api/easylinkcustomer/{id}")]
+        public IHttpActionResult GetEasylinkCustomerHistories(int id)
+        {
+            var results = db.EasyLinkByClientTotals(id).OrderByDescending(p => p.PeriodDateTime).AsEnumerable();
+            return Json(results);
+        }
+        [HttpPost, Route("api/easylinkclientdetail/")]
+        public IHttpActionResult GetEasylinkCustomerDetails(int id, string period)
+        {
+            var results = db.EasyLinkByClientDetail(id, period).OrderByDescending(p => p.PeriodDateTime).AsEnumerable();
+            return Json(results);
+        }
 
-        
         [HttpGet, Route("api/easylinkdetail/{id}")]
         [ResponseType(typeof(EasylinkImportHistory))]
         public async Task<IHttpActionResult> GetEasylinkImportHistory(int id)

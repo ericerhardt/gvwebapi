@@ -52,6 +52,7 @@ namespace GVWebapi.Controllers
             {
                 modelView.ModelIntro = equipment.IntroDate.GetValueOrDefault();
                 modelView.RecoVolume = equipment.MFRMoVol.GetValueOrDefault();
+               
             }
 
             if (modelView.Equipments == null)
@@ -159,10 +160,13 @@ namespace GVWebapi.Controllers
             decimal? maxbwvolume = devices.Max(x=> x.BWVolume);
             decimal? maxclrvolume = devices.Max(x=> x.ColorVolume);
 
+            decimal? avgbwvolume = devices.Average(x => x.BWVolume);
+            decimal? avgclrvolume = devices.Average(x => x.ColorVolume);
+
             var maxvolume = maxbwvolume > (maxclrvolume == null ? 0 : maxclrvolume) ? maxbwvolume : maxclrvolume;
 
 
-            return Json(new { Devices = devices, MaxVolume = maxvolume });
+            return Json(new { Devices = devices, MaxVolume = maxvolume, AvgBWVol = avgbwvolume, AvgCLRVol = avgclrvolume });
 
         }
 

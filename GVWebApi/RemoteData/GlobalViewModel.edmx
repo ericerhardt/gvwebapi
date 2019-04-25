@@ -234,6 +234,7 @@
           <Property Name="idClient" Type="int" />
           <Property Name="Email" Type="varchar" MaxLength="180" />
           <Property Name="Password" Type="varchar" MaxLength="150" />
+          <Property Name="Phone" Type="varchar" MaxLength="20" />
           <Property Name="LastUpdated" Type="datetime" />
           <Property Name="LastUpdatedBy" Type="varchar" MaxLength="50" />
           <Property Name="Status" Type="int" />
@@ -406,6 +407,33 @@ warning 6002: The table/view 'GlobalView.dbo.EasylinkByClient' does not have a p
           <Property Name="PeriodMonth" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
+warning 6002: The table/view 'GlobalView.dbo.EasyLinkPagesByClient' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="EasyLinkPagesByClient">
+          <Key>
+            <PropertyRef Name="MappingID" />
+          </Key>
+          <Property Name="MappingID" Type="int" Nullable="false" />
+          <Property Name="emailaddress" Type="varchar" MaxLength="254" />
+          <Property Name="PeriodDate" Type="datetime" />
+          <Property Name="Pages" Type="int" />
+          <Property Name="ClientId" Type="int" />
+          <Property Name="ClientName" Type="varchar" MaxLength="254" />
+          <Property Name="FaxNumber" Type="varchar" MaxLength="150" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'GlobalView.dbo.EasylinkPagesByUsers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="EasylinkPagesByUsers">
+          <Key>
+            <PropertyRef Name="MappingID" />
+          </Key>
+          <Property Name="MappingID" Type="int" Nullable="false" />
+          <Property Name="emailaddress" Type="varchar" MaxLength="254" />
+          <Property Name="PeriodDate" Type="datetime" />
+          <Property Name="Pages" Type="int" />
+          <Property Name="ClientId" Type="int" />
+          <Property Name="ClientName" Type="varchar" MaxLength="254" />
+        </EntityType>
+        <!--Errors Found During Generation:
 warning 6002: The table/view 'GlobalView.dbo.EquipmentManagerList' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="EquipmentManagerList">
           <Key>
@@ -573,6 +601,13 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="EasyLinkByClientDetail" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientID" Type="int" Mode="In" />
+          <Parameter Name="Period" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="EasyLinkByClientTotals" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientID" Type="int" Mode="In" />
+        </Function>
         <Function Name="EasylinkReportByDate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="clientId" Type="int" Mode="In" />
           <Parameter Name="startDate" Type="varchar" Mode="In" />
@@ -645,6 +680,27 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
     [EasylinkByClient].[PeriodYear] AS [PeriodYear], 
     [EasylinkByClient].[PeriodMonth] AS [PeriodMonth]
     FROM [dbo].[EasylinkByClient] AS [EasylinkByClient]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="EasyLinkPagesByClient" EntityType="Self.EasyLinkPagesByClient" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [EasyLinkPagesByClient].[MappingID] AS [MappingID], 
+    [EasyLinkPagesByClient].[emailaddress] AS [emailaddress], 
+    [EasyLinkPagesByClient].[PeriodDate] AS [PeriodDate], 
+    [EasyLinkPagesByClient].[Pages] AS [Pages], 
+    [EasyLinkPagesByClient].[ClientId] AS [ClientId], 
+    [EasyLinkPagesByClient].[ClientName] AS [ClientName], 
+    [EasyLinkPagesByClient].[FaxNumber] AS [FaxNumber]
+    FROM [dbo].[EasyLinkPagesByClient] AS [EasyLinkPagesByClient]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="EasylinkPagesByUsers" EntityType="Self.EasylinkPagesByUsers" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [EasylinkPagesByUsers].[MappingID] AS [MappingID], 
+    [EasylinkPagesByUsers].[emailaddress] AS [emailaddress], 
+    [EasylinkPagesByUsers].[PeriodDate] AS [PeriodDate], 
+    [EasylinkPagesByUsers].[Pages] AS [Pages], 
+    [EasylinkPagesByUsers].[ClientId] AS [ClientId], 
+    [EasylinkPagesByUsers].[ClientName] AS [ClientName]
+    FROM [dbo].[EasylinkPagesByUsers] AS [EasylinkPagesByUsers]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="EquipmentManagerList" EntityType="Self.EquipmentManagerList" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -819,6 +875,15 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
             <Parameter Name="startDate" Mode="In" Type="String" />
             <Parameter Name="endDate" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="EasyLinkPagesByClients" EntityType="GlobalViewModel.EasyLinkPagesByClient" />
+          <EntitySet Name="EasylinkPagesByUsers" EntityType="GlobalViewModel.EasylinkPagesByUser" />
+          <FunctionImport Name="EasyLinkByClientTotals" ReturnType="Collection(GlobalViewModel.EasyLinkByClientTotals_Result)">
+          <Parameter Name="ClientID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="EasyLinkByClientDetail" ReturnType="Collection(GlobalViewModel.EasyLinkByClientDetail_Result)">
+            <Parameter Name="ClientID" Mode="In" Type="Int32" />
+            <Parameter Name="Period" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="ContactClient">
           <Key>
@@ -889,6 +954,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <Property Name="logindatetime" Type="DateTime" Precision="3" />
           <Property Name="logoutdatetime" Type="DateTime" Precision="3" />
           <Property Name="userimage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Phone" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ClientContact">
           <Key>
@@ -1383,6 +1449,45 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <Property Type="Int32" Name="Pages" Nullable="true" />
           <Property Type="String" Name="FaxNumber" Nullable="true" MaxLength="150" />
         </ComplexType>
+        <EntityType Name="EasyLinkPagesByClient">
+          <Key>
+            <PropertyRef Name="MappingID" />
+          </Key>
+          <Property Name="MappingID" Type="Int32" Nullable="false" />
+          <Property Name="emailaddress" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
+          <Property Name="PeriodDate" Type="DateTime" Precision="3" />
+          <Property Name="Pages" Type="Int32" />
+          <Property Name="ClientId" Type="Int32" />
+          <Property Name="ClientName" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
+          <Property Name="FaxNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="EasylinkPagesByUser">
+          <Key>
+            <PropertyRef Name="MappingID" />
+          </Key>
+          <Property Name="MappingID" Type="Int32" Nullable="false" />
+          <Property Name="emailaddress" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
+          <Property Name="PeriodDate" Type="DateTime" Precision="3" />
+          <Property Name="Pages" Type="Int32" />
+          <Property Name="ClientId" Type="Int32" />
+          <Property Name="ClientName" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <ComplexType Name="EasyLinkByClientTotals_Result">
+          <Property Type="String" Name="PeriodDate" Nullable="true" MaxLength="7" />
+          <Property Type="Int32" Name="Users" Nullable="true" />
+          <Property Type="Int32" Name="Pages" Nullable="true" />
+          <Property Type="String" Name="PeriodParam" Nullable="true" MaxLength="7" />
+          <Property Type="DateTime" Name="PeriodDateTime" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="EasyLinkByClientDetail_Result">
+          <Property Type="String" Name="emailaddress" Nullable="true" MaxLength="254" />
+          <Property Type="String" Name="FaxNumber" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="PeriodDate" Nullable="true" MaxLength="7" />
+          <Property Type="DateTime" Name="PeriodDateTime" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="Pages" Nullable="true" />
+          <Property Type="Int32" Name="ClientId" Nullable="true" />
+          <Property Type="String" Name="PeriodParam" Nullable="true" MaxLength="7" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1463,6 +1568,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <EntitySetMapping Name="GlobalViewUsers">
             <EntityTypeMapping TypeName="GlobalViewModel.GlobalViewUser">
               <MappingFragment StoreEntitySet="GlobalViewUsers">
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
                 <ScalarProperty Name="userimage" ColumnName="userimage" />
                 <ScalarProperty Name="logoutdatetime" ColumnName="logoutdatetime" />
                 <ScalarProperty Name="logindatetime" ColumnName="logindatetime" />
@@ -1856,6 +1962,55 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
                 <ScalarProperty Name="emailaddress" ColumnName="emailaddress" />
                 <ScalarProperty Name="Pages" ColumnName="Pages" />
                 <ScalarProperty Name="FaxNumber" ColumnName="FaxNumber" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="EasyLinkPagesByClients">
+            <EntityTypeMapping TypeName="GlobalViewModel.EasyLinkPagesByClient">
+              <MappingFragment StoreEntitySet="EasyLinkPagesByClient">
+                <ScalarProperty Name="FaxNumber" ColumnName="FaxNumber" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="ClientId" ColumnName="ClientId" />
+                <ScalarProperty Name="Pages" ColumnName="Pages" />
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="emailaddress" ColumnName="emailaddress" />
+                <ScalarProperty Name="MappingID" ColumnName="MappingID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EasylinkPagesByUsers">
+            <EntityTypeMapping TypeName="GlobalViewModel.EasylinkPagesByUser">
+              <MappingFragment StoreEntitySet="EasylinkPagesByUsers">
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="ClientId" ColumnName="ClientId" />
+                <ScalarProperty Name="Pages" ColumnName="Pages" />
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="emailaddress" ColumnName="emailaddress" />
+                <ScalarProperty Name="MappingID" ColumnName="MappingID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="EasyLinkByClientTotals" FunctionName="GlobalViewModel.Store.EasyLinkByClientTotals">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="GlobalViewModel.EasyLinkByClientTotals_Result">
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="Users" ColumnName="Users" />
+                <ScalarProperty Name="Pages" ColumnName="Pages" />
+                <ScalarProperty Name="PeriodParam" ColumnName="PeriodParam" />
+                <ScalarProperty Name="PeriodDateTime" ColumnName="PeriodDateTime" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="EasyLinkByClientDetail" FunctionName="GlobalViewModel.Store.EasyLinkByClientDetail">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="GlobalViewModel.EasyLinkByClientDetail_Result">
+                <ScalarProperty Name="emailaddress" ColumnName="emailaddress" />
+                <ScalarProperty Name="FaxNumber" ColumnName="FaxNumber" />
+                <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
+                <ScalarProperty Name="PeriodDateTime" ColumnName="PeriodDateTime" />
+                <ScalarProperty Name="Pages" ColumnName="Pages" />
+                <ScalarProperty Name="ClientId" ColumnName="ClientId" />
+                <ScalarProperty Name="PeriodParam" ColumnName="PeriodParam" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

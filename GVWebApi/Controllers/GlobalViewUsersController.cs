@@ -33,6 +33,20 @@ namespace GVWebapi.Controllers
             return Ok(globalViewUser);
         }
 
+        [HttpPost, Route("api/updateuserphone")]
+        public async Task<IHttpActionResult> UpdateUserPhone(int id, string phone)
+        {
+            GlobalViewUser globalViewUser = await _globalViewEntities.GlobalViewUsers.FindAsync(id);
+            if (globalViewUser == null)
+            {
+                return NotFound();
+            }
+            globalViewUser.Phone = phone;
+            _globalViewEntities.SaveChanges();
+
+            return Ok();
+        }
+
         [ResponseType(typeof(GlobalViewUser))]
         public async Task<IHttpActionResult> PostGlobalViewUser(GlobalViewUser globalViewUser)
         {
