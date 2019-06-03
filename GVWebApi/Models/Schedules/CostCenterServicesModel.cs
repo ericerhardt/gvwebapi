@@ -20,4 +20,20 @@ namespace GVWebapi.Models.Schedules
         public Decimal OverageCPP { get; set; }
         public Decimal Cost { get; set; }
     }
+    
+    public class  ServiceCostCenterViewModel
+    {
+        public int ScheduleCostCenterID { get; set; }
+        public long ScheduleID { get; set; }
+        public int CustomerID { get; set; }
+        public string CostCenter { get; set; }
+        public Nullable<int> Status { get; set; }
+        public List<MeterGroupCostCenter> MeterGroups { get; set; }
+    }
+    public class MeterGroupCostCenter 
+    {
+        public string MeterGroupDesc { get; set; }
+        public int MeterGroupID { get; set; }
+        public Nullable<int> Volume { get; set; }
+    }
 }

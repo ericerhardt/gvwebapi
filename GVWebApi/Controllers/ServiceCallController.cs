@@ -53,7 +53,7 @@ namespace GVWebapi.Controllers
                         oServiceInfo.User = Equipment.AssetUser;
                         oServiceInfo.Floor = Equipment.Floor;
 
-                        var Id = "69874";//InsertServiceCall(oServiceInfo);
+                        var Id =  InsertServiceCall(oServiceInfo);
                        
                         oServiceInfo.CallNumber = Id;
                         oServiceInfo.CallType = 1;

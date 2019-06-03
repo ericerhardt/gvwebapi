@@ -216,6 +216,7 @@
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\ClientsContractController.cs" />
     <Compile Include="Controllers\ClientSettingsController.cs" />
+    <Compile Include="Controllers\CostAllocationController.cs" />
     <Compile Include="Controllers\CostAvoidancesController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\CycleHistoryApiController.cs" />
@@ -223,7 +224,9 @@
     <Compile Include="Controllers\DeviceApiController.cs" />
     <Compile Include="Controllers\DevicesController.cs" />
     <Compile Include="Controllers\ServiceCallController.cs" />
+    <Compile Include="Helpers\PiviotArrays.cs" />
     <Compile Include="Models\BulkCallModel.cs" />
+    <Compile Include="Models\CostAllocationSettingsViewModel.cs" />
     <Compile Include="Models\Devices\EquipmentPropertiesModel.cs" />
     <Compile Include="Models\Easylink\EasyLinkChildManagerModel.cs" />
     <Compile Include="Models\Easylink\EasyLinkChildMatchSaveModel.cs" />
@@ -282,6 +285,7 @@
     <Compile Include="Models\EquipmentsModelView.cs" />
     <Compile Include="Models\Locations.cs" />
     <Compile Include="Models\LoginData.cs" />
+    <Compile Include="Models\Reports\GVGraphsandCharts.cs" />
     <Compile Include="Models\Reports\QuarterlyReviewModel.cs" />
     <Compile Include="Models\RevisionDataModel.cs" />
     <Compile Include="Models\RevisionHistoryViewModel.cs" />
@@ -336,6 +340,12 @@
       <DependentUpon>coFreedomEntities.edmx</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\ContactClient.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\CostAllocationMeterGroup.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\CostAllocationSetting.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\CostAvoidance.cs">
@@ -446,6 +456,9 @@
     <Compile Include="RemoteData\GlobalViewUser.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="RemoteData\InvoicedEquipmentHistory.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="RemoteData\Location.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
@@ -480,6 +493,9 @@
       <DependentUpon>coFreedomEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\Schedule.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\ScheduleCostCenter.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\ScheduleService.cs">

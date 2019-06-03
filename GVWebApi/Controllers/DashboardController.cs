@@ -16,7 +16,7 @@ namespace GVWebapi.Controllers
     {
         private readonly CoFreedomEntities _context = new CoFreedomEntities();
         private readonly GlobalViewEntities _db = new GlobalViewEntities();
-        private CustomerPortalEntities db = new CustomerPortalEntities();
+ 
       
         [HttpGet]
         [Route("api/savingbycategory/{ClientID}")]
@@ -35,7 +35,7 @@ namespace GVWebapi.Controllers
                   ReplacementValue = Replacements.Sum(c => c.ReplacementValue).Value;
             }
             
-            var CostAvoidance =  String.IsNullOrEmpty(db.CostAvoidances.Where(c => c.CustomerID == ClientID).Sum(c => c.TotalSavingsCost).ToString()) ? "0" : db.CostAvoidances.Where(c => c.CustomerID == ClientID).Sum(c => c.TotalSavingsCost).Value.ToString();
+            var CostAvoidance =  String.IsNullOrEmpty(_db.CostAvoidances.Where(c => c.CustomerID == ClientID).Sum(c => c.TotalSavingsCost).ToString()) ? "0" : _db.CostAvoidances.Where(c => c.CustomerID == ClientID).Sum(c => c.TotalSavingsCost).Value.ToString();
             var Rollovers =   _db.QuarterlyRollovers.Where(r => r.ContractID == contract && r.Rollovers > 0).Sum(x => x.Rollovers * x.CPP) ?? 0;
            
             var Revision = er.RevisionSummary(contract).Sum(o=> o.Savings).ToString() ?? "0" ;

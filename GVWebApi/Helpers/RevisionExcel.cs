@@ -78,7 +78,7 @@ namespace GVWebapi.Helpers
                             new
                             {
                                
-                                FPROverageCharge = ((e.Overage - e.Rollover) * e.CPP) - e.CreditAmount <= 0 ? 0.00M : (((e.Overage) - e.Rollover) * e.CPP) - e.CreditAmount,
+                                FPROverageCharge = ((e.OverageCharge - (e.Rollover * e.CPP)) - e.CreditAmount) <= 0 ? 0.00M : ((e.OverageCharge - (e.Rollover * e.CPP)) - e.CreditAmount),
                                 ClientOverageCharge = e.Overage > 0 ? ( e.Overage * mg.CPP): 0.00M,
                                 CreditAmount = e.CreditAmount,
                                 OverageToDate = e.OverageToDate,
@@ -302,7 +302,7 @@ namespace GVWebapi.Helpers
                 rollOverPage.Period = period.PeriodDate;
                 rollOverPage.InvoiceID = period.InvoiceID;
                 rollOverPage.StartDate = period.StartDate;
-                var gvdata = gv.QuarterlyRollovers.Where(r => r.ContractID == ContractID && r.InvoiceID == period.InvoiceID).ToList();
+                var gvdata = gv.QuarterlyRollovers.Where(r => r.ContractID == ContractID && r.InvoiceID == period.InvoiceID && r.disabled == false).ToList();
                 var _rollovers = from g in gvdata
                                  orderby g.ERPMeterGroupDesc
                                  select

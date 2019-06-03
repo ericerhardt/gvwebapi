@@ -17,7 +17,7 @@ namespace GVWebapi.RemoteData
         public long DeviceId { get; set; }
         public Nullable<long> ScheduleId { get; set; }
         public long CustomerId { get; set; }
-        public string EquipmentId { get; set; }
+        public int EquipmentId { get; set; }
         public string EquipmentNumber { get; set; }
         public string SerialNumber { get; set; }
         public string Model { get; set; }

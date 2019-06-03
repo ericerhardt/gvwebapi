@@ -10,7 +10,7 @@ using System.Web.Http.Description;
 using GVWebapi.RemoteData;
 using GVWebapi.Models;
 using GVWebapi.Helpers;
-
+using GVWebapi.Models.Reports;
 namespace GVWebapi.Controllers
 {
     public class RevisionDatasController : ApiController
@@ -50,6 +50,196 @@ namespace GVWebapi.Controllers
             }
                
         }
+
+
+        [HttpGet, Route("api/revisiondatas/chart/{customerId}")]
+        public IHttpActionResult GetContractVSActualHistory(int customerId)
+        {
+          
+            var contract = _coFreedomEntities.vw_csContractList.OrderBy(c => c.ContractID).Where(c => c.CustomerID == customerId).FirstOrDefault();
+            ExcelRevisionExport revision = new ExcelRevisionExport();
+            var revs = revision.GetRevisionHistory(contract.ContractID).Reverse();
+            var mgs = _globalView.RevisionMeterGroups.Where(x => x.ERPContractID == contract.ContractID);
+
+           
+            var chardata = new List<ContractedVolumeReport>();
+           
+            foreach(var rev in revs)
+            {
+                foreach(var detail in rev.detail)
+                {
+                    var revisiondata = new ContractedVolumeReport();
+                    revisiondata.Period = rev.peroid.Value.ToString("MMM, yyyy");
+                    revisiondata.MeterGroup = detail.ContractMeterGroupID.Value;
+                    revisiondata.MeterGroupDesc = detail.MeterGroup;
+                    revisiondata.ContractedVolume = detail.ContractVolume;
+                    revisiondata.ActualVolume = detail.ActualVolume;
+                    chardata.Add(revisiondata);
+                }
+               
+            }
+            var chartlist = new List<dynamic>();
+           
+            var random = new Random();
+            var i = 1;
+            foreach (var mg in mgs)
+            {
+                var chardata2 = chardata.Where(x => x.MeterGroup == mg.ERPMeterGroupID);
+                var MeterGroup = chardata2.Select(x => x.MeterGroupDesc).First();
+                var color = String.Format("#{0:X6}", random.Next(0x1000000));
+                var a = new { idx = i++, show = false, label = "Contracted " + MeterGroup, color = color, data = chardata2.Select(x => new object[] { x.Period, x.ContractedVolume }) };
+                chartlist.Add(a);
+                var b = new { idx = i++, show = false, label = "Actual " + MeterGroup, color = color + "82", data = chardata2.Select(x => new object[] { x.Period, x.ActualVolume }) };
+                chartlist.Add(b);
+              
+
+            }
+            
+
+            return Json(chartlist);
+
+        }
+
+
+        [HttpGet, Route("api/revisiondatas/volumehistorychart/{customerId}")]
+        public IHttpActionResult GetContractVSActualHistory2(int customerId)
+        {
+            var contract = _coFreedomEntities.vw_csContractList.OrderBy(c => c.ContractID).Where(c => c.CustomerID == customerId).FirstOrDefault();
+            var ContractDate = DateTime.Now.AddMonths(-48);
+            ExcelRevisionExport revision = new ExcelRevisionExport();
+            var revs = revision.GetRevisionHistory(contract.ContractID).Where(x => x.peroid >= ContractDate).Reverse();
+            var mgs = _globalView.RevisionDataViews.Where(r => r.ContractID == contract.ContractID && r.OverageToDate >= ContractDate).Select(x => new { x.ContractMeterGroupID, x.MeterGroup }).ToList().Distinct();
+            var chartdata = new List<dynamic>();
+            var periodDate = revs.First().peroid;
+            foreach (var rev in revs)
+            {
+                var datediff = (rev.peroid - periodDate).Value.Days;
+                periodDate = rev.peroid.Value;
+                if(datediff > 90)
+                {
+                    var loop = datediff / 90;
+                   for( var i = 1; loop < i; i++)
+                    {
+
+
+                    }
+
+                }
+
+                var chartItem = new Dictionary<string, string>();
+                chartItem.Add("Period", rev.peroid.Value.ToString("MMM, yyyy"));
+                foreach (var detail in rev.detail)
+                {
+
+
+                    chartItem.Add(detail.MeterGroup + " Contracted", detail.ContractVolume.Value.ToString());
+                    chartItem.Add(detail.MeterGroup + " Actual", detail.ActualVolume.Value.ToString());
+                    
+                }
+                chartdata.Add(chartItem);
+            }
+           
+            var seriesdata = new List<dynamic>();
+            foreach (var mg in mgs)
+            {
+                var seriesItem = new Dictionary<string, string>();
+                seriesItem.Add("dataField", mg.MeterGroup + " Contracted");
+                seriesdata.Add(seriesItem);
+                var seriesItem2 = new Dictionary<string, string>();
+                seriesItem2.Add("dataField", mg.MeterGroup + " Actual");
+                seriesdata.Add(seriesItem2);
+            }
+
+
+            return Json( new { data = chartdata, series = seriesdata });
+
+        }
+
+        [HttpGet, Route("api/reports/volumehistorychart/{customerId}")]
+        public IHttpActionResult ContractVSActualHistoryChart(int customerId)
+        {
+            var contract = _coFreedomEntities.vw_csContractList.OrderBy(c => c.ContractID).Where(c => c.CustomerID == customerId).FirstOrDefault();
+            var ContractDate = DateTime.Now.AddMonths(-48);
+            ExcelRevisionExport revision = new ExcelRevisionExport();
+            var revs = revision.GetRevisionHistory(contract.ContractID).Where(x => x.peroid >= ContractDate).Reverse();
+            var mgs = _globalView.RevisionDataViews.Where(r => r.ContractID == contract.ContractID && r.OverageToDate >= ContractDate).Select(x => new { x.ContractMeterGroupID, x.MeterGroup }).ToList().Distinct();
+            var chartdata = new List<dynamic>();
+            var periodDate = revs.First().peroid;
+            foreach (var rev in revs)
+            {
+                var datediff = (rev.peroid - periodDate).Value.Days;
+                periodDate = rev.peroid.Value;
+
+                if (datediff > 99)
+                {
+
+                    var loop = datediff / 90;
+
+                    for (var i = 1; i <= loop; i++)
+                    {
+                        var chartItemx = new Dictionary<string, string>();
+                        if (i == loop)
+                        {
+                            chartItemx.Add("Period", rev.peroid.Value.ToString("MMM, yyyy"));
+                        }
+                        else
+                        {
+                            chartItemx.Add("Period", rev.peroid.Value.AddDays(-90).ToString("MMM, yyyy"));
+                        }
+
+                        foreach (var detail in rev.detail)
+                        {
+                            var contractedVol = detail.ContractVolume.Value / loop;
+                            var actualVol = detail.ActualVolume.Value / loop;
+
+                            chartItemx.Add(detail.MeterGroup + " Contracted", contractedVol.ToString());
+                            chartItemx.Add(detail.MeterGroup + " Actual", actualVol.ToString());
+
+                        }
+                        chartdata.Add(chartItemx);
+                    }
+
+                }
+                else
+                {
+                    var chartItem = new Dictionary<string, string>();
+                    chartItem.Add("Period", rev.peroid.Value.ToString("MMM, yyyy"));
+                    foreach (var detail in rev.detail)
+                    {
+
+
+                        chartItem.Add(detail.MeterGroup + " Contracted", detail.ContractVolume.Value.ToString());
+                        chartItem.Add(detail.MeterGroup + " Actual", detail.ActualVolume.Value.ToString());
+
+                    }
+                    chartdata.Add(chartItem);
+                }
+
+
+            }
+
+            var c_seriesdata = new List<dynamic>();
+            var a_seriesdata = new List<dynamic>();
+            foreach (var mg in mgs)
+            {
+                var seriesItem = new Dictionary<string, string>();
+                seriesItem.Add("dataField", mg.MeterGroup + " Contracted");
+                seriesItem.Add("opacity", "1.0");
+                seriesItem.Add("lineWidth", "4");
+                seriesItem.Add("dashStyle", "4,4");
+                c_seriesdata.Add(seriesItem);
+                var seriesItem2 = new Dictionary<string, string>();
+                seriesItem2.Add("dataField", mg.MeterGroup + " Actual");
+                seriesItem2.Add("opacity", "0.4");
+                a_seriesdata.Add(seriesItem2);
+
+            }
+
+
+            return Json(new { data = chartdata, cseries = c_seriesdata, aseries = a_seriesdata });
+
+        }
+
 
         [HttpGet, Route("api/revisiondatas/getreconciliationinvoiced/{ContractId}/{StartDate}/{EndDate}")]
         public IHttpActionResult GetReconciliationInvoiced(int contractId,DateTime startDate,DateTime endDate)

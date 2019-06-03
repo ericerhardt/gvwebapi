@@ -12,16 +12,10 @@ namespace GVWebapi.RemoteData
     using System;
     using System.Collections.Generic;
     
-    public partial class QuarterlyRollover
+    public partial class CostAllocationSetting
     {
-        public int ContractID { get; set; }
-        public Nullable<System.DateTime> OverageFromDate { get; set; }
-        public Nullable<System.DateTime> OverageToDate { get; set; }
-        public int InvoiceID { get; set; }
-        public int ContractMeterGroupID { get; set; }
-        public string ERPMeterGroupDesc { get; set; }
-        public Nullable<decimal> Rollovers { get; set; }
-        public decimal CPP { get; set; }
-        public Nullable<bool> disabled { get; set; }
+        public int SettingsId { get; set; }
+        public int CustomerID { get; set; }
+        public bool AssumedAllocation { get; set; }
     }
 }

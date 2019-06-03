@@ -18,9 +18,9 @@ namespace GVWebapi.RemoteData
         public Schedule()
         {
             this.CyclePeriodSchedules = new HashSet<CyclePeriodSchedule>();
-            this.Devices = new HashSet<Device>();
             this.ScheduleServices = new HashSet<ScheduleService>();
             this.Schedules1 = new HashSet<Schedule>();
+            this.Devices = new HashSet<Device>();
         }
     
         public long ScheduleId { get; set; }
@@ -42,11 +42,11 @@ namespace GVWebapi.RemoteData
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CyclePeriodSchedule> CyclePeriodSchedules { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Device> Devices { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ScheduleService> ScheduleServices { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Schedule> Schedules1 { get; set; }
         public virtual Schedule Schedule1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Device> Devices { get; set; }
     }
 }

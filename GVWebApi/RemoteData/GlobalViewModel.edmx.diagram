@@ -12,7 +12,6 @@
         <EntityTypeShape EntityType="GlobalViewModel.EquipmentManagerList" Width="3.375" PointX="5.375" PointY="0.75" />
         <EntityTypeShape EntityType="GlobalViewModel.GlobalViewUser" Width="1.5" PointX="6.75" PointY="4.125" />
         <EntityTypeShape EntityType="GlobalViewModel.ClientContact" Width="1.5" PointX="5" PointY="4.125" />
-        <EntityTypeShape EntityType="GlobalViewModel.Device" Width="2.375" PointX="3.625" PointY="8.125" />
         <EntityTypeShape EntityType="GlobalViewModel.CyclePeriod" Width="1.5" PointX="8.875" PointY="9.125" />
         <EntityTypeShape EntityType="GlobalViewModel.CyclePeriodSchedule" Width="1.5" PointX="11.125" PointY="8.5" />
         <EntityTypeShape EntityType="GlobalViewModel.CycleReconciliationService" Width="1.5" PointX="8.875" PointY="12.625" />
@@ -27,7 +26,6 @@
         <AssociationConnector Association="GlobalViewModel.FK_CyclePeriodSchedules_CyclePeriod" />
         <AssociationConnector Association="GlobalViewModel.FK_CyclePeriodSchedules_Schedule" />
         <AssociationConnector Association="GlobalViewModel.FK_CycleReconciliationServices_Cycle" />
-        <AssociationConnector Association="GlobalViewModel.FK_Devices_Schedules" />
         <AssociationConnector Association="GlobalViewModel.FK_EasyLinkItem_EasyLInk" />
         <AssociationConnector Association="GlobalViewModel.FK_Schedule_ScheduleService" />
         <AssociationConnector Association="GlobalViewModel.FK_Schedules_ScheduleId" />
@@ -47,6 +45,12 @@
         <EntityTypeShape EntityType="GlobalViewModel.CostAvoidance" Width="1.5" PointX="15" PointY="0.75" />
         <EntityTypeShape EntityType="GlobalViewModel.EasyLinkPagesByClient" Width="4.625" PointX="17.375" PointY="3.25" />
         <EntityTypeShape EntityType="GlobalViewModel.EasylinkPagesByUser" Width="3.75" PointX="17.375" PointY="0.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.CostAllocationMeterGroup" Width="3.5" PointX="16.375" PointY="6.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.CostAllocationSetting" Width="3.5" PointX="11.375" PointY="17.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.InvoicedEquipmentHistory" Width="3.875" PointX="15.375" PointY="18.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.Device" Width="1.5" PointX="2.875" PointY="8.125" />
+        <AssociationConnector Association="GlobalViewModel.FK_Devices_Schedules" />
+        <EntityTypeShape EntityType="GlobalViewModel.ScheduleCostCenter" Width="1.5" PointX="18.375" PointY="9.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
