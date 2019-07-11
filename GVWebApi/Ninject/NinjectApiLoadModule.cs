@@ -30,12 +30,13 @@ namespace GVWebapi.Ninject
             Kernel.Bind<ICoFreedomDeviceService>().To<CoFreedomDeviceService>();
             Kernel.Bind<ICycleHistoryService>().To<CycleHistoryService>();
             Kernel.Bind<ICyclePeriodService>().To<CyclePeriodService>();
-            Kernel.Bind<IDeviceService>().To<DeviceService>();
+            Kernel.Bind<IScheduleDevicesService>().To<ScheduleDevicesService>();
             Kernel.Bind<ILocationsService>().To<LocationsService>();
             Kernel.Bind<IEditScheduleService>().To<EditScheduleService>();
             Kernel.Bind<IScheduleService>().To<ScheduleService>();
             Kernel.Bind<IReconciliationService>().To<ReconciliationService>();
             Kernel.Bind<IScheduleServicesService>().To<ScheduleServicesService>();
+            Kernel.Bind<ICostAllocationService>().To<CostAllocationService>();
         }
 
         private static string StripMetaData(string connectionString)

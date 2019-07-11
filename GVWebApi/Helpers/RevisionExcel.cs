@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using GVWebapi.Models.Schedules;
 
 namespace GVWebapi.Helpers
 {    
@@ -48,8 +49,61 @@ namespace GVWebapi.Helpers
             var Contract = ea.vw_ClientsOnContract.Where(c => c.CustomerID == CustomerID).FirstOrDefault();
             return Contract.ContractID;
         }
+
+        public string ValidateMeterGroupVolume(IEnumerable<SccMeterGroupSumsViewModel> models,long scheduleId )
+        {
+            string Message = String.Empty;
+
+            GlobalViewEntities db = new GlobalViewEntities();
+
+            var contractPages = db.ScheduleServices.Where(x => x.ScheduleId == scheduleId).ToList();
+
+           var invaildvolumes =  contractPages.Join(models, pages => pages.MeterGroup, model => model.Name, (pages, model) => new { Pages = pages, Model = model })
+                         .Where(pagemodel => pagemodel.Pages.ContractedPages < pagemodel.Model.Total).ToList();
+
+            if (invaildvolumes.Count > 0)
+            {
+                Message = " Cost Center Volume totals for ";
+                var count = invaildvolumes.Count();
+                foreach ( var volumes in invaildvolumes)
+                {
+                    int difference = volumes.Model.Total.Value - volumes.Pages.ContractedPages;
+                    if (count-- > 1)
+                        Message += volumes.Model.Name +  " (" + difference.ToString("n0") + ")  ,";
+                    else
+                        Message += volumes.Model.Name + " (" + difference.ToString("n0") + ")";
+                }
+                Message += " are to high.";
+            } else
+            {
+                Message = "Validated";
+            }
+            return  Message;
+        }
+
         
-        public List<GVWebapi.Models.VisionData>  RevisionSummary(Int32 ContractID)
+        public IEnumerable<ScheduleCostCenterViewModel> ServiceCostCenterModelToList(List<ServiceCostCenterViewModel> models)
+        {
+            List<ScheduleCostCenterViewModel> scheduleCostCenterList = new List<ScheduleCostCenterViewModel>();
+            foreach(var model in models)
+            {
+                foreach(var metergroup in model.MeterGroups)
+                {
+                    ScheduleCostCenterViewModel scc = new ScheduleCostCenterViewModel();
+                    scc.ScheduleCostCenterID = model.ScheduleCostCenterID;
+                    scc.CustomerID = model.CustomerID;
+                    scc.ScheduleID = model.ScheduleID;
+                    scc.MeterGroupID = metergroup.ContractMeterGroupID;
+                    scc.MeterGroupDesc = metergroup.MeterGroupDesc;
+                    scc.Volume = metergroup.Volume;
+                    scheduleCostCenterList.Add(scc);
+                }
+            }
+
+            return scheduleCostCenterList;
+        }
+
+        public List<VisionData>  RevisionSummary(Int32 ContractID)
         {
 
             GlobalViewEntities gv = new GlobalViewEntities();

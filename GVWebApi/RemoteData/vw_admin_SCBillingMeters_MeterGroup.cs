@@ -34,5 +34,6 @@ namespace GVWebapi.RemoteData
         public int EquipmentID { get; set; }
         public string InvoiceType { get; set; }
         public int CustomerID { get; set; }
+        public int ContractMeterGroupID { get; set; }
     }
 }

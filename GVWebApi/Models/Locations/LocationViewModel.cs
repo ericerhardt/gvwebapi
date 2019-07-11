@@ -31,7 +31,7 @@ namespace GVWebapi.Models.Locations
         public string City { get; set; }
         public string State { get; set; }
         public string Zip { get; set; }
-        public string FullAddress => $"{City},{State},{Zip}";
+        public string FullAddress => $"{City}, {State} {Zip}";
         public int CoFreedomLocationId { get; set; }
     }
 }

@@ -445,7 +445,6 @@ warning 6002: The table/view 'CoFreedom._custom_eviews.vw_admin_SCBillingMeters_
           <Key>
             <PropertyRef Name="InvoiceID" />
             <PropertyRef Name="CustomerName" />
-            <PropertyRef Name="ContractNumber" />
             <PropertyRef Name="EquipmentCustomerName" />
             <PropertyRef Name="ContractCode" />
             <PropertyRef Name="EquipmentNumber" />
@@ -454,6 +453,7 @@ warning 6002: The table/view 'CoFreedom._custom_eviews.vw_admin_SCBillingMeters_
             <PropertyRef Name="EquipmentID" />
             <PropertyRef Name="InvoiceType" />
             <PropertyRef Name="CustomerID" />
+            <PropertyRef Name="ContractNumber" />
           </Key>
           <Property Name="InvoiceID" Type="int" Nullable="false" />
           <Property Name="CustomerName" Type="varchar" MaxLength="128" Nullable="false" />
@@ -463,6 +463,7 @@ warning 6002: The table/view 'CoFreedom._custom_eviews.vw_admin_SCBillingMeters_
           <Property Name="EquipmentNumber" Type="varchar" MaxLength="32" Nullable="false" />
           <Property Name="EquipmentSerialNumber" Type="varchar" MaxLength="30" Nullable="false" />
           <Property Name="ContractMeterGroup" Type="varchar" MaxLength="64" />
+		  <Property Name="ContractMeterGroupID" Type="int" Nullable="false" />
           <Property Name="MeterType" Type="varchar" MaxLength="15" />
           <Property Name="InvoiceNumber" Type="varchar" MaxLength="15" Nullable="false" />
           <Property Name="CreatorID" Type="char" MaxLength="8" />
@@ -1630,6 +1631,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
     [vw_admin_SCBillingMeters_MeterGroup].[EquipmentNumber] AS [EquipmentNumber], 
     [vw_admin_SCBillingMeters_MeterGroup].[EquipmentSerialNumber] AS [EquipmentSerialNumber], 
     [vw_admin_SCBillingMeters_MeterGroup].[ContractMeterGroup] AS [ContractMeterGroup], 
+	[vw_admin_SCBillingMeters_MeterGroup].[ContractMeterGroupID] AS [ContractMeterGroupID], 
     [vw_admin_SCBillingMeters_MeterGroup].[MeterType] AS [MeterType], 
     [vw_admin_SCBillingMeters_MeterGroup].[InvoiceNumber] AS [InvoiceNumber], 
     [vw_admin_SCBillingMeters_MeterGroup].[CreatorID] AS [CreatorID], 
@@ -3145,7 +3147,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
             <PropertyRef Name="InvoiceNumber" />
             <PropertyRef Name="EquipmentID" />
             <PropertyRef Name="InvoiceType" />
-            <PropertyRef Name="CustomerID" />
+            <PropertyRef Name="CustomerID" />		
           </Key>
           <Property Name="InvoiceID" Type="Int32" Nullable="false" />
           <Property Name="CustomerName" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
@@ -3167,6 +3169,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
           <Property Name="EquipmentID" Type="Int32" Nullable="false" />
           <Property Name="InvoiceType" Type="String" Nullable="false" MaxLength="2" FixedLength="true" Unicode="false" />
           <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="ContractMeterGroupID" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="vw_admin_SCEquipments_22">
           <Key>
@@ -4472,6 +4475,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
           <EntitySetMapping Name="vw_admin_SCBillingMeters_MeterGroup">
             <EntityTypeMapping TypeName="CoFreedomModel.vw_admin_SCBillingMeters_MeterGroup">
               <MappingFragment StoreEntitySet="vw_admin_SCBillingMeters_MeterGroup">
+                <ScalarProperty Name="ContractNumber" ColumnName="ContractNumber" />
                 <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
                 <ScalarProperty Name="InvoiceType" ColumnName="InvoiceType" />
                 <ScalarProperty Name="EquipmentID" ColumnName="EquipmentID" />
@@ -4485,11 +4489,11 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
                 <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
                 <ScalarProperty Name="MeterType" ColumnName="MeterType" />
                 <ScalarProperty Name="ContractMeterGroup" ColumnName="ContractMeterGroup" />
+				 <ScalarProperty Name="ContractMeterGroupID" ColumnName="ContractMeterGroupID" />
                 <ScalarProperty Name="EquipmentSerialNumber" ColumnName="EquipmentSerialNumber" />
                 <ScalarProperty Name="EquipmentNumber" ColumnName="EquipmentNumber" />
                 <ScalarProperty Name="ContractCode" ColumnName="ContractCode" />
                 <ScalarProperty Name="EquipmentCustomerName" ColumnName="EquipmentCustomerName" />
-                <ScalarProperty Name="ContractNumber" ColumnName="ContractNumber" />
                 <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
                 <ScalarProperty Name="InvoiceID" ColumnName="InvoiceID" />
               </MappingFragment>
@@ -5119,7 +5123,7 @@ warning 6002: The table/view 'CoFreedom.dbo.vw_QuarterlyModelMatrix' does not ha
         <EntityTypeShape EntityType="CoFreedomModel.vw_ServiceCallandContact" Width="1.5" PointX="17.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_WeeklyServiceCalls" Width="1.5" PointX="9.75" PointY="17.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_admin_EquipmentList_MeterGroup" Width="2.5" PointX="17.75" PointY="13.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="CoFreedomModel.vw_admin_SCBillingMeters_MeterGroup" Width="1.5" PointX="11.75" PointY="18.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="CoFreedomModel.vw_admin_SCBillingMeters_MeterGroup" Width="2.125" PointX="15.75" PointY="22.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_admin_SCEquipments_22" Width="1.5" PointX="13.75" PointY="18.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.vw_invoicedMeterGroups" Width="2.375" PointX="19.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="CoFreedomModel.SCBillingCycle" Width="1.5" PointX="0.75" PointY="19.375" IsExpanded="true" />

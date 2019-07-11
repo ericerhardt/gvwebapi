@@ -16,7 +16,9 @@ namespace GVWebapi.RemoteData
     {
         public int SettingsMeterGroupID { get; set; }
         public int CustomerID { get; set; }
-        public int MeterGroupID { get; set; }
+        public long MeterGroupID { get; set; }
         public decimal ExcessCPP { get; set; }
+        public Nullable<int> ContractMeterGroupID { get; set; }
+        public string ContractMeterGroup { get; set; }
     }
 }

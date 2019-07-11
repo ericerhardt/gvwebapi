@@ -11,14 +11,14 @@ namespace GVWebapi.Controllers
 {
     public class DeviceApiController : ApiController
     {
-        private readonly IDeviceService _deviceService;
+        private readonly IScheduleDevicesService _deviceService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICoFreedomUnitOfWork _coFreedomUnitOfWork;
         private readonly IScheduleService _scheduleService;
         private readonly ILocationsService _locationSerivce;
         private readonly GlobalViewEntities _globalViewEntities = new GlobalViewEntities();
 
-        public DeviceApiController(IDeviceService deviceService, IUnitOfWork unitOfWork, ICoFreedomUnitOfWork coFreedomUnitOfWork, IScheduleService scheduleService, ILocationsService locationSerivce)
+        public DeviceApiController(IScheduleDevicesService deviceService, IUnitOfWork unitOfWork, ICoFreedomUnitOfWork coFreedomUnitOfWork, IScheduleService scheduleService, ILocationsService locationSerivce)
         {
             _deviceService = deviceService;
             _unitOfWork = unitOfWork;
@@ -27,15 +27,16 @@ namespace GVWebapi.Controllers
             _locationSerivce = locationSerivce;
         }
  
-        [HttpGet, Route("api/editschedule/devices/active/getdetails/{deviceId}")]
-        public IHttpActionResult GetEditDetails(long deviceId)
+        [HttpGet, Route("api/editschedule/devices/active/getdetails/{scheduleDeviceID}")]
+        public IHttpActionResult GetEditDetails(long scheduleDeviceID)
         {
-             
+            var device = _globalViewEntities.ScheduleDevices.Find(scheduleDeviceID);
             var model = new
             {
-                ActiveSchedules = _scheduleService.GetActiveSchedules(deviceId),
-                Locations = _locationSerivce.LoadAllByDeviceId(deviceId),
-                DeviceItem = _deviceService.GetDeviceByID(deviceId)
+                DeviceItem = _deviceService.GetDeviceByID(device.ScheduleDeviceID),
+                ActiveSchedules = _scheduleService.GetActiveSchedules(device.CustomerID),
+                Locations = _locationSerivce.LoadAllByDeviceId(device.EquipmentID),
+               
             };
 
             _unitOfWork.Commit();

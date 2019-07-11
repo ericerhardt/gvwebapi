@@ -40,7 +40,7 @@ namespace GV.Domain
                 .Database(MsSqlConfiguration.MsSql2008.ConnectionString(connectionString))
                 .Mappings(x =>
                 {
-                    x.FluentMappings.Add<DevicesMap>();
+                    x.FluentMappings.Add<ScheduleDevicesMap>();
                     x.FluentMappings.Add<LocationMap>();
                     x.FluentMappings.Add<SchedulesMap>();
                     x.FluentMappings.Add<AssetReplacementMap>();

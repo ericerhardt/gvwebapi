@@ -5,12 +5,12 @@ namespace GV.Domain.Entities
 {
     public class SchedulesEntity
     {
-        private readonly IList<DevicesEntity> _devices;
+        private readonly IList<ScheduleDevicesEntity> _devices;
         private readonly IList<ScheduleServiceEntity> _scheduleServices;
 
         public SchedulesEntity()
         {
-            _devices = new List<DevicesEntity>();
+            _devices = new List<ScheduleDevicesEntity>();
             _scheduleServices = new List<ScheduleServiceEntity>();
         }
 
@@ -30,10 +30,10 @@ namespace GV.Domain.Entities
         public virtual SchedulesEntity CoterminousSchedule { get; set; }
         public virtual DateTimeOffset?  ModifiedDateTime { get; set; }
 
-        public virtual IEnumerable<DevicesEntity> Devices => _devices;
+        public virtual IEnumerable<ScheduleDevicesEntity> Devices => _devices;
         public virtual IEnumerable<ScheduleServiceEntity> ScheduleServices => _scheduleServices;
 
-        public virtual void AddDevice(DevicesEntity entity)
+        public virtual void AddDevice(ScheduleDevicesEntity entity)
         {
             entity.Schedule = this;
             _devices.Add(entity);
@@ -44,6 +44,6 @@ namespace GV.Domain.Entities
             service.Schedule = this;
             _scheduleServices.Add(service);
         }
-        
+ 
     }
 }

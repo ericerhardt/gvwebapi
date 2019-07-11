@@ -1,6 +1,11 @@
 ﻿using System.Web.Http;
+using System.Collections.Generic;
+using System.Linq;
 using GV.Domain;
 using GVWebapi.Services;
+using GVWebapi.RemoteData;
+using GVWebapi.Models.CostAllocation;
+using GVWebapi.Models.Schedules;
 
 namespace GVWebapi.Controllers
 {
@@ -8,13 +13,15 @@ namespace GVWebapi.Controllers
     {
         private readonly ICycleHistoryService _cycleHistoryService;
         private readonly ICyclePeriodService _cyclePeriodService;
+        private readonly CostAllocationService _costAllocationService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CycleHistoryApiController(ICycleHistoryService cycleHistoryService, IUnitOfWork unitOfWork, ICyclePeriodService cyclePeriodService)
+        public CycleHistoryApiController(ICycleHistoryService cycleHistoryService, IUnitOfWork unitOfWork, ICyclePeriodService cyclePeriodService, CostAllocationService costAllocationService)
         {
             _cycleHistoryService = cycleHistoryService;
             _unitOfWork = unitOfWork;
             _cyclePeriodService = cyclePeriodService;
+            _costAllocationService = costAllocationService;
         }
 
         [HttpGet, Route("api/cyclehistory/availablecycles/{customerId}")]
@@ -89,12 +96,14 @@ namespace GVWebapi.Controllers
             return Ok();
         }
 
-        [HttpGet, Route("api/cyclehistory/period/summary/{cyclePeriodId}")]
-        public IHttpActionResult GetCyclePeriodSummary(long cyclePeriodId)
+        [HttpGet, Route("api/cyclehistory/period/summary/{custid}/{cyclePeriodId}")]
+        public IHttpActionResult GetCyclePeriodSummary(int custid, long cyclePeriodId)
         {
+            
             var model = _cyclePeriodService.GetCyclePeriodSummary(cyclePeriodId);
             _unitOfWork.Commit();
-            return Ok(model);
+
+            return Ok( new { model , allocatedService = model.AllocatedServices, costCenterSummaries = model.CostcenterSummary, model.Metergroups });
         }
 
         [HttpGet, Route("api/cyclehistory/period/devices/{cyclePeriodId}")]
@@ -106,11 +115,13 @@ namespace GVWebapi.Controllers
         }
 
         [HttpPost, Route("api/cyclehistory/period/instancesinvoiced")]
-        public IHttpActionResult UpdateScheduleInstancesInvoiced(InvoiceInstanceSaveModel model)
+        public IHttpActionResult UpdateScheduleInstancesInvoiced(InvoiceInstanceSaveModel imodel)
         {
-            _cyclePeriodService.SaveInstancesInvoiced(model);
+            _cyclePeriodService.SaveInstancesInvoiced(imodel);
             _unitOfWork.Commit();
-            return Ok();
+  
+            var model = _cyclePeriodService.GetCyclePeriodSummary(imodel.CyclePeriodId);
+            return Ok(new { model, allocatedService = model.AllocatedServices, costCenterSummaries = model.CostcenterSummary, model.Metergroups });
         }
 
         [HttpPost, Route("api/cyclehistory/period/updateinvoice")]

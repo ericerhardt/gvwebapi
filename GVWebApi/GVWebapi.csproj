@@ -224,10 +224,21 @@
     <Compile Include="Controllers\DeviceApiController.cs" />
     <Compile Include="Controllers\DevicesController.cs" />
     <Compile Include="Controllers\ServiceCallController.cs" />
+    <Compile Include="Entities\FprEntities.Context.cs" />
     <Compile Include="Helpers\PiviotArrays.cs" />
     <Compile Include="Models\BulkCallModel.cs" />
-    <Compile Include="Models\CostAllocationSettingsViewModel.cs" />
+    <Compile Include="Models\CostAllocation\AllocatedHardwareViewModel.cs" />
+    <Compile Include="Models\CostAllocation\AllocatedServicesViewModel.cs" />
+    <Compile Include="Models\CostAllocation\CostAllocationMeterGroupView.cs" />
+    <Compile Include="Models\CostAllocation\CostAllocationSettingsViewModel.cs" />
+    <Compile Include="Models\CostAllocation\CostCenterSummaryViewModel.cs" />
+    <Compile Include="Models\CostAllocation\GVInvoicedEquipmentHistory.cs" />
+    <Compile Include="Models\CostAllocation\InvoicedEquipmentHistoryView.cs" />
+    <Compile Include="Models\CostAllocation\MeterGroupModel.cs" />
+    <Compile Include="Models\CostAllocation\V_SCContractMeterGroupsModel.cs" />
+    <Compile Include="Models\Devices\ScheduleDevicesModel.cs" />
     <Compile Include="Models\Devices\EquipmentPropertiesModel.cs" />
+    <Compile Include="Models\Devices\ScheduleDeviceViewModel.cs" />
     <Compile Include="Models\Easylink\EasyLinkChildManagerModel.cs" />
     <Compile Include="Models\Easylink\EasyLinkChildMatchSaveModel.cs" />
     <Compile Include="Controllers\EasylinkController.cs" />
@@ -259,7 +270,6 @@
     <Compile Include="Models\ContactViewModel.cs" />
     <Compile Include="Models\Customers.cs" />
     <Compile Include="Models\DashboardModel.cs" />
-    <Compile Include="Models\Devices\DeviceModel.cs" />
     <Compile Include="Models\Devices\DeviceRemoveModel.cs" />
     <Compile Include="Models\Devices\DeviceReplacementSaveModel.cs" />
     <Compile Include="Models\Devices\DeviceSaveModel.cs" />
@@ -292,6 +302,7 @@
     <Compile Include="Models\RolloverPagesModel.cs" />
     <Compile Include="Models\RolloverUsageModel.cs" />
     <Compile Include="Models\RolloverView.cs" />
+    <Compile Include="Models\CostAllocation\SccMeterGroupSumsViewModel.cs" />
     <Compile Include="Models\Schedules\CostCenterServicesModel.cs" />
     <Compile Include="Models\Schedules\CoterminousModel.cs" />
     <Compile Include="Models\Schedules\EditScheduleDeviceTopModel.cs" />
@@ -385,9 +396,6 @@
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\CycleReconciliationService.cs">
-      <DependentUpon>GlobalViewModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RemoteData\Device.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\EasyLink.cs">
@@ -496,6 +504,9 @@
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\ScheduleCostCenter.cs">
+      <DependentUpon>GlobalViewModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemoteData\ScheduleDevice.cs">
       <DependentUpon>GlobalViewModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RemoteData\ScheduleService.cs">
@@ -622,10 +633,11 @@
       <DependentUpon>coFreedomEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="Services\CoFreedomDeviceService.cs" />
+    <Compile Include="Services\CostAllocationService.cs" />
     <Compile Include="Services\CustomMultipartFormDataStreamProvider.cs" />
     <Compile Include="Services\CycleHistoryService.cs" />
     <Compile Include="Services\CyclePeriodService.cs" />
-    <Compile Include="Services\DeviceService.cs" />
+    <Compile Include="Services\ScheduleDevicesService.cs" />
     <Compile Include="Services\EasyLinkServices.cs" />
     <Compile Include="Services\EditScheduleService.cs" />
     <Compile Include="Services\LocationsService.cs" />

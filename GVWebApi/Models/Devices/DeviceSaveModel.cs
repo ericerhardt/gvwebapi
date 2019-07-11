@@ -2,7 +2,8 @@
 {
     public class DeviceSaveModel
     {
-        public long DeviceId { get; set; }
+        public long ScheduleDeviceID { get; set; }
+        public long EquipmentID { get; set; }
         public long ScheduleId { get; set; }
         public int LocationId { get; set; }
         public decimal MonthlyCost { get; set; }

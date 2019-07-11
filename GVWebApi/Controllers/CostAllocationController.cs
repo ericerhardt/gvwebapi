@@ -2,93 +2,65 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
 using GVWebapi.RemoteData;
 using GVWebapi.Models;
 using GVWebapi.Helpers;
 using GVWebapi.Models.Schedules;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using GVWebapi.Services;
+using GV.Domain;
 
 namespace GVWebapi.Controllers
 {
     public class CostAllocationController : ApiController
     {
-        private GlobalViewEntities db = new GlobalViewEntities();
-        private ExcelRevisionExport er = new ExcelRevisionExport();
+ 
+        private readonly ICostAllocationService _costAllocationService;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly GlobalViewEntities _globalview = new GlobalViewEntities();
+
+
+        public CostAllocationController(ICostAllocationService costAllocationService, IUnitOfWork unitOfWork )
+        {
+            _costAllocationService = costAllocationService;
+            _unitOfWork = unitOfWork;
+           
+        }
+
         // GET: api/CostAllocation/5
         [HttpGet,Route("api/allocationsettings/{id}")]
         public async Task<IHttpActionResult> GetCostAllocationSetting(int id)
         {
-            CostAllocationSetting costAllocationSetting = new CostAllocationSetting();
-            costAllocationSetting = await db.CostAllocationSettings.Where(x =>x.CustomerID == id).FirstOrDefaultAsync();
-            List<CostAllocationSettingsViewModel> MeterGroupsModel = new List<CostAllocationSettingsViewModel>();
+            
+           var  costAllocationSetting = await _globalview.CostAllocationSettings.Where(x =>x.CustomerID == id).FirstOrDefaultAsync();
+         
             if (costAllocationSetting == null)
             {
                 CostAllocationSetting row = new CostAllocationSetting();
                 row.CustomerID = id;
                 row.AssumedAllocation = true;
-                db.CostAllocationSettings.Add(row);
-                db.SaveChanges();
-                costAllocationSetting = await db.CostAllocationSettings.Where(x => x.CustomerID == id).FirstOrDefaultAsync();
+                _globalview.CostAllocationSettings.Add(row);
+                _globalview.SaveChanges();  
             }
-          
-            List<CostAllocationMeterGroup> AllocationMetergroups = new List<CostAllocationMeterGroup>();
-            AllocationMetergroups = await db.CostAllocationMeterGroups.Where(x => x.CustomerID == id).ToListAsync();
-            if (AllocationMetergroups.Count() == 0)
-            {
-                var ContractID = er.GetContractID(id);
-                var revMeterGroups = db.RevisionMeterGroups.Where(x => x.ERPContractID == ContractID);
-                foreach (var mg in revMeterGroups)
-                {
+            costAllocationSetting = await _globalview.CostAllocationSettings.Where(x => x.CustomerID == id).FirstOrDefaultAsync();
+            var metergroups = _costAllocationService.GetCostAllocationMeterGroups(id).OrderBy(x => x.ContractMeterGroup);
 
-                    CostAllocationMeterGroup metergroup = new CostAllocationMeterGroup()
-                    {
-                        CustomerID = id,
-                        MeterGroupID = (int)mg.MeterGroupID,
-                        ExcessCPP = 0.00M
-                    };
-                    db.CostAllocationMeterGroups.Add(metergroup);
-                }
-                 db.SaveChanges();
-                AllocationMetergroups = await db.CostAllocationMeterGroups.Where(x => x.CustomerID == id).ToListAsync();
-            } 
-                foreach(var mg in AllocationMetergroups)
-                {
-                    
-                    CostAllocationSettingsViewModel model = new CostAllocationSettingsViewModel()
-                    {
-                        SettingsMeterGroupID = mg.SettingsMeterGroupID,
-                        CustomerID = mg.CustomerID,
-                        MeterGroupID = mg.MeterGroupID,
-                        MeterGroupDesc = db.RevisionMeterGroups.Find(mg.MeterGroupID).MeterGroupDesc,
-                        ExcessCPP = mg.ExcessCPP
-                    };
-                    MeterGroupsModel.Add(model);
-                }
-               
-            
-
-            return Ok( new { settings = costAllocationSetting, metergorups = MeterGroupsModel });
+            return Ok( new { settings = costAllocationSetting, metergroups  });
         }
         [HttpPost, Route("api/saveexcessmetergroups")]
         public async Task<IHttpActionResult> SaveMeterGroupExcessCPP(IEnumerable<CostAllocationSettingsViewModel> models )
         {
             foreach(var model in models)
             {
-                var metergroup = db.CostAllocationMeterGroups.Find(model.SettingsMeterGroupID);
+                var metergroup = _globalview.CostAllocationMeterGroups.Find(model.SettingsMeterGroupID);
                 {
                     metergroup.ExcessCPP = model.ExcessCPP;
                 };
                
             }
-            await db.SaveChangesAsync();
+            await _globalview.SaveChangesAsync();
         
 
             return Ok();
@@ -98,67 +70,31 @@ namespace GVWebapi.Controllers
         public async Task<IHttpActionResult> SaveCostAllocationSave(CostAllocationSetting model)
         {
             
-            var setting = db.CostAllocationSettings.Find(model.SettingsId);
+            var setting = _globalview.CostAllocationSettings.Find(model.SettingsId);
             if(setting != null)
             {
                 setting.AssumedAllocation = model.AssumedAllocation;
-                await db.SaveChangesAsync();
+                await _globalview.SaveChangesAsync();
             }
             return Ok();
         }
+ 
+
         [HttpGet, Route("api/getallcostcenters/{id}/{sid}")]
-        public async Task<IHttpActionResult> GetAllCostCenters(int id, long sid)
+        public  IHttpActionResult GetAllCostCenters(int id, long sid)
         {
-            var schedule = db.Schedules.Where(x => x.ScheduleId == sid).FirstOrDefault();
-            var costcenters = await db.InvoicedEquipmentHistories
-                                      .Where(x => x.CustomerID == id && x.CostCenter != "" &&  x.PeriodDate <= schedule.ExpiredDateTime)
-                                      .Select(x => x.CostCenter).Distinct().ToListAsync();
-            var metergroups = await db.CostAllocationMeterGroups.Where(x => x.CustomerID == id).Select(x => x.MeterGroupID).Distinct().ToListAsync();
+            var scheduleCostCenter = _globalview.ScheduleCostCenters.Where(x => x.ScheduleID == sid).ToList();
+            List<ServiceCostCenterViewModel> objCostCenters = _costAllocationService.GetScheduleCostCenters(sid, scheduleCostCenter).ToList();
 
-            List<ServiceCostCenterViewModel> objCostCenters = new List<ServiceCostCenterViewModel>();
-            foreach (var costcenter in costcenters)
-            {
-                ServiceCostCenterViewModel obj = new ServiceCostCenterViewModel();
-                obj.Status = 0;
-                obj.CostCenter = costcenter;
-                obj.MeterGroups = new List<MeterGroupCostCenter>();
-                foreach (var metergroup in metergroups)
-                {
-                   
-                    MeterGroupCostCenter mg = new MeterGroupCostCenter();
-                    mg.MeterGroupDesc = db.RevisionMeterGroups.Find(metergroup).MeterGroupDesc;
-                    mg.MeterGroupID = metergroup;
-                    mg.Volume = 0;
-                    obj.MeterGroups.Add(mg);
-                }
-                obj.ScheduleID = sid;
-                obj.CustomerID = id;
-                objCostCenters.Add(obj);
-            }
-
-            var scheduleCostCenters = db.ScheduleCostCenters.Where(x => x.ScheduleID == sid).ToList();
-
-            foreach (var objcostcenter in objCostCenters)
-            {
-                foreach (var metergroup in objcostcenter.MeterGroups)
-                {
-
-                    var scheduleServiceMg = scheduleCostCenters.Where(x => x.CostCenter == objcostcenter.CostCenter && x.MeterGroupID == metergroup.MeterGroupID).FirstOrDefault();
-                    if (scheduleServiceMg != null)
-                    {
-                        objcostcenter.ScheduleCostCenterID = scheduleServiceMg.ScheduleCostCenterID;
-                        objcostcenter.Status = 1;
-                        metergroup.Volume = scheduleServiceMg.Volume;
-
-                    }
-                }
-            }
-
-            var MeterGroupSums = scheduleCostCenters.GroupBy(l => l.MeterGroupID).Select(x => new
-            {
-                Name = db.RevisionMeterGroups.Find(x.Key).MeterGroupDesc,
-                Total = x.Sum(t => t.Volume)
-            });
+            IEnumerable<SccMeterGroupSumsViewModel> MeterGroupSums = objCostCenters
+                                                    .SelectMany(x => x.MeterGroups)
+                                                    .GroupBy(i => new { id = i.ContractMeterGroupID, name = i.MeterGroupDesc })
+                                                    .Select(i => new SccMeterGroupSumsViewModel
+                                                    {
+                                                        MeterGroupID = i.Key.id,
+                                                        Name = i.Key.name,
+                                                        Total = i.Sum(t => t.Volume)
+                                                    }).ToList();
 
 
             return Ok(new { costcenters = objCostCenters, metergroups = MeterGroupSums.OrderBy(x=> x.Name) });
@@ -166,71 +102,92 @@ namespace GVWebapi.Controllers
         [HttpPost, Route("api/modifyallcostcenters")]
         public   IHttpActionResult  ModifyAllCostCenters(List<ServiceCostCenterViewModel> models)
         {
+           string isValidMsg = string.Empty;
             if (models.Any())
             {
-                var scheduleID = models.FirstOrDefault().ScheduleID;
-                var _scheduleCostCenters = db.ScheduleCostCenters.Where(x => x.ScheduleID == scheduleID).ToList();
-                var MeterGroupSums = _scheduleCostCenters.GroupBy(l => l.MeterGroupID).Select(x => new
-                {
-                    Name = db.RevisionMeterGroups.Find(x.Key).MeterGroupDesc,
-                    Total = x.Sum(t => t.Volume)
-                });
+                ExcelRevisionExport ere = new ExcelRevisionExport();
 
-                foreach (var model in models)
+                var scheduleID = models.FirstOrDefault().ScheduleID;
+                var _scheduleCostCenters = ere.ServiceCostCenterModelToList(models);
+
+
+                IEnumerable<SccMeterGroupSumsViewModel> MeterGroupSums = _scheduleCostCenters.GroupBy(l => new { l.MeterGroupID, l.MeterGroupDesc }).Select(x => new SccMeterGroupSumsViewModel
                 {
-                    var scheduleCostCenters = db.ScheduleCostCenters.Find(model.ScheduleCostCenterID);
-                    if (scheduleCostCenters != null)
+                    MeterGroupID = x.Key.MeterGroupID.Value,
+                    Name = x.Key.MeterGroupDesc,
+                    Total = x.Sum(t => t.Volume)
+                }).ToList();
+
+              isValidMsg =   ere.ValidateMeterGroupVolume(MeterGroupSums, scheduleID);
+                if (isValidMsg != "Validated")
+                {
+                    return Ok(new { message = isValidMsg, costcenters = models });
+                }
+                else
+                {
+
+
+                    foreach (var model in models)
                     {
-                         foreach(var metergroup in model.MeterGroups)
-                         {
-                            if(scheduleCostCenters.MeterGroupID == metergroup.MeterGroupID)
+                        var scheduleCostCenter = _globalview.ScheduleCostCenters.Where(r => r.CustomerID == model.CustomerID && r.ScheduleID == model.ScheduleID && r.CostCenter == model.CostCenter).ToList();
+                        if (scheduleCostCenter.Count > 0)
+                        {
+                           
+                            foreach (var metergroup in model.MeterGroups)
                             {
-                                scheduleCostCenters.Volume = metergroup.Volume;
-                            } else
+                                var CostCenter = scheduleCostCenter.Where(x => x.MeterGroupID == metergroup.ContractMeterGroupID).FirstOrDefault();
+                                if (CostCenter != null)
+                                {
+                                    CostCenter.Volume = metergroup.Volume;
+                                }
+                                else
+                                {
+                                    var isExists = _globalview.ScheduleCostCenters.Where(r => r.CustomerID == model.CustomerID && r.ScheduleID == model.ScheduleID && r.CostCenter == model.CostCenter && r.MeterGroupID == metergroup.ContractMeterGroupID).FirstOrDefault();
+                                    if (metergroup.Volume != 0 && isExists == null)
+                                    {
+                                        ScheduleCostCenter scc = new ScheduleCostCenter();
+                                        scc.ScheduleID = model.ScheduleID;
+                                        scc.CustomerID = model.CustomerID;
+                                        scc.CostCenter = model.CostCenter;
+                                        scc.MeterGroupID = metergroup.ContractMeterGroupID;
+                                        scc.Volume = metergroup.Volume;
+                                        _globalview.ScheduleCostCenters.Add(scc);
+                                    }
+                                }
+                            }
+                            _globalview.SaveChanges();
+                        }
+                        else
+                        {
+                            foreach (var metergroup in model.MeterGroups)
                             {
-                                var isExists = db.ScheduleCostCenters.Where(r => r.CustomerID == model.CustomerID && r.ScheduleID == model.ScheduleID && r.CostCenter == model.CostCenter && r.MeterGroupID == metergroup.MeterGroupID).FirstOrDefault();
-                                if (metergroup.Volume != 0 && isExists == null)
+                                if (metergroup.Volume != null)
                                 {
                                     ScheduleCostCenter scc = new ScheduleCostCenter();
                                     scc.ScheduleID = model.ScheduleID;
                                     scc.CustomerID = model.CustomerID;
                                     scc.CostCenter = model.CostCenter;
-                                    scc.MeterGroupID = metergroup.MeterGroupID;
+                                    scc.MeterGroupID = metergroup.ContractMeterGroupID;
                                     scc.Volume = metergroup.Volume;
-                                    db.ScheduleCostCenters.Add(scc);
+                                    _globalview.ScheduleCostCenters.Add(scc);
                                 }
-                            }                         
-                         }
-                         db.SaveChanges();                         
-                    } else
-                    {
-                        foreach (var metergroup in model.MeterGroups)
-                        {
-                            if (metergroup.Volume != 0) {  
-                                ScheduleCostCenter scc = new ScheduleCostCenter();
-                                scc.ScheduleID = model.ScheduleID;
-                                scc.CustomerID = model.CustomerID;
-                                scc.CostCenter = model.CostCenter;
-                                scc.MeterGroupID = metergroup.MeterGroupID;
-                                scc.Volume = metergroup.Volume;
-                                db.ScheduleCostCenters.Add(scc);
-                            }
 
+                            }
+                            _globalview.SaveChanges();
                         }
-                        db.SaveChanges();
+
                     }
 
                 }
-                
+ 
             }
-
-            return Ok(new { costcenters = models });
+            return Ok(new { message = isValidMsg, costcenters = models });
         }
         [HttpGet, Route("api/getallcostcenterschedule/{id}")]
         public async Task<IHttpActionResult> GetSchedulelCostCenters(int id)
         {
-            var devices = db.Devices.Where(x => x.ScheduleId == id).Select(x => x.EquipmentId).ToList();
-            var costcenters = await db.InvoicedEquipmentHistories.Where(x => devices.Contains(x.EquipmentID)).Select(x => x.CostCenter).Distinct().ToListAsync();
+            var devices = _globalview.ScheduleDevices.Where(x => x.ScheduleId == id).Select(x => x.EquipmentID).ToList();
+            var costcenters = await _globalview.InvoicedEquipmentHistories.Where(x => devices.Contains(x.EquipmentID)).Select(x => x.CostCenter).Distinct().ToListAsync();
             return Ok(new { costcenters = costcenters });
         }
 
@@ -238,14 +195,14 @@ namespace GVWebapi.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _globalview.Dispose();
             }
             base.Dispose(disposing);
         }
 
         private bool CostAllocationSettingExists(int id)
         {
-            return db.CostAllocationSettings.Count(e => e.SettingsId == id) > 0;
+            return _globalview.CostAllocationSettings.Count(e => e.SettingsId == id) > 0;
         }
 
        

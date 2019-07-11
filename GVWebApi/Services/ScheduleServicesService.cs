@@ -6,7 +6,7 @@ using GV.CoFreedomDomain.Entities;
 using GV.Domain;
 using GV.Domain.Entities;
 using GVWebapi.Controllers;
-
+using GVWebapi.Models.CostAllocation;
 namespace GVWebapi.Services
 {
     public interface IScheduleServicesService
@@ -42,16 +42,21 @@ namespace GVWebapi.Services
 
             foreach (var meterGroup in coFreedomMeterGroups)
             {
-                var existingService = schedule.ScheduleServices.FirstOrDefault(x => x.MeterGroup == meterGroup);
+                var existingService = schedule.ScheduleServices.FirstOrDefault(x => x.MeterGroup == meterGroup.ContractMeterGroup);
                 if (existingService == null)
                 {
                     //doesn't exist in GV stuff
-                    var scheduleService = new ScheduleServiceEntity(meterGroup);
+                    var scheduleService = new ScheduleServiceEntity(meterGroup.ContractMeterGroup);
                     schedule.AddScheduleService(scheduleService);
                 }
-            }
+                else
+                {
+                    existingService.ContractMeterGroupID = meterGroup.ContractMeterGroupID;
 
+                }
+            }
             _unitOfWork.Commit();
+
 
             return schedule.ScheduleServices
                 .Where(x => x.IsDeleted == false)
@@ -59,6 +64,7 @@ namespace GVWebapi.Services
                 {
                     ScheduleServiceId = x.ScheduleServiceId,
                     MeterGroup = x.MeterGroup,
+                    ContractMeterGroupID = x.ContractMeterGroupID,
                     ContractedPages = x.ContractedPages,
                     BaseCpp = x.BaseCpp,
                     OverageCpp = x.OverageCpp,
@@ -95,23 +101,25 @@ namespace GVWebapi.Services
             scheduleService.ModifiedDateTime = DateTimeOffset.Now;
         }
 
-        private IEnumerable<string> GetCoFreedomMeterGroups(long customerId)
+        private IEnumerable<MeterGroup> GetCoFreedomMeterGroups(long customerId)
         {
             return _coFreedomRepository.Find<ScEquipmentEntity>()
                 .Where(x => x.CustomerId == customerId)
                 .SelectMany(x => x.ContractDetails)
                 .SelectMany(x => x.Contract.ContractMeterGroups)
-                .Select(x => x.ContractMeterGroup)
+                .Select(x => new  MeterGroup { ContractMeterGroupID = x.ContractMeterGroupId, ContractMeterGroup = x.ContractMeterGroup })
                 .Distinct()
                 .ToList();
         }
     }
+    
 
     public class ScheduleServiceModel
     {
         public long ScheduleServiceId { get; set; }
         public long ScheduleId { get; set; }
         public string MeterGroup { get; set; }
+        public int ContractMeterGroupID { get; set; }
         public int ContractedPages { get; set; }
         public decimal BaseCpp { get; set; }
         public decimal OverageCpp { get; set; }

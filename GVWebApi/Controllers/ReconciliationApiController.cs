@@ -16,11 +16,11 @@ namespace GVWebapi.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet, Route("api/cyclehistory/reconciliation/{cycleId}")]
-        public IHttpActionResult GetReconciliation(long cycleId)
+        [HttpGet, Route("api/cyclehistory/reconciliation/{cycleId}/{custid}")]
+        public IHttpActionResult GetReconciliation(long cycleId, int custid)
         {
-            var reconSummary = _reconciliationService.GetReconciliation(cycleId);
-            _unitOfWork.Commit();
+            var reconSummary = _reconciliationService.GetReconciliation(cycleId, custid);
+       
             return Ok(reconSummary);
         }
 

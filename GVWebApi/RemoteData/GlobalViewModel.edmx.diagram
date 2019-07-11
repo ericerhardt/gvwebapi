@@ -45,12 +45,12 @@
         <EntityTypeShape EntityType="GlobalViewModel.CostAvoidance" Width="1.5" PointX="15" PointY="0.75" />
         <EntityTypeShape EntityType="GlobalViewModel.EasyLinkPagesByClient" Width="4.625" PointX="17.375" PointY="3.25" />
         <EntityTypeShape EntityType="GlobalViewModel.EasylinkPagesByUser" Width="3.75" PointX="17.375" PointY="0.75" />
-        <EntityTypeShape EntityType="GlobalViewModel.CostAllocationMeterGroup" Width="3.5" PointX="16.375" PointY="6.75" />
-        <EntityTypeShape EntityType="GlobalViewModel.CostAllocationSetting" Width="3.5" PointX="11.375" PointY="17.75" />
         <EntityTypeShape EntityType="GlobalViewModel.InvoicedEquipmentHistory" Width="3.875" PointX="15.375" PointY="18.75" />
-        <EntityTypeShape EntityType="GlobalViewModel.Device" Width="1.5" PointX="2.875" PointY="8.125" />
-        <AssociationConnector Association="GlobalViewModel.FK_Devices_Schedules" />
-        <EntityTypeShape EntityType="GlobalViewModel.ScheduleCostCenter" Width="1.5" PointX="18.375" PointY="9.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.CostAllocationMeterGroup" Width="4.25" PointX="16.375" PointY="6.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.CostAllocationSetting" Width="1.5" PointX="11.375" PointY="17.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.ScheduleCostCenter" Width="2.375" PointX="18.375" PointY="9.75" />
+        <EntityTypeShape EntityType="GlobalViewModel.ScheduleDevice" Width="3.25" PointX="2.875" PointY="23.5" />
+        <AssociationConnector Association="GlobalViewModel.FK_ScheduleDevices_Schedules" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

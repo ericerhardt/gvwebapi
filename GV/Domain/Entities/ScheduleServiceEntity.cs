@@ -17,6 +17,7 @@ namespace GV.Domain.Entities
         public virtual long ScheduleServiceId { get; set; }
         public virtual SchedulesEntity Schedule { get; set; }
         public virtual string MeterGroup { get; set; }
+        public virtual int ContractMeterGroupID { get; set; }
         public virtual int ContractedPages { get; set; }
         public virtual decimal BaseCpp { get; set; }
         public virtual decimal OverageCpp { get; set; }

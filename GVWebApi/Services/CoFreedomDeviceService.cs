@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GV.Domain;
 using GV.Domain.Entities;
+using GVWebapi.Models.Devices;
 using GVWebapi.Models.Schedules;
 using GVWebapi.RemoteData;
 
@@ -14,8 +15,11 @@ namespace GVWebapi.Services
         vw_admin_EquipmentList_MeterGroup GetCoFreedomDevice(long EquipmentId);
         Dictionary<string, int> GetDeviceCount(long customerId);
         int GetScheduleDeviceCount(string scheduleNumber);
+        IList<vw_admin_EquipmentList_MeterGroup> GetCoFreedomScheduledDevices(List<string> scheduleNames, long customerId);
         EditScheduleDeviceTopModel GetTabCounts(long scheduleId);
         IList<vw_admin_EquipmentList_MeterGroup> GetCoFreedomDevices(string scheduleName, long customerId);
+        IList<ScheduleDevice> GetScheduleDevices(long scheduleId, long customerId);
+        IList<InvoicedEquipmentHistory> GetInvoicedDevices(string scheduleName, long customerId, int Period);
         IList<vw_admin_EquipmentList_MeterGroup> GetCoFreedomDevicesNoSchedule(long customerId);
         IList<vw_admin_EquipmentList_MeterGroup> GetCoFreedomDevices(long customerId);
     }
@@ -103,6 +107,41 @@ namespace GVWebapi.Services
                     .ToList();
             }
         }
+        public IList<ScheduleDevice> GetScheduleDevices(long scheduleId, long customerId)
+        {
+            using (var globaViewEntinites = new GlobalViewEntities())
+            {
+                return globaViewEntinites
+                    .ScheduleDevices
+                    .Where(x => x.CustomerID == customerId)
+                    .Where(x => x.ScheduleId  == scheduleId)
+                    .ToList();
+            }
+        }
+        public IList<vw_admin_EquipmentList_MeterGroup> GetCoFreedomScheduledDevices(List<string> scheduleNames, long customerId)
+        {
+            using (var freedomEntities = new CoFreedomEntities())
+            {
+                return freedomEntities
+                    .vw_admin_EquipmentList_MeterGroup
+                    .Where(x => x.CustomerID == customerId)
+                    .Where(x => scheduleNames.Contains(x.ScheduleNumber.ToLower().Trim()))
+                    .ToList();
+            }
+        }
+        public IList<InvoicedEquipmentHistory> GetInvoicedDevices(string scheduleName, long customerId,int Period)
+        {
+            using (var globalViewEntities = new GlobalViewEntities())
+            {
+               return globalViewEntities
+                    .InvoicedEquipmentHistories
+                    .Where(x => x.CustomerID == customerId)
+                    .Where(x => x.ScheduleNumber.ToLower().Trim() == scheduleName.ToLower().Trim())
+                    .Where(x => x.Period == Period)
+                    .ToList();
+              
+            }
+        }
         public vw_admin_EquipmentList_MeterGroup GetCoFreedomDevice(long EquipmentId)
         {
             using (var freedomEntities = new CoFreedomEntities())
@@ -143,7 +182,7 @@ namespace GVWebapi.Services
             {
                 if (scheduleDevice.RemovedStatus == RemovedStatusEnum.Removed) continue;
                 if (scheduleDevice.RemovedStatus == RemovedStatusEnum.FormatterReplaced) continue;
-                var existsInCoFreedom = coFreedomDevices.FirstOrDefault(x => x.EquipmentId == scheduleDevice.EquipmentId);
+                var existsInCoFreedom = coFreedomDevices.FirstOrDefault(x => x.EquipmentId == scheduleDevice.EquipmentID);
                 if (existsInCoFreedom != null) continue;
                 scheduleDevice.RemovedStatus = RemovedStatusEnum.SetForRemoval;
                 scheduleDevice.ModifiedDateTime = DateTimeOffset.Now;
@@ -157,21 +196,21 @@ namespace GVWebapi.Services
 
         private void AddUnAllocatedDevices(IList<CoFreedomDeviceModel> coFreedomDevices, SchedulesEntity schedule)
         {
-            var unAllocatedDevices = _repository.Find<DevicesEntity>()
-                .Where(x => x.CustomerId == schedule.CustomerId)
+            var unAllocatedDevices = _repository.Find<ScheduleDevicesEntity>()
+                .Where(x => x.CustomerID == schedule.CustomerId)
                 .Where(x => x.Schedule == null)
                 .ToList();
 
             foreach (var coFreedomDeviceModel in coFreedomDevices.Where(x => x.ScheduleNumber == null))
             {
-                var existingGlobalViewDevice = unAllocatedDevices.FirstOrDefault(x => x.EquipmentId == coFreedomDeviceModel.EquipmentId);
+                var existingGlobalViewDevice = unAllocatedDevices.FirstOrDefault(x => x.EquipmentID == coFreedomDeviceModel.EquipmentId);
                 if (existingGlobalViewDevice == null)
                 {
                     //add unallocated device
-                    var newDevice = new DevicesEntity
+                    var newDevice = new ScheduleDevicesEntity
                     {
-                        CustomerId = schedule.CustomerId,
-                        EquipmentId = coFreedomDeviceModel.EquipmentId,
+                        CustomerID = schedule.CustomerId,
+                        EquipmentID = coFreedomDeviceModel.EquipmentId,
                         EquipmentNumber = coFreedomDeviceModel.EquipmentNumber,
                         SerialNumber = coFreedomDeviceModel.SerialNumber,
                         Model = coFreedomDeviceModel.Model,
@@ -200,15 +239,15 @@ namespace GVWebapi.Services
                 if (deviceModel.ScheduleNumber == null) continue;
                 var existingDevice = schedule.Devices
                     .Where(x => x.Schedule.Name == schedule.Name)
-                    .FirstOrDefault(x => x.EquipmentId == deviceModel.EquipmentId);
+                    .FirstOrDefault(x => x.EquipmentID == deviceModel.EquipmentId);
 
                 if (existingDevice == null)
                 {
                     //add new device
-                    var newDevice = new DevicesEntity
+                    var newDevice = new ScheduleDevicesEntity
                     {
-                        CustomerId = schedule.CustomerId,
-                        EquipmentId = deviceModel.EquipmentId,
+                        CustomerID = schedule.CustomerId,
+                        EquipmentID = deviceModel.EquipmentId,
                         EquipmentNumber = deviceModel.EquipmentNumber,
                         SerialNumber = deviceModel.SerialNumber,
                         Model = deviceModel.Model,

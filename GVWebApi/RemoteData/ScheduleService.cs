@@ -25,6 +25,7 @@ namespace GVWebapi.RemoteData
         public bool IsDeleted { get; set; }
         public System.DateTimeOffset CreatedDateTime { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedDateTime { get; set; }
+        public Nullable<int> ContractMeterGroupID { get; set; }
     
         public virtual Schedule Schedule { get; set; }
     }

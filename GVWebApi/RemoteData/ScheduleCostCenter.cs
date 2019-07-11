@@ -16,9 +16,9 @@ namespace GVWebapi.RemoteData
     {
         public int ScheduleCostCenterID { get; set; }
         public long ScheduleID { get; set; }
-        public int CustomerID { get; set; }
+        public long CustomerID { get; set; }
         public string CostCenter { get; set; }
-        public Nullable<int> MeterGroupID { get; set; }
+        public Nullable<long> MeterGroupID { get; set; }
         public Nullable<int> Volume { get; set; }
     }
 }

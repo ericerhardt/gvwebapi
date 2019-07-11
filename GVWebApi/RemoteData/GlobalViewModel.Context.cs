@@ -59,11 +59,11 @@ namespace GVWebapi.RemoteData
         public virtual DbSet<CostAvoidance> CostAvoidances { get; set; }
         public virtual DbSet<EasyLinkPagesByClient> EasyLinkPagesByClients { get; set; }
         public virtual DbSet<EasylinkPagesByUser> EasylinkPagesByUsers { get; set; }
+        public virtual DbSet<InvoicedEquipmentHistory> InvoicedEquipmentHistories { get; set; }
         public virtual DbSet<CostAllocationMeterGroup> CostAllocationMeterGroups { get; set; }
         public virtual DbSet<CostAllocationSetting> CostAllocationSettings { get; set; }
-        public virtual DbSet<InvoicedEquipmentHistory> InvoicedEquipmentHistories { get; set; }
-        public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<ScheduleCostCenter> ScheduleCostCenters { get; set; }
+        public virtual DbSet<ScheduleDevice> ScheduleDevices { get; set; }
     
         public virtual ObjectResult<EasylinkReportByDate_Result> EasylinkReportByDate(Nullable<int> clientId, string startDate, string endDate)
         {

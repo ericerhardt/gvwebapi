@@ -80,6 +80,26 @@ namespace GVWebapi.Controllers
                 Survey.Title = formData["Title"];
                 Survey.SurveyTypeID = 2;
                 Survey.SurveyDate = DateTime.Parse(formData["SurveyDate"]);
+                if (formData["Answers"].Count() > 0 && Survey != null)
+                {
+
+                    IList<SurveyAnswer> surveyAnswers = JsonConvert.DeserializeObject<IList<SurveyAnswer>>(formData["Answers"]);
+                    foreach (var answer in surveyAnswers)
+                    {
+                        var surveyAnswer = _customerPortalEntities.SurveyAnswers.Where(sa => sa.SurveyID == id && sa.QuestionID == answer.QuestionID).FirstOrDefault();
+                        if (surveyAnswer != null)
+                        {
+                            surveyAnswer.SurveyID = Survey.SurveyID;
+                            surveyAnswer.QuestionID = answer.QuestionID;
+                            surveyAnswer.Question = answer.Question;
+                            surveyAnswer.AnswerNumeric = answer.AnswerNumeric;
+                            surveyAnswer.Comments = answer.Comments;
+                            surveyAnswer.NA = false;
+                        }
+                       
+                    }
+                    _customerPortalEntities.SaveChanges();
+                }
             }
             else
             {
@@ -95,29 +115,31 @@ namespace GVWebapi.Controllers
                 _customerPortalEntities.Surveys.Add(newSurvey);
                 _customerPortalEntities.SaveChanges();
                 Survey = newSurvey;
+                if (formData["Answers"].Count() > 0)
+                {
+
+                    IList<SurveyAnswer> surveyAnswers = JsonConvert.DeserializeObject<IList<SurveyAnswer>>(formData["Answers"]);
+                    foreach (var answer in surveyAnswers)
+                    {
+                        var surveyAnswer = new SurveyAnswer()
+                        {
+                            SurveyID = Survey.SurveyID,
+                            QuestionID = answer.QuestionID,
+                            Question = answer.Question,
+                            AnswerNumeric = answer.AnswerNumeric,
+                            Comments = answer.Comments,
+                            NA = false
+                        };
+                        _customerPortalEntities.SurveyAnswers.Add(surveyAnswer);
+                        _customerPortalEntities.SaveChanges();
+                    }
+                }
             }
            
 
               
           
-            if (formData["Answers"].Count() > 0)
-            {
-                IList<SurveyAnswer> surveyAnswers = JsonConvert.DeserializeObject<IList<SurveyAnswer>>(formData["Answers"]);
-                foreach(var answer in surveyAnswers)
-                {
-                    var surveyAnswer = new SurveyAnswer()
-                    {
-                        SurveyID = Survey.SurveyID,
-                        QuestionID = answer.QuestionID,
-                        Question = answer.Question,
-                        AnswerNumeric = answer.AnswerNumeric,
-                        Comments = answer.Comments,
-                        NA = false
-                    };
-                    _customerPortalEntities.SurveyAnswers.Add(surveyAnswer);
-                     _customerPortalEntities.SaveChanges();
-                }
-            }
+           
             
 
             //access files  

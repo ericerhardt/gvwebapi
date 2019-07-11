@@ -38,5 +38,11 @@ namespace GVWebapi.RemoteData
         public Nullable<System.DateTime> PeriodDate { get; set; }
         public Nullable<int> Period { get; set; }
         public Nullable<int> MeterGroupID { get; set; }
+        public string EquipmentNumber { get; set; }
+        public Nullable<bool> Active { get; set; }
+        public Nullable<int> ContractMeterGroupID { get; set; }
+        public string ContractMeterGroup { get; set; }
+        public string Model { get; set; }
+        public string ModelCategory { get; set; }
     }
 }

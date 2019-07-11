@@ -33,11 +33,11 @@ namespace GVWebapi.Services
     public class ScheduleService : IScheduleService
     {
         private readonly IScheduleServicesService _scheduleServicesService;
-        private readonly IDeviceService _deviceService;
+        private readonly IScheduleDevicesService _deviceService;
         private readonly IRepository _repository;
         private readonly ICoFreedomDeviceService _coFreedomDeviceService;
 
-        public ScheduleService(IRepository repository, ICoFreedomDeviceService coFreedomDeviceService, IScheduleServicesService scheduleServicesService, IDeviceService deviceService)
+        public ScheduleService(IRepository repository, ICoFreedomDeviceService coFreedomDeviceService, IScheduleServicesService scheduleServicesService, IScheduleDevicesService deviceService)
         {
             _repository = repository;
             _coFreedomDeviceService = coFreedomDeviceService;
@@ -91,6 +91,7 @@ namespace GVWebapi.Services
                 {
                    var scheduleServiceModel = new ScheduleServiceEntity();
                     scheduleServiceModel.MeterGroup = metergroup.MeterGroup;
+                    scheduleServiceModel.ContractMeterGroupID = metergroup.ContractMeterGroupID;
                     scheduleServiceModel.BaseCpp = metergroup.BaseCpp;
                     scheduleServiceModel.OverageCpp = metergroup.OverageCpp;
                     scheduleServiceModel.Schedule = results;
@@ -287,13 +288,13 @@ namespace GVWebapi.Services
             UpdateMonthyHardwareCost(TotalCost, model.ScheduleId);
         }
 
-        public IList<SchedulesModel> GetActiveSchedules(long deviceId)
+        public IList<SchedulesModel> GetActiveSchedules(long customerID)
         {
-            var device = _coFreedomDeviceService.GetCoFreedomDevice(deviceId);
+          
 
             return _repository.Find<SchedulesEntity>()
                 .Where(x => x.IsDeleted == false)
-                .Where(x => x.CustomerId == device.CustomerID)
+                .Where(x => x.CustomerId == customerID)
                 .Select(x => SchedulesModel.For(x))
                 .ToList();
         }

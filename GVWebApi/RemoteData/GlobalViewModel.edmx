@@ -44,7 +44,9 @@
           </Key>
           <Property Name="SettingsMeterGroupID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CustomerID" Type="int" Nullable="false" />
-          <Property Name="MeterGroupID" Type="int" Nullable="false" />
+          <Property Name="ContractMeterGroupID" Type="int" />
+          <Property Name="ContractMeterGroup" Type="varchar" MaxLength="255" />
+          <Property Name="MeterGroupID" Type="bigint" Nullable="false" />
           <Property Name="ExcessCPP" Type="decimal" Precision="12" Scale="5" Nullable="false" />
         </EntityType>
         <EntityType Name="CostAllocationSettings">
@@ -115,24 +117,6 @@
           <Property Name="EndDate" Type="datetime2" Precision="7" />
           <Property Name="IsReconciled" Type="bit" Nullable="false" />
           <Property Name="ReconcileAdj" Type="decimal" Precision="16" Scale="4" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Devices">
-          <Key>
-            <PropertyRef Name="DeviceId" />
-          </Key>
-          <Property Name="DeviceId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ScheduleId" Type="bigint" />
-          <Property Name="CustomerId" Type="bigint" Nullable="false" />
-          <Property Name="EquipmentId" Type="int" Nullable="false" />
-          <Property Name="EquipmentNumber" Type="nvarchar" MaxLength="250" Nullable="false" />
-          <Property Name="SerialNumber" Type="nvarchar" MaxLength="250" Nullable="false" />
-          <Property Name="Model" Type="nvarchar" MaxLength="250" Nullable="false" />
-          <Property Name="CreatedDateTime" Type="datetimeoffset" Precision="7" Nullable="false" />
-          <Property Name="ModifiedDateTime" Type="datetimeoffset" Precision="7" />
-          <Property Name="RemovedStatus" Type="nvarchar" MaxLength="50" />
-          <Property Name="MonthlyCost" Type="decimal" Precision="18" Scale="6" Nullable="false" />
-          <Property Name="RemovalDateTime" Type="datetimeoffset" Precision="7" />
-          <Property Name="Disposition" Type="nvarchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="EasyLink">
           <Key>
@@ -267,7 +251,9 @@
           </Key>
           <Property Name="EquipmentHistoryID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="EquipmentID" Type="int" Nullable="false" />
+          <Property Name="EquipmentNumber" Type="varchar" MaxLength="255" />
           <Property Name="SerialNumber" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="Model" Type="varchar" MaxLength="255" />
           <Property Name="LocName" Type="varchar" MaxLength="255" />
           <Property Name="Building" Type="varchar" MaxLength="255" />
           <Property Name="AssetUser" Type="varchar" MaxLength="255" />
@@ -280,6 +266,7 @@
           <Property Name="IPAddress" Type="varchar" MaxLength="255" />
           <Property Name="SupplyProvider" Type="varchar" MaxLength="255" />
           <Property Name="Location" Type="varchar" MaxLength="255" />
+          <Property Name="Active" Type="bit" />
           <Property Name="CustomerID" Type="int" Nullable="false" />
           <Property Name="BillToID" Type="int" Nullable="false" />
           <Property Name="LocationID" Type="int" />
@@ -289,6 +276,9 @@
           <Property Name="PeriodDate" Type="datetime" />
           <Property Name="Period" Type="int" />
           <Property Name="MeterGroupID" Type="int" />
+          <Property Name="ContractMeterGroupID" Type="int" />
+          <Property Name="ContractMeterGroup" Type="varchar" MaxLength="255" />
+          <Property Name="ModelCategory" Type="varchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="Location">
           <Key>
@@ -361,10 +351,44 @@
           </Key>
           <Property Name="ScheduleCostCenterID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ScheduleID" Type="bigint" Nullable="false" />
-          <Property Name="CustomerID" Type="int" Nullable="false" />
+          <Property Name="CustomerID" Type="bigint" Nullable="false" />
           <Property Name="CostCenter" Type="varchar" MaxLength="1024" />
-          <Property Name="MeterGroupID" Type="int" />
+          <Property Name="MeterGroupID" Type="bigint" />
           <Property Name="Volume" Type="int" />
+        </EntityType>
+        <EntityType Name="ScheduleDevices">
+          <Key>
+            <PropertyRef Name="ScheduleDeviceID" />
+          </Key>
+          <Property Name="ScheduleDeviceID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ScheduleId" Type="bigint" />
+          <Property Name="EquipmentID" Type="int" Nullable="false" />
+          <Property Name="EquipmentNumber" Type="varchar" MaxLength="255" />
+          <Property Name="SerialNumber" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="Model" Type="varchar" MaxLength="255" />
+          <Property Name="Building" Type="varchar" MaxLength="255" />
+          <Property Name="AssetUser" Type="varchar" MaxLength="255" />
+          <Property Name="Floor" Type="varchar" MaxLength="255" />
+          <Property Name="Department" Type="varchar" MaxLength="255" />
+          <Property Name="CostCenter" Type="varchar" MaxLength="255" />
+          <Property Name="Address" Type="varchar" MaxLength="255" />
+          <Property Name="OwnershipType" Type="varchar" MaxLength="255" />
+          <Property Name="ScheduleNumber" Type="varchar" MaxLength="255" />
+          <Property Name="IPAddress" Type="varchar" MaxLength="255" />
+          <Property Name="Location" Type="varchar" MaxLength="255" />
+          <Property Name="Active" Type="bit" />
+          <Property Name="CustomerID" Type="bigint" Nullable="false" />
+          <Property Name="LocationID" Type="int" />
+          <Property Name="InstallDate" Type="datetime" />
+          <Property Name="ContractMeterGroupID" Type="int" />
+          <Property Name="ContractMeterGroup" Type="varchar" MaxLength="255" />
+          <Property Name="ModelCategory" Type="varchar" MaxLength="255" />
+          <Property Name="CreatedDateTime" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="ModifiedDateTime" Type="datetimeoffset" Precision="7" />
+          <Property Name="RemovedStatus" Type="nvarchar" MaxLength="50" />
+          <Property Name="MonthlyCost" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="RemovalDateTime" Type="datetimeoffset" Precision="7" />
+          <Property Name="Disposition" Type="nvarchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="Schedules">
           <Key>
@@ -393,6 +417,7 @@
           <Property Name="ScheduleServiceId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ScheduleId" Type="bigint" Nullable="false" />
           <Property Name="MeterGroup" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="ContractMeterGroupID" Type="int" />
           <Property Name="ContractedPages" Type="int" Nullable="false" />
           <Property Name="BaseCpp" Type="decimal" Precision="18" Scale="6" Nullable="false" />
           <Property Name="OverageCpp" Type="decimal" Precision="18" Scale="6" Nullable="false" />
@@ -599,18 +624,6 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Devices_Schedules">
-          <End Role="Schedules" Type="Self.Schedules" Multiplicity="0..1" />
-          <End Role="Devices" Type="Self.Devices" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Schedules">
-              <PropertyRef Name="ScheduleId" />
-            </Principal>
-            <Dependent Role="Devices">
-              <PropertyRef Name="ScheduleId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_EasyLinkItem_EasyLInk">
           <End Role="EasyLink" Type="Self.EasyLink" Multiplicity="1" />
           <End Role="EasyLinkItem" Type="Self.EasyLinkItem" Multiplicity="*" />
@@ -643,6 +656,18 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
               <PropertyRef Name="ScheduleId" />
             </Principal>
             <Dependent Role="ScheduleService">
+              <PropertyRef Name="ScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ScheduleDevices_Schedules">
+          <End Role="Schedules" Type="Self.Schedules" Multiplicity="0..1" />
+          <End Role="ScheduleDevices" Type="Self.ScheduleDevices" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedules">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="ScheduleDevices">
               <PropertyRef Name="ScheduleId" />
             </Dependent>
           </ReferentialConstraint>
@@ -682,7 +707,6 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <EntitySet Name="CyclePeriodSchedules" EntityType="Self.CyclePeriodSchedules" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CycleReconciliationServices" EntityType="Self.CycleReconciliationServices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Cycles" EntityType="Self.Cycles" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Devices" EntityType="Self.Devices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EasyLink" EntityType="Self.EasyLink" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EasyLinkChildMatch" EntityType="Self.EasyLinkChildMatch" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EasylinkData" EntityType="Self.EasylinkData" Schema="dbo" store:Type="Tables" />
@@ -699,6 +723,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <EntitySet Name="RevisionMeterGroups" EntityType="Self.RevisionMeterGroups" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RevisionNotes" EntityType="Self.RevisionNotes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ScheduleCostCenters" EntityType="Self.ScheduleCostCenters" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ScheduleDevices" EntityType="Self.ScheduleDevices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Schedules" EntityType="Self.Schedules" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ScheduleService" EntityType="Self.ScheduleService" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClientContacts" EntityType="Self.ClientContacts" store:Type="Views" store:Schema="dbo">
@@ -824,10 +849,6 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
             <End Role="Cycles" EntitySet="Cycles" />
             <End Role="CycleReconciliationServices" EntitySet="CycleReconciliationServices" />
           </AssociationSet>
-          <AssociationSet Name="FK_Devices_Schedules" Association="Self.FK_Devices_Schedules">
-            <End Role="Schedules" EntitySet="Schedules" />
-            <End Role="Devices" EntitySet="Devices" />
-          </AssociationSet>
           <AssociationSet Name="FK_EasyLinkItem_EasyLInk" Association="Self.FK_EasyLinkItem_EasyLInk">
             <End Role="EasyLink" EntitySet="EasyLink" />
             <End Role="EasyLinkItem" EntitySet="EasyLinkItem" />
@@ -839,6 +860,10 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <AssociationSet Name="FK_Schedule_ScheduleService" Association="Self.FK_Schedule_ScheduleService">
             <End Role="Schedules" EntitySet="Schedules" />
             <End Role="ScheduleService" EntitySet="ScheduleService" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ScheduleDevices_Schedules" Association="Self.FK_ScheduleDevices_Schedules">
+            <End Role="Schedules" EntitySet="Schedules" />
+            <End Role="ScheduleDevices" EntitySet="ScheduleDevices" />
           </AssociationSet>
           <AssociationSet Name="FK_Schedules_ScheduleId" Association="Self.FK_Schedules_ScheduleId">
             <End Role="Schedules" EntitySet="Schedules" />
@@ -942,15 +967,15 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
             <Parameter Name="ClientID" Mode="In" Type="Int32" />
             <Parameter Name="Period" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="InvoicedEquipmentHistories" EntityType="GlobalViewModel.InvoicedEquipmentHistory" />
           <EntitySet Name="CostAllocationMeterGroups" EntityType="GlobalViewModel.CostAllocationMeterGroup" />
           <EntitySet Name="CostAllocationSettings" EntityType="GlobalViewModel.CostAllocationSetting" />
-          <EntitySet Name="InvoicedEquipmentHistories" EntityType="GlobalViewModel.InvoicedEquipmentHistory" />
-          <EntitySet Name="Devices" EntityType="GlobalViewModel.Device" />
-          <AssociationSet Name="FK_Devices_Schedules" Association="GlobalViewModel.FK_Devices_Schedules">
-            <End Role="Schedule" EntitySet="Schedules" />
-            <End Role="Device" EntitySet="Devices" />
-          </AssociationSet>
           <EntitySet Name="ScheduleCostCenters" EntityType="GlobalViewModel.ScheduleCostCenter" />
+          <EntitySet Name="ScheduleDevices" EntityType="GlobalViewModel.ScheduleDevice" />
+          <AssociationSet Name="FK_ScheduleDevices_Schedules" Association="GlobalViewModel.FK_ScheduleDevices_Schedules">
+            <End Role="Schedule" EntitySet="Schedules" />
+            <End Role="ScheduleDevice" EntitySet="ScheduleDevices" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="ContactClient">
           <Key>
@@ -1172,7 +1197,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <NavigationProperty Name="ScheduleServices" Relationship="GlobalViewModel.FK_Schedule_ScheduleService" FromRole="Schedule" ToRole="ScheduleService" />
           <NavigationProperty Name="Schedules1" Relationship="GlobalViewModel.FK_Schedules_ScheduleId" FromRole="Schedule" ToRole="Schedule1" />
           <NavigationProperty Name="Schedule1" Relationship="GlobalViewModel.FK_Schedules_ScheduleId" FromRole="Schedule1" ToRole="Schedule" />
-          <NavigationProperty Name="Devices" Relationship="GlobalViewModel.FK_Devices_Schedules" FromRole="Schedule" ToRole="Device" />
+          <NavigationProperty Name="ScheduleDevices" Relationship="GlobalViewModel.FK_ScheduleDevices_Schedules" FromRole="Schedule" ToRole="ScheduleDevice" />
         </EntityType>
         <EntityType Name="ScheduleService">
           <Key>
@@ -1190,6 +1215,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <Property Name="CreatedDateTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
           <Property Name="ModifiedDateTime" Type="DateTimeOffset" Precision="7" />
           <NavigationProperty Name="Schedule" Relationship="GlobalViewModel.FK_Schedule_ScheduleService" FromRole="ScheduleService" ToRole="Schedule" />
+          <Property Name="ContractMeterGroupID" Type="Int32" />
         </EntityType>
         <Association Name="FK_CyclePeriod_Cycle">
           <End Type="GlobalViewModel.Cycle" Role="Cycle" Multiplicity="1" />
@@ -1525,23 +1551,6 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <Property Type="Int32" Name="ClientId" Nullable="true" />
           <Property Type="String" Name="PeriodParam" Nullable="true" MaxLength="7" />
         </ComplexType>
-        <EntityType Name="CostAllocationMeterGroup">
-          <Key>
-            <PropertyRef Name="SettingsMeterGroupID" />
-          </Key>
-          <Property Name="SettingsMeterGroupID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CustomerID" Type="Int32" Nullable="false" />
-          <Property Name="MeterGroupID" Type="Int32" Nullable="false" />
-          <Property Name="ExcessCPP" Type="Decimal" Nullable="false" Precision="12" Scale="5" />
-        </EntityType>
-        <EntityType Name="CostAllocationSetting">
-          <Key>
-            <PropertyRef Name="SettingsId" />
-          </Key>
-          <Property Name="SettingsId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CustomerID" Type="Int32" Nullable="false" />
-          <Property Name="AssumedAllocation" Type="Boolean" Nullable="false" />
-        </EntityType>
         <EntityType Name="InvoicedEquipmentHistory">
           <Key>
             <PropertyRef Name="EquipmentHistoryID" />
@@ -1570,49 +1579,90 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <Property Name="PeriodDate" Type="DateTime" Precision="3" />
           <Property Name="Period" Type="Int32" />
           <Property Name="MeterGroupID" Type="Int32" />
+          <Property Name="EquipmentNumber" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Active" Type="Boolean" />
+          <Property Name="ContractMeterGroupID" Type="Int32" />
+          <Property Name="ContractMeterGroup" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Model" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="ModelCategory" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="Device">
+        <EntityType Name="CostAllocationMeterGroup">
           <Key>
-            <PropertyRef Name="DeviceId" />
+            <PropertyRef Name="SettingsMeterGroupID" />
           </Key>
-          <Property Name="DeviceId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ScheduleId" Type="Int64" />
-          <Property Name="CustomerId" Type="Int64" Nullable="false" />
-          <Property Name="EquipmentId" Type="Int32" Nullable="false" />
-          <Property Name="EquipmentNumber" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="SerialNumber" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="Model" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedDateTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
-          <Property Name="ModifiedDateTime" Type="DateTimeOffset" Precision="7" />
-          <Property Name="RemovedStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="MonthlyCost" Type="Decimal" Nullable="false" Precision="18" Scale="6" />
-          <Property Name="RemovalDateTime" Type="DateTimeOffset" Precision="7" />
-          <Property Name="Disposition" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Schedule" Relationship="GlobalViewModel.FK_Devices_Schedules" FromRole="Device" ToRole="Schedule" />
+          <Property Name="SettingsMeterGroupID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="MeterGroupID" Type="Int64" Nullable="false" />
+          <Property Name="ExcessCPP" Type="Decimal" Nullable="false" Precision="12" Scale="5" />
+          <Property Name="ContractMeterGroupID" Type="Int32" />
+          <Property Name="ContractMeterGroup" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
         </EntityType>
-        <Association Name="FK_Devices_Schedules">
-          <End Type="GlobalViewModel.Schedule" Role="Schedule" Multiplicity="0..1" />
-          <End Type="GlobalViewModel.Device" Role="Device" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Schedule">
-              <PropertyRef Name="ScheduleId" />
-            </Principal>
-            <Dependent Role="Device">
-              <PropertyRef Name="ScheduleId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
+        <EntityType Name="CostAllocationSetting">
+          <Key>
+            <PropertyRef Name="SettingsId" />
+          </Key>
+          <Property Name="SettingsId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="AssumedAllocation" Type="Boolean" Nullable="false" />
+        </EntityType>
         <EntityType Name="ScheduleCostCenter">
           <Key>
             <PropertyRef Name="ScheduleCostCenterID" />
           </Key>
           <Property Name="ScheduleCostCenterID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ScheduleID" Type="Int64" Nullable="false" />
-          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="CustomerID" Type="Int64" Nullable="false" />
           <Property Name="CostCenter" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
-          <Property Name="MeterGroupID" Type="Int32" />
+          <Property Name="MeterGroupID" Type="Int64" />
           <Property Name="Volume" Type="Int32" />
         </EntityType>
+        <EntityType Name="ScheduleDevice">
+          <Key>
+            <PropertyRef Name="ScheduleDeviceID" />
+          </Key>
+          <Property Name="ScheduleDeviceID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ScheduleId" Type="Int64" />
+          <Property Name="EquipmentID" Type="Int32" Nullable="false" />
+          <Property Name="EquipmentNumber" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="SerialNumber" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Model" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Building" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="AssetUser" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Floor" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Department" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="CostCenter" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="OwnershipType" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="ScheduleNumber" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="IPAddress" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Location" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Active" Type="Boolean" />
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="LocationID" Type="Int32" />
+          <Property Name="InstallDate" Type="DateTime" Precision="3" />
+          <Property Name="ContractMeterGroupID" Type="Int32" />
+          <Property Name="ContractMeterGroup" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="ModelCategory" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDateTime" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedDateTime" Type="DateTimeOffset" Precision="7" />
+          <Property Name="RemovedStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MonthlyCost" Type="Decimal" Nullable="false" Precision="12" Scale="2" />
+          <Property Name="RemovalDateTime" Type="DateTimeOffset" Precision="7" />
+          <Property Name="Disposition" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Schedule" Relationship="GlobalViewModel.FK_ScheduleDevices_Schedules" FromRole="ScheduleDevice" ToRole="Schedule" />
+        </EntityType>
+        <Association Name="FK_ScheduleDevices_Schedules">
+          <End Type="GlobalViewModel.Schedule" Role="Schedule" Multiplicity="0..1" />
+          <End Type="GlobalViewModel.ScheduleDevice" Role="ScheduleDevice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="ScheduleDevice">
+              <PropertyRef Name="ScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1859,6 +1909,7 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
           <EntitySetMapping Name="ScheduleServices">
             <EntityTypeMapping TypeName="GlobalViewModel.ScheduleService">
               <MappingFragment StoreEntitySet="ScheduleService">
+                <ScalarProperty Name="ContractMeterGroupID" ColumnName="ContractMeterGroupID" />
                 <ScalarProperty Name="ModifiedDateTime" ColumnName="ModifiedDateTime" />
                 <ScalarProperty Name="CreatedDateTime" ColumnName="CreatedDateTime" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
@@ -2121,28 +2172,15 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <EntitySetMapping Name="CostAllocationMeterGroups">
-            <EntityTypeMapping TypeName="GlobalViewModel.CostAllocationMeterGroup">
-              <MappingFragment StoreEntitySet="CostAllocationMeterGroups">
-                <ScalarProperty Name="ExcessCPP" ColumnName="ExcessCPP" />
-                <ScalarProperty Name="MeterGroupID" ColumnName="MeterGroupID" />
-                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
-                <ScalarProperty Name="SettingsMeterGroupID" ColumnName="SettingsMeterGroupID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="CostAllocationSettings">
-            <EntityTypeMapping TypeName="GlobalViewModel.CostAllocationSetting">
-              <MappingFragment StoreEntitySet="CostAllocationSettings">
-                <ScalarProperty Name="AssumedAllocation" ColumnName="AssumedAllocation" />
-                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
-                <ScalarProperty Name="SettingsId" ColumnName="SettingsId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="InvoicedEquipmentHistories">
             <EntityTypeMapping TypeName="GlobalViewModel.InvoicedEquipmentHistory">
               <MappingFragment StoreEntitySet="InvoicedEquipmentHistory">
+                <ScalarProperty Name="ModelCategory" ColumnName="ModelCategory" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="ContractMeterGroup" ColumnName="ContractMeterGroup" />
+                <ScalarProperty Name="ContractMeterGroupID" ColumnName="ContractMeterGroupID" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="EquipmentNumber" ColumnName="EquipmentNumber" />
                 <ScalarProperty Name="MeterGroupID" ColumnName="MeterGroupID" />
                 <ScalarProperty Name="Period" ColumnName="Period" />
                 <ScalarProperty Name="PeriodDate" ColumnName="PeriodDate" />
@@ -2170,22 +2208,24 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Devices">
-            <EntityTypeMapping TypeName="GlobalViewModel.Device">
-              <MappingFragment StoreEntitySet="Devices">
-                <ScalarProperty Name="Disposition" ColumnName="Disposition" />
-                <ScalarProperty Name="RemovalDateTime" ColumnName="RemovalDateTime" />
-                <ScalarProperty Name="MonthlyCost" ColumnName="MonthlyCost" />
-                <ScalarProperty Name="RemovedStatus" ColumnName="RemovedStatus" />
-                <ScalarProperty Name="ModifiedDateTime" ColumnName="ModifiedDateTime" />
-                <ScalarProperty Name="CreatedDateTime" ColumnName="CreatedDateTime" />
-                <ScalarProperty Name="Model" ColumnName="Model" />
-                <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
-                <ScalarProperty Name="EquipmentNumber" ColumnName="EquipmentNumber" />
-                <ScalarProperty Name="EquipmentId" ColumnName="EquipmentId" />
-                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
-                <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
-                <ScalarProperty Name="DeviceId" ColumnName="DeviceId" />
+          <EntitySetMapping Name="CostAllocationMeterGroups">
+            <EntityTypeMapping TypeName="GlobalViewModel.CostAllocationMeterGroup">
+              <MappingFragment StoreEntitySet="CostAllocationMeterGroups">
+                <ScalarProperty Name="ContractMeterGroup" ColumnName="ContractMeterGroup" />
+                <ScalarProperty Name="ContractMeterGroupID" ColumnName="ContractMeterGroupID" />
+                <ScalarProperty Name="ExcessCPP" ColumnName="ExcessCPP" />
+                <ScalarProperty Name="MeterGroupID" ColumnName="MeterGroupID" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="SettingsMeterGroupID" ColumnName="SettingsMeterGroupID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CostAllocationSettings">
+            <EntityTypeMapping TypeName="GlobalViewModel.CostAllocationSetting">
+              <MappingFragment StoreEntitySet="CostAllocationSettings">
+                <ScalarProperty Name="AssumedAllocation" ColumnName="AssumedAllocation" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="SettingsId" ColumnName="SettingsId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2198,6 +2238,41 @@ warning 6002: The table/view 'GlobalView.dbo.RevisionDataView' does not have a p
                 <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
                 <ScalarProperty Name="ScheduleID" ColumnName="ScheduleID" />
                 <ScalarProperty Name="ScheduleCostCenterID" ColumnName="ScheduleCostCenterID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ScheduleDevices">
+            <EntityTypeMapping TypeName="GlobalViewModel.ScheduleDevice">
+              <MappingFragment StoreEntitySet="ScheduleDevices">
+                <ScalarProperty Name="Disposition" ColumnName="Disposition" />
+                <ScalarProperty Name="RemovalDateTime" ColumnName="RemovalDateTime" />
+                <ScalarProperty Name="MonthlyCost" ColumnName="MonthlyCost" />
+                <ScalarProperty Name="RemovedStatus" ColumnName="RemovedStatus" />
+                <ScalarProperty Name="ModifiedDateTime" ColumnName="ModifiedDateTime" />
+                <ScalarProperty Name="CreatedDateTime" ColumnName="CreatedDateTime" />
+                <ScalarProperty Name="ModelCategory" ColumnName="ModelCategory" />
+                <ScalarProperty Name="ContractMeterGroup" ColumnName="ContractMeterGroup" />
+                <ScalarProperty Name="ContractMeterGroupID" ColumnName="ContractMeterGroupID" />
+                <ScalarProperty Name="InstallDate" ColumnName="InstallDate" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
+                <ScalarProperty Name="ScheduleNumber" ColumnName="ScheduleNumber" />
+                <ScalarProperty Name="OwnershipType" ColumnName="OwnershipType" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="CostCenter" ColumnName="CostCenter" />
+                <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="Floor" ColumnName="Floor" />
+                <ScalarProperty Name="AssetUser" ColumnName="AssetUser" />
+                <ScalarProperty Name="Building" ColumnName="Building" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+                <ScalarProperty Name="EquipmentNumber" ColumnName="EquipmentNumber" />
+                <ScalarProperty Name="EquipmentID" ColumnName="EquipmentID" />
+                <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+                <ScalarProperty Name="ScheduleDeviceID" ColumnName="ScheduleDeviceID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

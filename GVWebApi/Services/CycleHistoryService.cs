@@ -130,8 +130,9 @@ namespace GVWebapi.Services
                 item.Periods = _cyclePeriodService.GetCyclePeriods(item.CycleHistoryId);
                 if (item.IsReconciled)
                 {
+                    var custid = Int32.Parse(customerId.ToString());
                     // item.ReconcileTotal = _cycleReconService.GetReconciliation(item.CycleHistoryId).InvoicedService.Sum(x => x.OverageCost);
-                    item.ReconcileTotal = _cycleReconService.GetReconciliationSummary(item.CycleHistoryId).InvoicedService.Sum(x => x.OverageCost);
+                    item.ReconcileTotal = _cycleReconService.GetReconciliationSummary(item.CycleHistoryId, custid).InvoicedService.Sum(x => x.OverageCost);
                 }
                 maxItem--;
             }

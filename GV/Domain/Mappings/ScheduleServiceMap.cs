@@ -12,6 +12,7 @@ namespace GV.Domain.Mappings
             Id(x => x.ScheduleServiceId).GeneratedBy.Identity();
 
             Map(x => x.MeterGroup);
+            Map(x => x.ContractMeterGroupID);
             Map(x => x.ContractedPages);
             Map(x => x.BaseCpp);
             Map(x => x.OverageCpp);

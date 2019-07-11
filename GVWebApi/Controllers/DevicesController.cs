@@ -12,6 +12,7 @@ using System.Data.Entity.SqlServer;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
 using GVWebapi.Models.Devices;
+using GV.Domain.Entities;
 
 namespace GVWebapi.Controllers
 {
@@ -156,15 +157,18 @@ namespace GVWebapi.Controllers
             var devices = _coFreedomEntities.vw_BillingMeterVolumesByDevice
                                                     .Where(c => c.EquipmentNumber == id)
                                                     .Where(c => c.ReadingDate >= fromDate && c.ReadingDate <= toDate).ToList();
-            
-            decimal? maxbwvolume = devices.Max(x=> x.BWVolume);
-            decimal? maxclrvolume = devices.Max(x=> x.ColorVolume);
-
-            decimal? avgbwvolume = devices.Average(x => x.BWVolume);
-            decimal? avgclrvolume = devices.Average(x => x.ColorVolume);
-
-            var maxvolume = maxbwvolume > (maxclrvolume == null ? 0 : maxclrvolume) ? maxbwvolume : maxclrvolume;
-
+            decimal? maxbwvolume = 0.0M;
+            decimal? maxclrvolume = 0.0M;
+            decimal? avgbwvolume = 0.0M;
+            decimal? avgclrvolume = 0.0M;
+            decimal? maxvolume = 0.0M;
+            if (devices.Count() > 0) {
+                maxbwvolume =  devices.Max(x=> x.BWVolume);
+                maxclrvolume=  devices.Max(x=> x.ColorVolume);
+                avgbwvolume =  devices.Average(x => x.BWVolume);
+                avgclrvolume = devices.Average(x => x.ColorVolume);
+                maxvolume =  maxbwvolume > (maxclrvolume == null ? 0.0M : maxclrvolume) ? maxbwvolume : maxclrvolume;
+            }
 
             return Json(new { Devices = devices, MaxVolume = maxvolume, AvgBWVol = avgbwvolume, AvgCLRVol = avgclrvolume });
 
@@ -286,8 +290,23 @@ namespace GVWebapi.Controllers
         public IHttpActionResult GetDevicesOnSchedule(long scheduleId)
         {
             var schedule = _globalViewEntities.Schedules.Find(scheduleId);
-            var devices = _coFreedomEntities.vw_admin_EquipmentList_MeterGroup.Where(x => x.ScheduleNumber == schedule.Name && x.CustomerID == schedule.CustomerId ).ToList();
-            schedule.MonthlyHwCost = devices.Select(i => Decimal.Parse(i.MonthlyCost)).Sum();
+            var devices = _globalViewEntities.ScheduleDevices.Where(x => x.Schedule.ScheduleId == scheduleId && x.CustomerID == schedule.CustomerId )
+                                                             .Where(x => x.RemovedStatus == null || x.RemovedStatus == "SetForRemoval")
+                                                             .Select(x => new ScheduleDeviceViewModel {
+                                                                                                        ScheduleDeviceID = x.ScheduleDeviceID,
+                                                                                                        EquipmentID = x.EquipmentID,
+                                                                                                        SerialNumber = x.SerialNumber,
+                                                                                                        EquipmentNumber = x.EquipmentNumber,
+                                                                                                        ScheduleNumber = x.ScheduleNumber,
+                                                                                                        Model = x.Model,
+                                                                                                        Exhibit = x.OwnershipType,
+                                                                                                        Location = x.Location,
+                                                                                                        User = x.AssetUser,
+                                                                                                        CostCenter = x.CostCenter,
+                                                                                                        MonthlyCost = x.MonthlyCost,
+                                                                                                        Active = x.Active.Value
+                                                                                                        }).ToList();
+            schedule.MonthlyHwCost = devices.Sum(i => i.MonthlyCost);
             _globalViewEntities.SaveChanges();
             return Json(devices);
         }
@@ -440,9 +459,12 @@ namespace GVWebapi.Controllers
                         {
                             model.Description = model.Description + ". This device is not functioning.";
                         }
-                        if (imodel.CanPrint)
+                        if (!imodel.CanPrint)
                         {
                             model.Description = model.Description + "  We can not print to another device.";
+                        } else
+                        {
+                            model.Description = model.Description + "  We can print to another device for now.";
                         }
                         if (imodel.PatientCare)
                         {

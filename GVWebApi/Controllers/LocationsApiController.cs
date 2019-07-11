@@ -1,5 +1,9 @@
-﻿using System.Web.Http;
+﻿using System.Collections.Generic;
+using System.Web.Http;
 using GV.Domain;
+using GVWebapi.RemoteData;
+using GVWebapi.Models;
+using GVWebapi.Models.Locations;
 using GVWebapi.Services;
 
 namespace GVWebapi.Controllers
@@ -21,6 +25,26 @@ namespace GVWebapi.Controllers
             var locations = _locationsService.LoadAll(customerId);
             _unitOfWork.Commit();
             return Ok(locations);
+        }
+
+        [HttpPost, Route("api/adminlocation/updatelocationtax")]
+        public IHttpActionResult UpdateTaxRates(List<LocationViewModel>  models)
+        {
+                if (models != null)
+                {
+
+                GlobalViewEntities db = new GlobalViewEntities();
+                foreach (var model in models)
+                {
+                var location = db.Locations.Find(model.LocationId);
+                if(location != null)
+                {
+                    location.TaxRate = model.TaxRate;
+                }  
+                }
+                db.SaveChanges();
+                }
+            return Ok();
         }
 
         [HttpGet, Route("api/adminlocation/setcorporate/{locationId}/{newValue}")]

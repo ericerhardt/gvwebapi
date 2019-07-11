@@ -5,45 +5,45 @@ using GVWebapi.Services;
 
 namespace GVWebapi.Models.Devices
 {
-    public class DeviceModel
+    public class ScheduleDevicesModel
     {
-        public static DeviceModel For(decimal taxRate,decimal instance, vw_admin_EquipmentList_MeterGroup coFreedomDevice)
+        public static ScheduleDevicesModel For(decimal taxRate,decimal instance, ScheduleDevicesEntity devicesModel)
         {
-            Decimal.TryParse(coFreedomDevice.MonthlyCost, out decimal MontlyCost);
-            var model = new DeviceModel();
-            model.EquipmentId = coFreedomDevice.EquipmentID;
-            model.EquipmentNumber = coFreedomDevice.EquipmentNumber;
-            model.SerialNumber = coFreedomDevice.SerialNumber;
-            model.Model = coFreedomDevice.Model;
-            model.ScheduleNumber = coFreedomDevice.ScheduleNumber;
-            model.Exhibit = coFreedomDevice.OwnershipType;
-            model.Location = coFreedomDevice.LocName;
-            model.LocationID = coFreedomDevice.LocationID;
-            model.User = coFreedomDevice.AssetUser;
-            model.CostCenter = coFreedomDevice.CostCenter;
-            model.Status = coFreedomDevice.Active ;
-            model.MonthlyCost = MontlyCost;
+           
+            var model = new ScheduleDevicesModel();
+            model.EquipmentID = devicesModel.EquipmentID;
+            model.CustomerID = devicesModel.CustomerID;
+            model.EquipmentNumber = devicesModel.EquipmentNumber;
+            model.SerialNumber = devicesModel.SerialNumber;
+            model.Model = devicesModel.Model;
+            model.ScheduleNumber = devicesModel.ScheduleNumber;
+            model.Exhibit = devicesModel.OwnershipType;
+            model.Location = devicesModel.Location;
+            model.LocationID = devicesModel.LocationID;
+            model.User = devicesModel.AssetUser;
+            model.CostCenter = devicesModel.CostCenter;
+            model.Status = devicesModel.Active.Value ;
+            model.MonthlyCost = devicesModel.MonthlyCost;
             model.InvoiceInstance = instance;
-            model.DeviceType = coFreedomDevice.ModelCategory;
             model.TaxRate = taxRate;
             return model;
         }
 
-        private static DeviceStatusEnum GetDeviceStatus(vw_admin_EquipmentList_MeterGroup coFreedomDevice, ScheduleDevicesEntity deviceEntity)
+        private static ScheduleDevicesStatusEnum GetDeviceStatus(vw_admin_EquipmentList_MeterGroup coFreedomDevice, ScheduleDevicesEntity deviceEntity)
         {
             if (deviceEntity.RemovedStatus.HasValue && deviceEntity.RemovedStatus.Value == RemovedStatusEnum.SetForRemoval)
             {
-                return DeviceStatusEnum.Removed;
+                return ScheduleDevicesStatusEnum.Removed;
             }
 
             switch (coFreedomDevice.Active)
             {
                 case true:
-                    return DeviceStatusEnum.Active;
+                    return ScheduleDevicesStatusEnum.Active;
                 case false:
-                    return DeviceStatusEnum.InActive;
+                    return ScheduleDevicesStatusEnum.InActive;
                 default:
-                    return DeviceStatusEnum.Removed;
+                    return ScheduleDevicesStatusEnum.Removed;
             }
         }
 
@@ -61,12 +61,13 @@ namespace GVWebapi.Models.Devices
             }
         }
 
-        private DeviceModel()
+        private ScheduleDevicesModel()
         {
         }
 
-        public long DeviceId { get; set; }
-        public int EquipmentId { get; set; }
+        public long ScheduleDeviceID { get; set; }
+        public int EquipmentID { get; set; }
+        public long CustomerID { get; set; }
         public string EquipmentNumber { get; set; }
         public string SerialNumber { get; set; }
         public string Model { get; set; }

@@ -249,7 +249,7 @@ namespace GVWebapi.Services
                     email = oEmail.Replace("_#DATETIME#_", DateTime.Now.ToShortDateString());
                     oEmail = email.Replace("_#EMAIL#_", oSupplyInfo.Email);
                     email = oEmail.Replace("_#TELEPHONE#_", oSupplyInfo.Phone);
-                    oEmail = email.Replace("_#OPERATIONAL#_", oSupplyInfo.IsWorking ? "Yes" : "No");
+                    oEmail = email.Replace("_#OPERATIONAL#_", oSupplyInfo.IsWorking ? "Yes" : "No");   
                     email = oEmail.Replace("_#COMMENTS#_", oSupplyInfo.Description);
                     oEmail = email.Replace("_#ISSUEID#_", oSupplyInfo.CallID);
                     email = oEmail.Replace("_#MODEL#_", equipQuery.Model);
@@ -266,7 +266,8 @@ namespace GVWebapi.Services
                     oEmail = email.Replace("_#DEVICEID#_",  EquipmentNumber);
                     email = oEmail.Replace("_#REQUESTOR#_", oSupplyInfo.Name);
                     oEmail = email.Replace("_#ISSUEID#_", oSupplyInfo.CallID);
-                    return oEmail;
+                    email = oEmail.Replace("_#CLIENTCARE#_", oSupplyInfo.PatientCare ? "Yes" : "No");
+                    return email;
                 }
                 else
                 {
@@ -384,8 +385,8 @@ namespace GVWebapi.Services
             if (type == 1)
             {
                 model.CallID = "# " + GetCallNumber(id);
-                string filename = @"c:\inetpub\wwwroot\gvwebapi\templates\IntegrisServiceRequest.htm";
-                //string filename = @"d:\dev\repos\IntegrisServiceRequest.htm";
+                 string filename = @"c:\inetpub\wwwroot\gvwebapi\templates\IntegrisServiceRequest.htm";
+                 //string filename = @"D:\Dev\Repos\FPR\GVWebApi\GVWebApi\templates\IntegrisServiceRequest.htm";
                 //Get a StreamReader class that can be used to read the file 
                 StreamReader objStreamReader = default(StreamReader);
                 objStreamReader = File.OpenText(filename);

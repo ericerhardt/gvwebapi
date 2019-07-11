@@ -97,7 +97,7 @@
     <Compile Include="Domain\Entities\CyclePeriodSchedulesEntity.cs" />
     <Compile Include="Domain\Entities\CycleReconciliationServicesEntity.cs" />
     <Compile Include="Domain\Entities\CyclesEntity.cs" />
-    <Compile Include="Domain\Entities\DevicesEntity.cs" />
+    <Compile Include="Domain\Entities\ScheduleDevicesEntity.cs" />
     <Compile Include="Domain\Entities\EasyLinkEntity.cs" />
     <Compile Include="Domain\Entities\LocationEntity.cs" />
     <Compile Include="Domain\Entities\SchedulesEntity.cs" />
@@ -107,7 +107,7 @@
     <Compile Include="Domain\Mappings\CyclePeriodScheduleMap.cs" />
     <Compile Include="Domain\Mappings\CycleReconciliationServicesMap.cs" />
     <Compile Include="Domain\Mappings\CyclesMap.cs" />
-    <Compile Include="Domain\Mappings\DevicesMap.cs" />
+    <Compile Include="Domain\Mappings\ScheduleDevicesMap.cs" />
     <Compile Include="Domain\Mappings\LocationMap.cs" />
     <Compile Include="Domain\Mappings\ScheduleServiceMap.cs" />
     <Compile Include="Domain\Mappings\SchedulesMap.cs" />
